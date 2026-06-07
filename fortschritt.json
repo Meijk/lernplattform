@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "saved": "2026-06-07T08:03:42.007Z",
+  "srs": {},
+  "streak": {
+    "count": 0,
+    "last": ""
+  },
+  "favorites": [
+    [
+      "impro_gruppe::0",
+      {
+        "methodId": "impro_gruppe",
+        "idx": 0,
+        "cardName": "Durch den Raum gehen",
+        "methodName": "Angewandte Improvisation",
+        "kat": "Impro – Präsenz"
+      }
+    ],
+    [
+      "mbt::0",
+      {
+        "methodId": "mbt",
+        "idx": 0,
+        "cardName": "Mentalisierungs-Stop & Rewind",
+        "methodName": "MBT",
+        "kat": "Kernintervention"
+      }
+    ]
+  ]
+}
