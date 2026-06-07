@@ -212,12 +212,29 @@ body{font-family:system-ui,-apple-system,sans-serif;color:#1a1a18;background:#f5
 <div id="storage-banner">
   <div class="storage-status">
     <div class="storage-dot"></div>
-    <span id="storage-label">Keine Datei verbunden</span>
+    <span id="storage-label">GitHub nicht verbunden</span>
   </div>
-  <div style="display:flex;gap:6px;flex-wrap:wrap">
-    <button class="storage-btn primary" id="btn-open-file" onclick="openStorageFile()">📂 Datei öffnen / anlegen</button>
-    <button class="storage-btn" id="btn-save-now" onclick="saveNow()" style="display:none">💾 Jetzt speichern</button>
-    <button class="storage-btn" id="btn-disconnect" onclick="disconnectFile()" style="display:none">✕ Trennen</button>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+    <button class="storage-btn primary" id="btn-gh-connect" onclick="ghShowSetup()">🔑 GitHub verbinden</button>
+    <button class="storage-btn" id="btn-save-now" onclick="ghSaveNow()" style="display:none">💾 Jetzt speichern</button>
+    <button class="storage-btn" id="btn-disconnect" onclick="ghDisconnect()" style="display:none">✕ Trennen</button>
+  </div>
+</div>
+
+<!-- GitHub Setup Modal -->
+<div id="gh-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:14px;padding:28px 32px;max-width:440px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,.18);">
+    <div style="font-size:16px;font-weight:600;margin-bottom:6px;">🔑 GitHub Verbindung</div>
+    <div style="font-size:12px;color:#5f5e5a;margin-bottom:18px;">Token wird nur im Browser gespeichert und nicht weitergegeben.</div>
+    <label style="font-size:12px;font-weight:500;display:block;margin-bottom:4px;">Personal Access Token (repo-Scope)</label>
+    <input id="gh-token-input" type="password" placeholder="ghp_..." style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid #d3d1c7;border-radius:7px;font-size:13px;margin-bottom:12px;">
+    <label style="font-size:12px;font-weight:500;display:block;margin-bottom:4px;">Repository (user/repo)</label>
+    <input id="gh-repo-input" type="text" placeholder="Meijk/lernplattform" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid #d3d1c7;border-radius:7px;font-size:13px;margin-bottom:18px;">
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button onclick="document.getElementById('gh-modal').style.display='none'" style="padding:7px 16px;border-radius:7px;border:1px solid #d3d1c7;background:#f7f5ee;cursor:pointer;font-family:inherit;font-size:13px;">Abbrechen</button>
+      <button onclick="ghConnect()" style="padding:7px 16px;border-radius:7px;border:none;background:#2c2c2a;color:#fff;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;">Verbinden</button>
+    </div>
+    <div id="gh-modal-error" style="display:none;margin-top:10px;font-size:12px;color:#c0392b;background:#fce4ec;padding:7px 10px;border-radius:6px;"></div>
   </div>
 </div>
 <div class="app">
@@ -5953,15 +5970,19 @@ const AAP_FLASHCARDS = [
 
 
 // ═══════════════════════════════════════════════════════════════
-// FILE SYSTEM ACCESS API – Automatisches Speichern in JSON-Datei
+// GITHUB STORAGE ENGINE
+// Lernfortschritt + Favoriten automatisch in GitHub speichern
 // ═══════════════════════════════════════════════════════════════
-// Funktioniert in Chrome/Edge (File System Access API).
-// Firefox-Fallback: automatischer Download bei jeder Änderung.
 
-let _fileHandle = null;       // FileSystemFileHandle
-let _saveTimer = null;        // Debounce-Timer
-let _saving = false;
-let _fsa_supported = typeof window !== 'undefined' && 'showOpenFilePicker' in window;
+const GH_TOKEN_KEY  = 'psych_gh_token';
+const GH_REPO_KEY   = 'psych_gh_repo';
+const GH_FILE       = 'fortschritt.json';
+
+let _ghToken  = null;
+let _ghRepo   = null;
+let _ghSha    = null;   // SHA des aktuellen fortschritt.json für Updates
+let _saveTimer = null;
+let _ghReady  = false;
 
 // ── Banner-Helpers ────────────────────────────────────────────
 function _setBanner(state, label) {
@@ -5969,15 +5990,15 @@ function _setBanner(state, label) {
   const l = document.getElementById('storage-label');
   const btnSave = document.getElementById('btn-save-now');
   const btnDisc = document.getElementById('btn-disconnect');
-  const btnOpen = document.getElementById('btn-open-file');
+  const btnConn = document.getElementById('btn-gh-connect');
   if (!b) return;
-  b.className = state ? 'connected' : '';
-  if (b && state === 'saving') b.className = 'saving';
-  if (b && state === 'error') b.className = 'error';
+  b.className = state === 'connected' ? 'connected'
+              : state === 'saving'    ? 'saving'
+              : state === 'error'     ? 'error' : '';
   if (l) l.textContent = label;
-  if (btnSave) btnSave.style.display = _fileHandle ? 'inline-block' : 'none';
-  if (btnDisc) btnDisc.style.display = _fileHandle ? 'inline-block' : 'none';
-  if (btnOpen) btnOpen.textContent = _fileHandle ? '📂 Datei wechseln' : '📂 Datei öffnen / anlegen';
+  if (btnSave) btnSave.style.display = _ghReady ? 'inline-block' : 'none';
+  if (btnDisc) btnDisc.style.display = _ghReady ? 'inline-block' : 'none';
+  if (btnConn) btnConn.textContent   = _ghReady ? '🔑 Token ändern' : '🔑 GitHub verbinden';
 }
 
 // ── Daten zusammenstellen ─────────────────────────────────────
@@ -5991,14 +6012,11 @@ function _buildUserData() {
   };
 }
 
-// ── Daten laden ───────────────────────────────────────────────
+// ── Daten anwenden ────────────────────────────────────────────
 function _applyUserData(data) {
   if (!data || !data.version) return;
-  // SRS
   if (data.srs) { srsData = data.srs; }
-  // Streak
   if (data.streak) { try { localStorage.setItem(SRS_STREAK_KEY, JSON.stringify(data.streak)); } catch(e) {} }
-  // Favorites
   if (data.favorites) {
     favoritesMap.clear();
     data.favorites.forEach(([k,v]) => favoritesMap.set(k,v));
@@ -6006,115 +6024,158 @@ function _applyUserData(data) {
   }
 }
 
-// ── In Datei schreiben (FSA) ──────────────────────────────────
-async function _writeToFile() {
-  if (!_fileHandle) return false;
+// ── GitHub API Helper ─────────────────────────────────────────
+async function _ghRequest(method, path, body) {
+  const r = await fetch(`https://api.github.com${path}`, {
+    method,
+    headers: {
+      'Authorization': `token ${_ghToken}`,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  return { status: r.status, data: await r.json() };
+}
+
+// ── Fortschritt von GitHub laden ──────────────────────────────
+async function ghLoad() {
   try {
-    _saving = true;
-    _setBanner('saving', '💾 Speichert…');
-    const writable = await _fileHandle.createWritable();
-    await writable.write(JSON.stringify(_buildUserData(), null, 2));
-    await writable.close();
-    _saving = false;
-    const name = _fileHandle.name || 'lernfortschritt.json';
-    _setBanner('connected', '✓ Automatisch gespeichert in ' + name);
-    return true;
-  } catch(e) {
-    _saving = false;
-    _setBanner('error', '⚠ Fehler beim Speichern: ' + e.message);
+    const { status, data } = await _ghRequest('GET', `/repos/${_ghRepo}/contents/${GH_FILE}`);
+    if (status === 200) {
+      _ghSha = data.sha;
+      const json = JSON.parse(atob(data.content.replace(/\n/g, '')));
+      _applyUserData(json);
+      return true;
+    } else if (status === 404) {
+      _ghSha = null; // Datei existiert noch nicht
+      return true;
+    }
     return false;
-  }
+  } catch(e) { return false; }
 }
 
-// ── Debounced Auto-Save ───────────────────────────────────────
-function autoSave() {
-  if (!_fileHandle) {
-    // Kein File Handle: nur localStorage (wie bisher)
-    return;
-  }
-  if (_saveTimer) clearTimeout(_saveTimer);
-  _saveTimer = setTimeout(async () => {
-    await _writeToFile();
-  }, 800); // 800ms Debounce – mehrere schnelle Änderungen werden gebündelt
-}
-
-// ── Datei öffnen oder anlegen ─────────────────────────────────
-async function openStorageFile() {
-  if (!_fsa_supported) {
-    // Firefox-Fallback: Import-Dialog
-    alert('Ihr Browser unterstützt die automatische Datei-Anbindung nicht (Chrome/Edge empfohlen).\n\nNutzen Sie den Backup-Export/Import.');
-    return;
-  }
+// ── Fortschritt zu GitHub speichern ──────────────────────────
+async function ghPush() {
+  if (!_ghReady) return;
+  _setBanner('saving', '💾 Speichert auf GitHub…');
   try {
-    // Versuche existierende Datei zu öffnen
-    const [handle] = await window.showOpenFilePicker({
-      types: [{ description: 'Lernfortschritt JSON', accept: { 'application/json': ['.json'] } }],
-      multiple: false
-    });
-    _fileHandle = handle;
-    // Datei lesen und Daten laden
-    const file = await handle.getFile();
-    const text = await file.text();
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(_buildUserData(), null, 2))));
+    const body = { message: 'Lernfortschritt aktualisiert', content };
+    if (_ghSha) body.sha = _ghSha;
+
+    const { status, data } = await _ghRequest('PUT', `/repos/${_ghRepo}/contents/${GH_FILE}`, body);
+    if (status === 200 || status === 201) {
+      _ghSha = data.content.sha;
+      _setBanner('connected', `✓ Gespeichert auf GitHub · ${new Date().toLocaleTimeString('de-DE', {hour:'2-digit',minute:'2-digit'})}`);
+    } else {
+      _setBanner('error', `⚠ Fehler beim Speichern: ${data.message || status}`);
+    }
+  } catch(e) {
+    _setBanner('error', '⚠ Netzwerkfehler beim Speichern');
+  }
+}
+
+// ── Auto-Save (Debounced) ─────────────────────────────────────
+function autoSave() {
+  if (!_ghReady) return;
+  if (_saveTimer) clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(() => ghPush(), 2000);
+}
+
+// ── Setup Modal ───────────────────────────────────────────────
+function ghShowSetup() {
+  const modal = document.getElementById('gh-modal');
+  const repoInput = document.getElementById('gh-repo-input');
+  if (_ghRepo) repoInput.value = _ghRepo;
+  document.getElementById('gh-modal-error').style.display = 'none';
+  modal.style.display = 'flex';
+}
+
+async function ghConnect() {
+  const token = document.getElementById('gh-token-input').value.trim();
+  const repo  = document.getElementById('gh-repo-input').value.trim();
+  const errEl = document.getElementById('gh-modal-error');
+  errEl.style.display = 'none';
+
+  if (!token || !repo) {
+    errEl.textContent = 'Bitte Token und Repository eingeben.';
+    errEl.style.display = 'block'; return;
+  }
+
+  // Token testen
+  _ghToken = token; _ghRepo = repo;
+  const { status, data } = await _ghRequest('GET', `/repos/${repo}`);
+  if (status !== 200) {
+    errEl.textContent = `Verbindung fehlgeschlagen: ${data.message || status}. Bitte Token und Repo prüfen.`;
+    errEl.style.display = 'block';
+    _ghToken = null; _ghRepo = null; return;
+  }
+
+  // Speichern
+  try {
+    localStorage.setItem(GH_TOKEN_KEY, token);
+    localStorage.setItem(GH_REPO_KEY, repo);
+  } catch(e) {}
+
+  _ghReady = true;
+  document.getElementById('gh-modal').style.display = 'none';
+  _setBanner('saving', '⬇ Lade Fortschritt von GitHub…');
+
+  const loaded = await ghLoad();
+  if (loaded) {
+    // UI aktualisieren
     try {
-      const data = JSON.parse(text);
-      _applyUserData(data);
-      // UI aktualisieren
       const dis = getFcDisorders();
       const allCards = buildCards(dis).filter(c => fcConfig.qtypes.has(c.qtype));
       srsUpdateUI(allCards);
       updateFavBadge();
-      _setBanner('connected', '✓ Verbunden: ' + handle.name + ' – wird automatisch gespeichert');
-    } catch(e) {
-      _setBanner('error', '⚠ Datei konnte nicht gelesen werden: ' + e.message);
-    }
-    // Dateinamen in localStorage merken (für Info-Anzeige)
-    try { localStorage.setItem('psych_last_file', handle.name); } catch(e) {}
-  } catch(e) {
-    if (e.name !== 'AbortError') {
-      // Neue Datei anlegen
-      try {
-        const handle = await window.showSaveFilePicker({
-          suggestedName: 'lernfortschritt_psychiatrie.json',
-          types: [{ description: 'Lernfortschritt JSON', accept: { 'application/json': ['.json'] } }]
-        });
-        _fileHandle = handle;
-        await _writeToFile();
-        _setBanner('connected', '✓ Neue Datei angelegt: ' + handle.name + ' – wird automatisch gespeichert');
-        try { localStorage.setItem('psych_last_file', handle.name); } catch(err) {}
-      } catch(e2) {
-        if (e2.name !== 'AbortError') {
-          _setBanner('error', '⚠ Konnte keine Datei anlegen: ' + e2.message);
-        }
-      }
-    }
+    } catch(e) {}
+    _setBanner('connected', `✓ Verbunden mit ${repo} · Fortschritt geladen`);
+  } else {
+    _setBanner('error', `⚠ Verbunden, aber Fortschritt konnte nicht geladen werden`);
   }
 }
 
 // ── Manuell speichern ─────────────────────────────────────────
-async function saveNow() {
-  if (_fileHandle) {
-    await _writeToFile();
-  } else {
-    exportUserData(); // Fallback: Download
-  }
+async function ghSaveNow() {
+  if (_ghReady) await ghPush();
+  else ghShowSetup();
 }
 
-// ── Datei trennen ─────────────────────────────────────────────
-function disconnectFile() {
-  _fileHandle = null;
-  try { localStorage.removeItem('psych_last_file'); } catch(e) {}
-  _setBanner(false, 'Keine Datei verbunden');
+// ── Verbindung trennen ────────────────────────────────────────
+function ghDisconnect() {
+  _ghToken = null; _ghRepo = null; _ghSha = null; _ghReady = false;
+  try { localStorage.removeItem(GH_TOKEN_KEY); localStorage.removeItem(GH_REPO_KEY); } catch(e) {}
+  _setBanner(false, 'GitHub nicht verbunden');
 }
 
-// ── Init: letzte Datei anzeigen ───────────────────────────────
-(function initStorageBanner() {
-  const last = (() => { try { return localStorage.getItem('psych_last_file'); } catch(e) { return null; } })();
-  if (last) {
-    _setBanner(false, 'Zuletzt: ' + last + ' – bitte wieder verbinden');
-  } else {
-    _setBanner(false, _fsa_supported
-      ? 'Keine Datei verbunden – Daten nur im Browser-Cache'
-      : 'Browser ohne Auto-Speicher (Firefox) – Backup-Export nutzen');
+// ── Init: gespeicherte Verbindung wiederherstellen ─────────────
+(async function initGhStorage() {
+  try {
+    const token = localStorage.getItem(GH_TOKEN_KEY);
+    const repo  = localStorage.getItem(GH_REPO_KEY);
+    if (token && repo) {
+      _ghToken = token; _ghRepo = repo; _ghReady = true;
+      _setBanner('saving', `⬇ Lade Fortschritt von ${repo}…`);
+      const loaded = await ghLoad();
+      if (loaded) {
+        try {
+          const dis = getFcDisorders();
+          const allCards = buildCards(dis).filter(c => fcConfig.qtypes.has(c.qtype));
+          srsUpdateUI(allCards);
+          updateFavBadge();
+        } catch(e) {}
+        _setBanner('connected', `✓ Verbunden mit ${repo}`);
+      } else {
+        _setBanner('error', `⚠ Konnte Fortschritt nicht laden – bitte neu verbinden`);
+        _ghReady = false;
+      }
+    } else {
+      _setBanner(false, 'GitHub nicht verbunden – Klick auf 🔑 um zu verbinden');
+    }
+  } catch(e) {
+    _setBanner(false, 'GitHub nicht verbunden');
   }
 })();
 
