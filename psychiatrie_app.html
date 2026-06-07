@@ -1,0 +1,2682 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;color:#1a1a18;background:#f5f4ef;font-size:14px;line-height:1.6}
+.app{max-width:980px;margin:0 auto;padding:1.5rem 1rem 3rem}
+.header{margin-bottom:1.5rem;border-bottom:1px solid #d3d1c7;padding-bottom:1rem}
+.header h1{font-size:22px;font-weight:500;margin-bottom:.25rem}
+.header p{font-size:13px;color:#5f5e5a}
+/* Nav */
+.top-nav{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;margin-top:4px}
+.tnav-btn{padding:7px 14px;border-radius:8px;border:1px solid #d3d1c7;background:transparent;color:#5f5e5a;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s}
+.tnav-btn.active{background:#2c2c2a;color:#f1efe8;border-color:#2c2c2a}
+/* Category pills */
+.cat-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.25rem}
+.cat-btn{padding:5px 14px;border-radius:20px;border:1px solid #b4b2a9;background:transparent;color:#5f5e5a;font-size:12px;cursor:pointer;transition:all .15s;font-family:inherit}
+.cat-btn:hover{background:#e8e6df;color:#1a1a18}
+.cat-btn.active{background:#2c2c2a;color:#f1efe8;border-color:#2c2c2a;font-weight:500}
+/* Grid */
+.disorder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-bottom:1.5rem}
+.disorder-card{padding:10px 14px;border:1px solid #d3d1c7;border-radius:10px;cursor:pointer;background:#fff;transition:all .15s}
+.disorder-card:hover{border-color:#888780;background:#f1efe8}
+.disorder-card.active{border-color:#2c2c2a;background:#f1efe8}
+.dc-name{font-size:13px;font-weight:500;margin-bottom:3px}
+.dc-code{font-size:11px;color:#888780;font-family:'Courier New',monospace}
+.dc-cat{font-size:11px;color:#b4b2a9;margin-top:2px}
+/* Views */
+.view{display:none}.view.visible{display:block}
+.content-area{display:none}.content-area.visible{display:block}
+.back-btn{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:#5f5e5a;cursor:pointer;border:none;background:none;padding:0 0 1rem;font-family:inherit}
+.back-btn:hover{color:#1a1a18}
+.disorder-title{font-size:20px;font-weight:500;margin-bottom:.4rem}
+.code-row{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+.code-badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:4px;font-size:11px;font-family:'Courier New',monospace;font-weight:500}
+.badge-icd10{background:#E6F1FB;color:#0C447C;border:1px solid #B5D4F4}
+.badge-icd11{background:#EAF3DE;color:#3B6D11;border:1px solid #C0DD97}
+.badge-cat{background:#F1EFE8;color:#5F5E5A;border:1px solid #D3D1C7}
+/* Tabs */
+.tabs{display:flex;border-bottom:1px solid #d3d1c7;margin-bottom:1rem;overflow-x:auto;gap:0}
+.tab-btn{padding:8px 15px;border:none;background:transparent;color:#5f5e5a;font-size:13px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;font-family:inherit;transition:all .15s}
+.tab-btn:hover{color:#1a1a18}
+.tab-btn.active{color:#1a1a18;border-bottom-color:#1a1a18;font-weight:500}
+.tab-panel{display:none}.tab-panel.active{display:block}
+/* Content blocks */
+.section{margin-bottom:1.25rem}
+.section-title{font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem}
+.criteria-block{background:#f1efe8;border-radius:8px;padding:.75rem 1rem;margin-bottom:.5rem}
+.criteria-label{font-size:12px;font-weight:500;color:#5f5e5a;margin-bottom:.4rem}
+.criteria-list{list-style:none;padding:0}
+.criteria-list li{font-size:13px;padding:2px 0 2px 18px;position:relative;line-height:1.5}
+.criteria-list li::before{content:"–";position:absolute;left:0;color:#888780}
+.criteria-list li.main-crit::before{content:"●";font-size:8px;top:5px;color:#444441}
+.info-box{border:1px solid #d3d1c7;border-radius:8px;padding:.75rem 1rem;margin-bottom:.75rem;background:#fff}
+.info-box.amber{border-color:#FAC775;background:#FAEEDA;color:#633806}
+.info-box.blue{border-color:#B5D4F4;background:#E6F1FB;color:#0C447C}
+.info-box.green{border-color:#C0DD97;background:#EAF3DE;color:#3B6D11}
+.info-box.red{border-color:#F7C1C1;background:#FCEBEB;color:#791F1F}
+.info-box.purple{border-color:#AFA9EC;background:#EEEDFE;color:#3C3489}
+.info-box-title{font-size:12px;font-weight:500;margin-bottom:.3rem}
+.mnemonic-box{background:#f1efe8;border:1px solid #d3d1c7;border-radius:8px;padding:.75rem 1rem;font-size:13px}
+.mnemonic-letter{font-weight:500;color:#1a1a18;margin-right:4px}
+.mnemonic-line{padding:2px 0}
+.ddx-item{border:1px solid #d3d1c7;border-radius:8px;padding:.6rem 1rem;margin-bottom:7px;background:#fff}
+.ddx-name{font-size:13px;font-weight:500;margin-bottom:2px}
+.ddx-hint{font-size:12px;color:#5f5e5a}
+.pharmako-box{background:#f1efe8;border:1px solid #d3d1c7;border-radius:8px;padding:1rem;font-size:13px;margin-bottom:.75rem}
+.note{font-size:12px;color:#888780;margin-top:8px}
+.pt1{padding-top:.75rem}
+/* Therapy methods view */
+.tx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-bottom:1.5rem}
+.tx-card{padding:10px 14px;border:1px solid #d3d1c7;border-radius:10px;cursor:pointer;background:#fff;transition:all .15s}
+.tx-card:hover{border-color:#888780;background:#f1efe8}
+.tx-card.active{border-color:#534AB7;background:#EEEDFE}
+.tx-name{font-size:13px;font-weight:500;margin-bottom:3px}
+.tx-short{font-size:11px;color:#888780}
+.tx-cat-pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;margin-top:4px}
+.tx-pill-vt{background:#E6F1FB;color:#0C447C}
+.tx-pill-3w{background:#EEEDFE;color:#3C3489}
+.tx-pill-acht{background:#EAF3DE;color:#3B6D11}
+.tx-pill-schema{background:#FAEEDA;color:#633806}
+.tx-pill-mbt{background:#FCEBEB;color:#791F1F}
+.tx-detail{display:none}.tx-detail.visible{display:block}
+.tx-detail-title{font-size:20px;font-weight:500;margin-bottom:.25rem}
+.tx-meta-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem}
+.tx-meta-badge{padding:3px 10px;border-radius:4px;font-size:12px;font-weight:500}
+.tx-section{margin-bottom:1.25rem}
+.tx-section-title{font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem}
+.tx-block{background:#f1efe8;border-radius:8px;padding:.75rem 1rem;font-size:13px}
+.tx-block ul{list-style:none;padding:0}
+.tx-block ul li{padding:2px 0 2px 16px;position:relative}
+.tx-block ul li::before{content:"–";position:absolute;left:0;color:#888780}
+.person-badge{display:inline-block;padding:3px 10px;border-radius:6px;background:#f1efe8;border:1px solid #d3d1c7;font-size:12px;margin:2px 4px 2px 0}
+/* Flashcards */
+.fc-view{display:none}.fc-view.visible{display:block}
+.fc-config{background:#fff;border:1px solid #d3d1c7;border-radius:10px;padding:1rem;margin-bottom:1.25rem}
+.fc-config-title{font-size:12px;font-weight:500;color:#5f5e5a;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem}
+.fc-config-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:.75rem}
+.fc-toggle{padding:5px 12px;border-radius:6px;border:1px solid #d3d1c7;background:#f1efe8;color:#5f5e5a;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.fc-toggle:hover{border-color:#888780;color:#1a1a18}
+.fc-toggle.on{background:#2c2c2a;color:#f1efe8;border-color:#2c2c2a}
+.fc-start-btn{display:inline-block;padding:9px 22px;background:#2c2c2a;color:#f1efe8;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s;margin-top:.75rem}
+.fc-start-btn:hover{background:#444441}
+.fc-start-btn:disabled{background:#b4b2a9;cursor:not-allowed}
+.fc-progress-wrap{margin-bottom:1.25rem}
+.fc-progress-meta{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#5f5e5a;margin-bottom:6px}
+.fc-progress-bar-bg{background:#e8e6df;border-radius:4px;height:6px}
+.fc-progress-bar-fill{background:#2c2c2a;height:6px;border-radius:4px;transition:width .3s ease}
+.fc-counters{display:flex;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap}
+.fc-counter{flex:1;min-width:80px;padding:8px 12px;border-radius:8px;border:1px solid #d3d1c7;background:#fff;text-align:center}
+.fc-counter .fc-cnt-num{font-size:20px;font-weight:500}
+.fc-counter .fc-cnt-lbl{font-size:11px;color:#888780}
+.fc-counter.green{border-color:#C0DD97;background:#EAF3DE}
+.fc-counter.green .fc-cnt-num{color:#3B6D11}
+.fc-counter.red{border-color:#F7C1C1;background:#FCEBEB}
+.fc-counter.red .fc-cnt-num{color:#791F1F}
+.fc-counter.gray .fc-cnt-num{color:#444441}
+.fc-scene{perspective:1000px;margin-bottom:1rem;min-height:280px;cursor:pointer}
+.fc-card{position:relative;width:100%;min-height:280px;transform-style:preserve-3d;transition:transform .45s ease}
+.fc-card.flipped{transform:rotateY(180deg)}
+.fc-face{position:absolute;top:0;left:0;width:100%;min-height:280px;backface-visibility:hidden;border:1px solid #d3d1c7;border-radius:12px;background:#fff;padding:1.5rem;display:flex;flex-direction:column;justify-content:center}
+.fc-face.back{transform:rotateY(180deg);background:#f1efe8}
+.fc-category-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;background:#e8e6df;color:#5f5e5a;margin-bottom:.75rem;border:1px solid #d3d1c7}
+.fc-qtype{font-size:11px;color:#888780;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem}
+.fc-question{font-size:16px;font-weight:500;line-height:1.5;color:#1a1a18;margin-bottom:.75rem}
+.fc-hint{font-size:12px;color:#888780;margin-top:auto;padding-top:.75rem;border-top:1px solid #e8e6df}
+.fc-answer-label{font-size:11px;color:#3B6D11;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem;font-weight:500}
+.fc-answer{font-size:13px;line-height:1.6;color:#1a1a18}
+.fc-answer ul{list-style:none;padding:0}
+.fc-answer ul li{padding:3px 0 3px 16px;position:relative}
+.fc-answer ul li::before{content:"–";position:absolute;left:0;color:#888780}
+.fc-answer ul li.main::before{content:"●";font-size:8px;top:6px;color:#444441}
+.fc-flip-hint{text-align:center;font-size:12px;color:#888780;margin-bottom:1rem}
+.fc-actions{display:flex;gap:10px;margin-bottom:1.5rem;justify-content:center}
+.fc-btn{flex:1;max-width:160px;padding:10px 16px;border-radius:8px;border:1px solid;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s}
+.fc-btn.wrong{border-color:#F7C1C1;background:#FCEBEB;color:#791F1F}
+.fc-btn.wrong:hover{background:#f0b4b4}
+.fc-btn.right{border-color:#C0DD97;background:#EAF3DE;color:#3B6D11}
+.fc-btn.right:hover{background:#b0d080}
+.fc-btn.skip{border-color:#d3d1c7;background:#f1efe8;color:#5f5e5a}
+.fc-btn.skip:hover{background:#e4e2db}
+.fc-results{text-align:center;padding:2rem 1rem}
+.fc-results-score{font-size:48px;font-weight:500;margin-bottom:.25rem}
+.fc-results-sub{font-size:14px;color:#5f5e5a;margin-bottom:1.5rem}
+.fc-results-bar-wrap{max-width:300px;margin:0 auto 1.5rem}
+.fc-results-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.fc-res-btn{padding:9px 20px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s}
+.fc-res-btn.primary{background:#2c2c2a;color:#f1efe8;border:none}
+.fc-res-btn.primary:hover{background:#444441}
+.fc-res-btn.secondary{background:transparent;color:#5f5e5a;border:1px solid #d3d1c7}
+.fc-res-btn.secondary:hover{background:#f1efe8}
+@media(max-width:600px){.disorder-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:400px){.disorder-grid{grid-template-columns:1fr}}
+
+/* ── SRS: Lernfortschritt-Badges ─────────────────── */
+.fc-srs-badge{display:inline-block;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:600;letter-spacing:.03em;vertical-align:middle;margin-left:6px}
+.srs-new{background:#e8e6df;color:#5f5e5a}
+.srs-learn{background:#fdf3dc;color:#8a5c00}
+.srs-review{background:#e6f0fb;color:#1a5fa8}
+.srs-mastered{background:#e6f5ec;color:#1a6b3a}
+.fc-deck-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:500;cursor:pointer;border:1.5px solid #d3d1c7;transition:all .15s;background:#fff}
+.fc-deck-pill.active{border-color:#2c2c2a;background:#2c2c2a;color:#f1efe8}
+.fc-deck-pill:hover:not(.active){background:#f1efe8}
+/* ── SRS: Stats-Dashboard ────────────────────────── */
+.srs-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:1rem 0}
+.srs-stat{text-align:center;padding:10px 6px;background:#f7f5ee;border-radius:10px}
+.srs-stat-num{font-size:22px;font-weight:600;line-height:1}
+.srs-stat-lbl{font-size:10px;color:#888780;margin-top:3px;text-transform:uppercase;letter-spacing:.04em}
+.srs-stat-num.new-col{color:#5f5e5a}
+.srs-stat-num.learn-col{color:#8a5c00}
+.srs-stat-num.review-col{color:#1a5fa8}
+.srs-stat-num.mastered-col{color:#1a6b3a}
+/* ── SRS: Prüfungsmodus ──────────────────────────── */
+.exam-mode-banner{background:linear-gradient(135deg,#2c2c2a,#444441);color:#f1efe8;border-radius:12px;padding:16px 20px;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.exam-mode-title{font-size:15px;font-weight:600}
+.exam-mode-sub{font-size:12px;opacity:.75;margin-top:3px}
+.exam-badge{background:#c8a84b;color:#1a1a18;padding:3px 10px;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:.05em}
+/* ── SRS: Fortschrittsbalken (mehrfarbig) ─────────── */
+.srs-progress-bar{height:6px;border-radius:3px;background:#e8e6df;overflow:hidden;display:flex;margin:6px 0 12px}
+.srs-bar-new{background:#d3d1c7}
+.srs-bar-learn{background:#f0b429}
+.srs-bar-review{background:#4a9fd4}
+.srs-bar-mastered{background:#2da84e}
+/* ── SRS: Lernsteak-Anzeige ──────────────────────── */
+.srs-streak{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:#8a5c00;background:#fdf3dc;padding:4px 10px;border-radius:8px}
+/* ── FC config extra row ─────────────────────────── */
+.fc-config-section-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#888780;margin:1rem 0 .4rem}
+
+
+/* ── File Storage Banner ────────────────────────────────────── */
+#storage-banner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:8px 16px;font-size:12px;border-bottom:1px solid #e8e6df;background:#f7f5ee;transition:background .3s}
+#storage-banner.connected{background:#e6f5ec;border-color:#b8e0c8}
+#storage-banner.error{background:#fce4ec;border-color:#f8bbd0}
+#storage-banner.saving{background:#fdf3dc}
+.storage-status{display:flex;align-items:center;gap:6px;font-weight:500}
+.storage-dot{width:8px;height:8px;border-radius:50%;background:#d3d1c7;flex-shrink:0;transition:background .3s}
+.connected .storage-dot{background:#2da84e}
+.error .storage-dot{background:#e53935}
+.saving .storage-dot{background:#f0b429;animation:pulse .6s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.storage-btn{font-size:11px;padding:3px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#fff;cursor:pointer;font-family:inherit;transition:all .15s}
+.storage-btn:hover{background:#f1efe8}
+.storage-btn.primary{background:#2c2c2a;color:#f1efe8;border-color:#2c2c2a}
+.storage-btn.primary:hover{background:#444441}
+
+</style>
+</head>
+<body>
+<div id="storage-banner">
+  <div class="storage-status">
+    <div class="storage-dot"></div>
+    <span id="storage-label">Keine Datei verbunden</span>
+  </div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap">
+    <button class="storage-btn primary" id="btn-open-file" onclick="openStorageFile()">📂 Datei öffnen / anlegen</button>
+    <button class="storage-btn" id="btn-save-now" onclick="saveNow()" style="display:none">💾 Jetzt speichern</button>
+    <button class="storage-btn" id="btn-disconnect" onclick="disconnectFile()" style="display:none">✕ Trennen</button>
+  </div>
+</div>
+<div class="app">
+  <div class="header">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+      <div>
+        <h1>Psychotherapie Lernplattform</h1>
+        <p>St&#246;rungsbilder · Therapieverfahren · Karteikarten | ICD-10 &amp; 11 · VT · Gruppen- &amp; Stationstherapie</p>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px">
+        <button onclick="exportUserData()" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#f7f5ee;cursor:pointer;font-family:inherit" title="Lernfortschritt & Favoriten als JSON-Datei sichern">⬇ Fortschritt exportieren</button>
+        <label style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#f7f5ee;cursor:pointer" title="Gespeicherten Fortschritt laden">⬆ Importieren<input type="file" accept=".json" onchange="importUserData(this)" style="display:none"></label>
+      </div>
+      </div>
+      <div class="top-nav">
+        <button class="tnav-btn active" id="nav-learn" onclick="showView('learn')">St&#246;rungsbilder</button>
+        <button class="tnav-btn" id="nav-tx" onclick="showView('tx')">Therapieverfahren</button>
+        <button class="tnav-btn" id="nav-gt" onclick="showView('gt')">Gruppentherapie</button>
+        <button class="tnav-btn" id="nav-med" onclick="showView('med')">Med. Grundlagen</button>
+        <button class="tnav-btn" id="nav-tech" onclick="showView('tech')">Gespr&#228;chstechniken</button>
+        <button class="tnav-btn" id="nav-fav" onclick="showView('fav')">&#9733; Favoriten</button>
+        <button class="tnav-btn" id="nav-fc" onclick="showView('fc')">&#127183; Karteikarten</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW: Störungsbilder -->
+  <div class="view visible" id="view-learn">
+    <div id="list-view">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:.5rem;">
+        <div class="cat-nav" id="cat-nav" style="margin-bottom:0;flex:1;"></div>
+        <button id="view-toggle-btn" onclick="toggleDisorderView()" style="padding:6px 12px;border-radius:8px;border:1px solid #d3d1c7;background:#fff;color:#5f5e5a;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap;">⊞ Tabellenansicht</button>
+      </div>
+      <div class="disorder-grid" id="disorder-grid"></div>
+    </div>
+    <div class="content-area" id="content-view">
+      <button class="back-btn" onclick="showList()">&#8592; Zur&#252;ck zur &#220;bersicht</button>
+      <div class="disorder-title" id="cv-title"></div>
+      <div class="code-row" id="cv-codes"></div>
+      <div class="tabs" id="cv-tabs"></div>
+      <div id="cv-panels"></div>
+    </div>
+  </div>
+
+  <!-- VIEW: Therapieverfahren -->
+  <div class="view" id="view-tx">
+    <div id="tx-list-view">
+      <div class="cat-nav" id="tx-cat-nav"></div>
+      <div class="tx-grid" id="tx-grid"></div>
+    </div>
+    <div class="tx-detail" id="tx-detail">
+      <button class="back-btn" onclick="showTxList()">&#8592; Zur&#252;ck zur &#220;bersicht</button>
+      <div class="tx-detail-title" id="tx-title"></div>
+      <div class="tx-meta-row" id="tx-meta"></div>
+      <div class="tabs" id="tx-tabs"></div>
+      <div id="tx-panels"></div>
+    </div>
+  </div>
+
+  <!-- VIEW: Gruppentherapie -->
+  <div class="view" id="view-gt">
+    <div id="gt-list-view">
+      <div class="cat-nav" id="gt-cat-nav"></div>
+      <div class="tx-grid" id="gt-grid"></div>
+    </div>
+    <div class="tx-detail" id="gt-detail">
+      <button class="back-btn" onclick="showGtList()">&#8592; Zur&#252;ck zur &#220;bersicht</button>
+      <div class="tx-detail-title" id="gt-title"></div>
+      <div class="tx-meta-row" id="gt-meta"></div>
+      <div class="tabs" id="gt-tabs"></div>
+      <div id="gt-panels"></div>
+    </div>
+  </div>
+
+  <!-- VIEW: Medizinische Grundlagen – Selbstlernkurs -->
+  <div class="view" id="view-med">
+    <!-- COURSE LIST VIEW -->
+    <div id="med-course-view">
+      <div style="margin-bottom:1.25rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:.75rem;">
+          <div>
+            <div style="font-size:18px;font-weight:500;">Med. Grundlagen – Selbstlernkurs</div>
+            <div style="font-size:12px;color:#5f5e5a;margin-top:2px;">Neurobiologie · Pharmakologie · Autonomes NS · Genetik – für Psychotherapeuten</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:12px;color:#5f5e5a;" id="med-progress-label">0 / 0 gelesen</span>
+            <button onclick="medResetProgress()" style="padding:4px 10px;border-radius:6px;border:1px solid #d3d1c7;background:transparent;color:#888780;font-size:11px;cursor:pointer;font-family:inherit;">Zurücksetzen</button>
+          </div>
+        </div>
+        <div style="background:#e8e6df;border-radius:4px;height:8px;">
+          <div id="med-progress-bar" style="height:8px;border-radius:4px;background:#2c2c2a;width:0%;transition:width .5s;"></div>
+        </div>
+      </div>
+      <div class="cat-nav" id="med-cat-nav"></div>
+      <div id="med-grid"></div>
+    </div>
+
+    <!-- TOPIC DETAIL VIEW -->
+    <div class="tx-detail" id="med-detail">
+      <!-- Top bar -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:1.25rem;">
+        <button class="back-btn" style="padding:0;" onclick="showMedList()">&#8592; Kursübersicht</button>
+        <button id="med-mark-btn" onclick="medToggleRead()" style="padding:6px 14px;border-radius:8px;border:1px solid #C0DD97;background:#EAF3DE;color:#3B6D11;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;">✓ Als gelesen markieren</button>
+      </div>
+      <!-- Breadcrumb -->
+      <div id="med-breadcrumb" style="font-size:11px;color:#888780;margin-bottom:.5rem;"></div>
+      <!-- Title + meta -->
+      <div class="tx-detail-title" id="med-title"></div>
+      <div class="tx-meta-row" id="med-meta" style="margin-bottom:1rem;"></div>
+      <!-- Topic progress bar -->
+      <div id="med-topic-progress" style="margin-bottom:1.25rem;"></div>
+      <!-- TOC -->
+      <div id="med-toc" style="margin-bottom:1.25rem;"></div>
+      <!-- Content rendered directly (no tabs) -->
+      <div id="med-content"></div>
+      <!-- Prev/Next -->
+      <div style="display:flex;justify-content:space-between;margin-top:2rem;padding-top:1rem;border-top:1px solid #d3d1c7;">
+        <button id="med-prev-btn" onclick="medNavigate(-1)" style="padding:8px 16px;border-radius:8px;border:1px solid #d3d1c7;background:#fff;color:#5f5e5a;font-size:13px;cursor:pointer;font-family:inherit;">← Vorheriges</button>
+        <button id="med-next-btn" onclick="medNavigate(1)" style="padding:8px 16px;border-radius:8px;border:1px solid #2c2c2a;background:#2c2c2a;color:#f1efe8;font-size:13px;cursor:pointer;font-family:inherit;">Nächstes →</button>
+      </div>
+    </div>
+  </div>
+
+
+    <!-- VIEW: Gesprächstechniken -->
+  <div class="view" id="view-tech">
+    <div id="tech-list-view">
+      <div class="cat-nav" id="tech-cat-nav"></div>
+      <div class="tx-grid" id="tech-grid"></div>
+    </div>
+    <div class="tx-detail" id="tech-detail">
+      <button class="back-btn" onclick="showTechList()">&#8592; Zur&#252;ck zur &#220;bersicht</button>
+      <div class="tx-detail-title" id="tech-title"></div>
+      <div class="tx-meta-row" id="tech-meta"></div>
+      <div class="tabs" id="tech-tabs"></div>
+      <div id="tech-panels"></div>
+    </div>
+  </div>
+
+  <!-- VIEW: Favoriten -->
+  <div class="view" id="view-fav">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:1.25rem;">
+      <div>
+        <div style="font-size:18px;font-weight:500;">★ Favoriten</div>
+        <div style="font-size:12px;color:#5f5e5a;margin-top:2px;">Ihre gespeicherten Techniken, Methoden und Interventionen</div>
+      </div>
+      <div id="fav-count" style="font-size:12px;color:#888780;"></div>
+    </div>
+    <div id="fav-filter" style="margin-bottom:1rem;"></div>
+    <div id="fav-grid"></div>
+    <div id="fav-empty" style="display:none;text-align:center;padding:3rem 1rem;color:#888780;">
+      <div style="font-size:32px;margin-bottom:.75rem;">☆</div>
+      <div style="font-size:14px;font-weight:500;margin-bottom:.5rem;">Noch keine Favoriten gespeichert</div>
+      <div style="font-size:13px;">Klicken Sie bei einer Technik auf ★ um sie als Favorit zu speichern.</div>
+    </div>
+  </div>
+
+  <!-- VIEW: Karteikarten -->
+  <div class="view fc-view" id="view-fc">
+    <div id="fc-config-screen">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:1.25rem">
+        <div style="font-size:18px;font-weight:500">Karteikarten-Abfrage</div>
+        <div class="srs-streak" id="srs-streak-display" style="display:none">🔥 <span id="srs-streak-num">0</span> Tage-Streak</div>
+      </div>
+
+      <!-- Lernfortschritt Dashboard -->
+      <div class="srs-stats" id="srs-stats-overview">
+        <div class="srs-stat"><div class="srs-stat-num new-col" id="stat-new">–</div><div class="srs-stat-lbl">Neu</div></div>
+        <div class="srs-stat"><div class="srs-stat-num learn-col" id="stat-learn">–</div><div class="srs-stat-lbl">Lerne</div></div>
+        <div class="srs-stat"><div class="srs-stat-num review-col" id="stat-review">–</div><div class="srs-stat-lbl">Wiederholen</div></div>
+        <div class="srs-stat"><div class="srs-stat-num mastered-col" id="stat-mastered">–</div><div class="srs-stat-lbl">Beherrscht</div></div>
+      </div>
+      <div class="srs-progress-bar" id="srs-progress-visual"></div>
+
+      <div class="fc-config">
+        <!-- Lernmodus -->
+        <div class="fc-config-section-title">Lernmodus</div>
+        <div class="fc-config-row" id="fc-mode-filters">
+          <button class="fc-deck-pill active" id="mode-btn-smart" onclick="setFcMode('smart',this)">🎯 Prüfungs-Modus</button>
+          <button class="fc-deck-pill" id="mode-btn-due" onclick="setFcMode('due',this)">📅 Fällige Karten</button>
+          <button class="fc-deck-pill" id="mode-btn-wrong" onclick="setFcMode('wrong',this)">✗ Fehlerkarten</button>
+          <button class="fc-deck-pill" id="mode-btn-new" onclick="setFcMode('new',this)">✦ Nur neue Karten</button>
+          <button class="fc-deck-pill" id="mode-btn-all" onclick="setFcMode('all',this)">Alle Karten</button>
+        </div>
+
+        <!-- Kategorie -->
+        <div class="fc-config-section-title" style="margin-top:1rem">Kategorie</div>
+        <div class="fc-config-row" id="fc-cat-filters"></div>
+
+        <!-- Fragentypen -->
+        <div class="fc-config-section-title" style="margin-top:.75rem">Fragentypen</div>
+        <div class="fc-config-row" id="fc-qtype-filters"></div>
+
+        <!-- Reihenfolge -->
+        <div class="fc-config-section-title" style="margin-top:.75rem">Reihenfolge</div>
+        <div class="fc-config-row" id="fc-order-filters"></div>
+
+        <button class="fc-start-btn" id="fc-start-btn" onclick="startFlashcards()">Abfrage starten</button>
+        <div id="fc-card-count" style="font-size:12px;color:#888780;margin-top:8px"></div>
+
+        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid #e8e6df;display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="resetSrsData()" style="font-size:11px;color:#888780;background:none;border:none;cursor:pointer;padding:0">Lernfortschritt zurücksetzen</button>
+        </div>
+      </div>
+    </div>
+    <div id="fc-session" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px">
+        <button class="back-btn" style="padding:0" onclick="endSession()">&#8592; Neue Auswahl</button>
+        <div style="font-size:12px;color:#5f5e5a" id="fc-session-label"></div>
+      </div>
+      <div class="fc-progress-wrap">
+        <div class="fc-progress-meta"><span id="fc-progress-text"></span><span id="fc-progress-pct"></span></div>
+        <div class="fc-progress-bar-bg"><div class="fc-progress-bar-fill" id="fc-progress-fill" style="width:0%"></div></div>
+      </div>
+      <div class="fc-counters">
+        <div class="fc-counter green"><div class="fc-cnt-num" id="fc-cnt-right">0</div><div class="fc-cnt-lbl">Gewusst</div></div>
+        <div class="fc-counter red"><div class="fc-cnt-num" id="fc-cnt-wrong">0</div><div class="fc-cnt-lbl">Nicht gewusst</div></div>
+        <div class="fc-counter gray"><div class="fc-cnt-num" id="fc-cnt-left">0</div><div class="fc-cnt-lbl">Verbleibend</div></div>
+      </div>
+      <div class="fc-scene" onclick="flipCard()">
+        <div class="fc-card" id="fc-card">
+          <div class="fc-face front">
+            <div class="fc-category-pill" id="fc-front-cat"></div>
+            <div class="fc-qtype" id="fc-front-qtype"></div>
+            <div class="fc-question" id="fc-front-q"></div>
+            <div class="fc-hint">Klicken zum Aufdecken</div>
+          </div>
+          <div class="fc-face back">
+            <div class="fc-answer-label">Antwort</div>
+            <div class="fc-answer" id="fc-back-a"></div>
+          </div>
+        </div>
+      </div>
+      <div class="fc-flip-hint" id="fc-flip-hint">Karte anklicken, um Antwort zu sehen</div>
+      <div class="fc-actions" id="fc-actions" style="display:none">
+        <button class="fc-btn wrong" onclick="rateCard(false)">&#10007; Nicht gewusst</button>
+        <button class="fc-btn skip" onclick="rateCard(null)">&#8594; &#220;berspringen</button>
+        <button class="fc-btn right" onclick="rateCard(true)">&#10003; Gewusst</button>
+      </div>
+    </div>
+    <div id="fc-results" style="display:none">
+      <div class="fc-results">
+        <div class="fc-results-score" id="fc-res-score"></div>
+        <div class="fc-results-sub" id="fc-res-sub"></div>
+        <div class="fc-results-bar-wrap">
+          <div class="fc-progress-bar-bg" style="height:10px;border-radius:5px"><div class="fc-progress-bar-fill" id="fc-res-bar" style="width:0%;height:10px;border-radius:5px"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:#888780;margin-top:4px"><span id="fc-res-right-lbl"></span><span id="fc-res-wrong-lbl"></span></div>
+        </div>
+        <!-- SRS Fortschritt nach Session -->
+        <div id="fc-res-srs" style="display:none;margin:1rem 0;padding:1rem;background:#f7f5ee;border-radius:10px;font-size:13px;text-align:left">
+          <div style="font-weight:600;margin-bottom:.5rem">Lernfortschritt aktualisiert</div>
+          <div id="fc-res-srs-detail" style="color:#5f5e5a;font-size:12px;line-height:1.6"></div>
+        </div>
+        <div class="fc-results-actions">
+          <button class="fc-res-btn primary" onclick="restartWrong()">✗ Falsche wiederholen</button>
+          <button class="fc-res-btn secondary" onclick="restartDue()">📅 Fällige Karten</button>
+          <button class="fc-res-btn secondary" onclick="endSession()">Neue Auswahl</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="psychiatrie_daten.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════
+// DATA: DISORDERS
+// ═══════════════════════════════════════════════════════════════
+
+
+// ═══════════════════════════════════════════════════════════════
+// DATA: THERAPY METHODS
+// ═══════════════════════════════════════════════════════════════
+
+
+// ═══════════════════════════════════════════════════════════════
+// DISORDERS VIEW
+// ═══════════════════════════════════════════════════════════════
+
+let activeCat = "Alle";
+let activeDisorder = null;
+
+function initDisorders() {
+  renderCatNav(); renderGrid();
+}
+
+function renderCatNav() {
+  document.getElementById("cat-nav").innerHTML = CATS.map(c =>
+    `<button class="cat-btn${activeCat===c?' active':''}" onclick="setCat('${c}')">${c}</button>`
+  ).join("");
+}
+
+function setCat(cat) { activeCat=cat; renderCatNav(); renderGrid(); }
+
+function renderGrid() {
+  const filtered = activeCat==="Alle" ? DISORDERS : DISORDERS.filter(d=>d.cat===activeCat);
+  if(disorderViewMode==="table") {
+    const catColors = {
+      "Affektiv":"#E6F1FB","Psychotisch":"#FCEBEB","Angststörungen":"#EAF3DE",
+      "Trauma":"#EEEDFE","Persönlichkeitsstörungen":"#FAEEDA","Zwangsspektrum":"#F0E8FB",
+      "Neurodevelopmental":"#E8F5F0","Sucht":"#FFF3E0","Essstörungen":"#FCE4EC"
+    };
+    const catBorder = {
+      "Affektiv":"#B5D4F4","Psychotisch":"#F7C1C1","Angststörungen":"#C0DD97",
+      "Trauma":"#AFA9EC","Persönlichkeitsstörungen":"#FAC775","Zwangsspektrum":"#C9A9E8",
+      "Neurodevelopmental":"#A3D9C0","Sucht":"#FFB74D","Essstörungen":"#F48FB1"
+    };
+    document.getElementById("disorder-grid").innerHTML =
+      `<div style="overflow-x:auto;border:1px solid #d3d1c7;border-radius:10px;overflow:hidden;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead><tr style="background:#f1efe8;border-bottom:2px solid #d3d1c7;">
+            <th style="padding:8px 12px;text-align:left;font-weight:500;">Kategorie</th>
+            <th style="padding:8px 12px;text-align:left;font-weight:500;">Störungsbild</th>
+            <th style="padding:8px 12px;text-align:left;font-weight:500;">ICD-10</th>
+            <th style="padding:8px 12px;text-align:left;font-weight:500;">ICD-11</th>
+            <th style="padding:8px 12px;text-align:left;font-weight:500;">Hauptkriterien</th>
+            <th style="padding:8px 12px;text-align:left;font-weight:500;">Diagnostik</th>
+          </tr></thead>
+          <tbody>
+            ${filtered.map((d,i)=>{
+              const bg = catColors[d.cat]||"#f1efe8";
+              const border = catBorder[d.cat]||"#d3d1c7";
+              return `<tr style="border-bottom:1px solid #e8e6df;background:${i%2===0?'#fff':'#fafaf8'};cursor:pointer;" onclick="showDisorder('${d.id}')">
+                <td style="padding:7px 12px;"><span style="padding:2px 7px;border-radius:4px;font-size:10px;background:${bg};border:1px solid ${border};white-space:nowrap;">${d.cat}</span></td>
+                <td style="padding:7px 12px;font-weight:500;color:#0C447C;">${d.name}</td>
+                <td style="padding:7px 12px;font-family:'Courier New',monospace;font-size:11px;white-space:nowrap;">${d.icd10}</td>
+                <td style="padding:7px 12px;font-family:'Courier New',monospace;font-size:11px;white-space:nowrap;">${d.icd11}</td>
+                <td style="padding:7px 12px;font-size:11px;">${d.haupt.length} Kriterien</td>
+                <td style="padding:7px 12px;font-size:11px;">${(d.diagnostik_inst||[]).length} Instrumente</td>
+              </tr>`;
+            }).join("")}
+          </tbody>
+        </table>
+      </div>`;
+    return;
+  }
+  document.getElementById("disorder-grid").innerHTML = filtered.map(d =>
+    `<div class="disorder-card${activeDisorder===d.id?' active':''}" onclick="showDisorder('${d.id}')">
+      <div class="dc-name">${d.name}</div>
+      <div class="dc-code">ICD-10: ${d.icd10} · ICD-11: ${d.icd11}</div>
+      <div class="dc-cat">${d.cat}</div>
+    </div>`
+  ).join("");
+}
+
+let disorderViewMode = "grid";
+function toggleDisorderView() {
+  disorderViewMode = disorderViewMode==="grid" ? "table" : "grid";
+  const btn = document.getElementById("view-toggle-btn");
+  if(btn) btn.textContent = disorderViewMode==="grid" ? "⊞ Tabellenansicht" : "⊟ Kachelansicht";
+  renderGrid();
+}
+
+function showDisorder(id) {
+  activeDisorder=id;
+  const d = DISORDERS.find(x=>x.id===id);
+  if(!d) return;
+  document.getElementById("list-view").style.display="none";
+  const cv=document.getElementById("content-view");
+  cv.classList.add("visible");
+  document.getElementById("cv-title").textContent=d.name;
+  document.getElementById("cv-codes").innerHTML=
+    `<span class="code-badge badge-icd10">ICD-10: ${d.icd10}</span>
+     <span class="code-badge badge-icd11">ICD-11: ${d.icd11}</span>
+     <span class="code-badge badge-cat">${d.cat}</span>`;
+  const isEss = d.cat==="Essstörungen";
+  const tabNames=["Kriterien","Diagnostik","Modelle & Fallkonzept","Therapie","Pharmakotherapie"];
+  if(isEss) tabNames.splice(1,0,"BMI & Somatik");
+  document.getElementById("cv-tabs").innerHTML=tabNames.map((t,i)=>
+    `<button class="tab-btn${i===0?' active':''}" onclick="setDTab(${i},this)">${t}</button>`
+  ).join("");
+  const panels = [renderKrit(d)];
+  if(isEss) panels.push(renderBMI(d));
+  panels.push(renderDDX(d), renderModelleKonzept(d), renderTherapie(d), renderPharma(d));
+  document.getElementById("cv-panels").innerHTML=panels.map((p,i)=>
+    `<div class="tab-panel${i===0?' active':''}">${p}</div>`).join("");
+  cv.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function setDTab(i,btn) {
+  document.querySelectorAll("#cv-tabs .tab-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  document.querySelectorAll("#cv-panels .tab-panel").forEach((p,idx)=>p.classList.toggle("active",idx===i));
+}
+
+function showList() {
+  activeDisorder=null;
+  document.getElementById("list-view").style.display="block";
+  document.getElementById("content-view").classList.remove("visible");
+  renderGrid();
+}
+
+function renderKrit(d) {
+  const mn=d.mnemonic?`<div class="section"><div class="section-title">Merkhilfe</div>
+    <div class="mnemonic-box"><div style="font-size:13px;font-weight:500;margin-bottom:6px;">${d.mnemonic.titel}</div>
+    ${d.mnemonic.items.map(i=>`<div class="mnemonic-line"><span class="mnemonic-letter">${i.split("–")[0]}–</span>${i.split("–").slice(1).join("–")}</div>`).join("")}
+    </div></div>`:"";
+  const icdBlock = (d.icd10_detail || d.icd11_detail) ? `
+    <div class="section" style="margin-top:.5rem;">
+      <div class="section-title">ICD-Subkodes & Spezifikatoren</div>
+      <div style="overflow-x:auto;margin-bottom:.75rem;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr style="background:#f1efe8;border-bottom:1px solid #d3d1c7;">
+              <th style="padding:7px 12px;text-align:left;font-weight:500;width:90px;">Version</th>
+              <th style="padding:7px 12px;text-align:left;font-weight:500;">Subkodes und Spezifikatoren</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${d.icd10_detail?`<tr style="border-bottom:1px solid #e8e6df;background:#fff;vertical-align:top;">
+              <td style="padding:8px 12px;"><span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-family:'Courier New',monospace;font-weight:500;background:#E6F1FB;color:#0C447C;border:1px solid #B5D4F4;white-space:nowrap;">ICD-10</span></td>
+              <td style="padding:8px 12px;line-height:1.7;">${d.icd10_detail.split(' · ').map(s=>`<div style="margin-bottom:2px;">· ${s}</div>`).join("")}</td>
+            </tr>`:''}
+            ${d.icd11_detail?`<tr style="background:#fafaf8;vertical-align:top;">
+              <td style="padding:8px 12px;"><span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-family:'Courier New',monospace;font-weight:500;background:#EAF3DE;color:#3B6D11;border:1px solid #C0DD97;white-space:nowrap;">ICD-11</span></td>
+              <td style="padding:8px 12px;line-height:1.7;">${d.icd11_detail.split(' · ').map(s=>`<div style="margin-bottom:2px;">· ${s}</div>`).join("")}</td>
+            </tr>`:''}
+          </tbody>
+        </table>
+      </div>
+    </div>` : "";
+  return `<div class="pt1"><div class="section">
+    <div class="criteria-block">
+      <div class="criteria-label">Hauptkriterien</div>
+      <ul class="criteria-list">${d.haupt.map(k=>`<li class="main-crit">${k}</li>`).join("")}</ul>
+    </div>
+    <div class="criteria-block">
+      <div class="criteria-label">Nebenkriterien / Zusatzsymptome</div>
+      <ul class="criteria-list">${d.neben.map(k=>`<li>${k}</li>`).join("")}</ul>
+    </div>
+    <div class="info-box blue"><div class="info-box-title">Klinische Hinweise & Schweregrad</div>
+      <div style="font-size:13px;">${d.hinweis}</div>
+      ${d.schwere?`<div style="font-size:12px;margin-top:4px;opacity:.85;">Schweregrad: ${d.schwere}</div>`:""}
+    </div></div>${icdBlock}${mn}</div>`;
+}
+
+function renderBMI(d) {
+  const BMI_ROWS = [
+    {bmi:"< 10",  who:"Extrem starkes Untergewicht",   farbe:"#791F1F", bg:"#FCEBEB", schwereAN:"Extrem schwer (ICD-11)",     klinisch:"Intensivmedizinische Behandlung oft nötig. Refeeding-Syndrom-Risiko maximal. Zwangsbehandlung rechtlich prüfen."},
+    {bmi:"10–12", who:"Extrem starkes Untergewicht",   farbe:"#791F1F", bg:"#FCEBEB", schwereAN:"Extrem schwer (ICD-11)",     klinisch:"Stationäre Behandlung zwingend. Medizinische Stabilisierung vor Psychotherapie. EKG, Elektrolyte, Nierenfunktion täglich."},
+    {bmi:"12–14", who:"Starkes Untergewicht",          farbe:"#993C1D", bg:"#FAECE7", schwereAN:"Schwer (BMI 15–<16 grenze)", klinisch:"Stationäre Behandlung. Organisches Monitoring engmaschig. Refeeding langsam beginnen (max. 20 kcal/kg/Tag initial)."},
+    {bmi:"14–15", who:"Starkes Untergewicht",          farbe:"#BA7517", bg:"#FAEEDA", schwereAN:"Schwer (ICD-11: BMI <16)",   klinisch:"Stationär. Internistische Mitbehandlung. Mahlzeitenbegleitung. Psychiatrische Krisenintervention bei Therapieverweigerung."},
+    {bmi:"15–16", who:"Mäßiges Untergewicht",          farbe:"#BA7517", bg:"#FAEEDA", schwereAN:"Mittelgradig (ICD-11)",      klinisch:"Stationär oder intensiv tagesklinisch. Gewichtszunahme 0.5–1 kg/Woche anstreben. Regelmäßiges Gewichtsmonitoring."},
+    {bmi:"16–17", who:"Leichtes Untergewicht",         farbe:"#639922", bg:"#EAF3DE", schwereAN:"Leicht (ICD-11: BMI ≥17)",  klinisch:"Tagesklinisch oder ambulant (wenn stabil). Engmaschige Begleitung. KVT-E, Mahlzeitenplanung. BMI-Verlauf dokumentieren."},
+    {bmi:"17–18.5",who:"Untergewicht (ICD-10 Grenze)", farbe:"#639922", bg:"#EAF3DE", schwereAN:"AN-Diagnose (ICD-10: <17.5)",klinisch:"AN-Diagnose möglich. Ambulante Therapie wenn kooperativ und Kurve stabil. Bei weiter fallend: Eskalation der Behandlungsstufe."},
+    {bmi:"18.5–25",who:"Normalgewicht",                farbe:"#0C447C", bg:"#E6F1FB", schwereAN:"Kein AN-Kriterium",          klinisch:"BN und BED: Normalgewicht häufig. Körpergewicht kein Maß für Schwere der Essstörung bei BN/BED."},
+    {bmi:"25–30", who:"Übergewicht (Präadipositas)",   farbe:"#3C3489", bg:"#EEEDFE", schwereAN:"–",                          klinisch:"BED häufig komorbid mit Übergewicht. Primär Essstörung behandeln, nicht Gewicht. Kein Diätprogramm ohne ES-Behandlung."},
+    {bmi:"30–35", who:"Adipositas Grad I",             farbe:"#3C3489", bg:"#EEEDFE", schwereAN:"–",                          klinisch:"BED: hohe Komorbidität. Internistische Komorbiditäten: Hypertonie, Diabetes, Schlafapnoe. Integrierte Behandlung."},
+    {bmi:"35–40", who:"Adipositas Grad II",            farbe:"#3C3489", bg:"#EEEDFE", schwereAN:"–",                          klinisch:"Schwere somatische Komorbiditäten. Bariatrische Chirurgie erst nach Behandlung einer BED. Psychiatrisches Assessment vor Op."},
+    {bmi:"≥ 40",  who:"Adipositas Grad III (morbid)",  farbe:"#3C3489", bg:"#EEEDFE", schwereAN:"–",                          klinisch:"Höchste somatische Morbidität und Mortalität. Multidisziplinäres Team. BED präoperativ zwingend ausschließen/behandeln."}
+  ];
+
+  const SOMATIK_AN = [
+    {system:"Herz / Kreislauf", befund:"Bradykardie (< 50/min = stationär!), Hypotonie, QTc-Verlängerung (EKG!), Perikarderguss, Herzinsuffizienz"},
+    {system:"Elektrolyte",      befund:"Hypokaliämie (Purging!), Hyponatriämie, Hypomagnesiämie, Hypophosphatämie (Refeeding-Syndrom!)"},
+    {system:"Blutbild",         befund:"Leukopenie, Anämie, Thrombozytopenie (Knochenmarkssuppression bei schwerer AN)"},
+    {system:"Leber",            befund:"Transaminasen-Erhöhung (Hungerhepatitis, auch bei Refeeding)"},
+    {system:"Niere",            befund:"Harnstoff-Anstieg (Dehydratation), Kreatinin (Cave: bei Untergewicht verfälscht)"},
+    {system:"Knochen",          befund:"Osteopenie / Osteoporose (ab 1 Jahr Erkrankung DXA-Scan), Stressfrakturen"},
+    {system:"Endokrin",         befund:"Amenorrhö (nicht mehr ICD-11-Kriterium, aber klinisch relevant), niedrige Östrogene, erhöhtes Kortisol, Euthyroid sick syndrome"},
+    {system:"Haut / Körper",    befund:"Lanugo (Flaum), Akrozyanose, trockene Haut, Haarausfall, Hypothermie"},
+    {system:"GI-Trakt",         befund:"Magenentleerungsverzögerung, Obstipation, Refeeding-Syndrom-Risiko"},
+    {system:"Neurologisch",     befund:"Kognitive Einschränkungen (reversibler Grausubstanzverlust), Krampfanfälle bei schwerer Elektrolytentgleisung"}
+  ];
+
+  const SOMATIK_BN = [
+    {system:"Zahnschmelz",      befund:"Erosionen (Magensäure), Karies – Zahnmediziner oft Erstentdecker"},
+    {system:"Speicheldrüsen",   befund:"Parotisschwellung (bilateral, schmerzlos) → 'Hamsterbacken'; Amylase ↑"},
+    {system:"Hände",            befund:"Russell-Zeichen: Schwielen/Narben über Fingerknöcheln (durch Zähne beim Auslösen des Würgereflexes)"},
+    {system:"Elektrolyte",      befund:"Hypokaliämie (Erbrechen!), Hypochlorämie, metabolische Alkalose → QTc-Risiko!"},
+    {system:"Ösophagus",        befund:"Mallory-Weiss-Läsionen, Reflux, selten Ösophagusruptur (Boerhaave-Syndrom – lebensbedrohlich!)"},
+    {system:"Magen",            befund:"Magenerweiterung (bei Essanfällen), Magenentleerungsverzögerung"},
+    {system:"Darm (Laxantien)", befund:"Melanosis coli, Darmträgheit, Pseudo-Diarrhö, Laxantien-Entzug-Ödeme"}
+  ];
+
+  const REFEEDING = [
+    {punkt:"Was ist das?",     inhalt:"Lebensbedrohliche Elektrolyt-Verschiebungen beim Wiederaufbau der Ernährung nach Unterernährung. Phosphat wird für Glykogensynthese verbraucht → Hypophosphatämie → Herzversagen, Krampfanfälle, Delirium."},
+    {punkt:"Risikofaktoren",   inhalt:"BMI < 14, Nahrungskarenz > 5 Tage, schwache Muskulatur, Elektrolyt-Baseline niedrig"},
+    {punkt:"Prophylaxe",       inhalt:"Langsame Kaloriensteigerung: Start mit 20 kcal/kg/Tag (max 1000 kcal), wöchentlich steigern. Phosphat, Magnesium, Thiamin (Vitamin B1) substituieren. Täglich Elektrolyte kontrollieren."},
+    {punkt:"Monitoring",       inhalt:"Täglich: Elektrolyte (Phosphat, Kalium, Magnesium), EKG. Engmaschige ärztliche Überwachung in der ersten Woche."},
+    {punkt:"Thiamin",          inhalt:"100mg Thiamin (Vitamin B1) täglich vor und in den ersten Tagen des Refeeding – Wernicke-Enzephalopathie-Prophylaxe"}
+  ];
+
+  const BMI_RECHNER = `
+    <div style="background:#f1efe8;border-radius:10px;padding:1rem;margin-bottom:1.25rem;border:1px solid #d3d1c7;">
+      <div style="font-size:13px;font-weight:500;margin-bottom:0.75rem;">BMI-Rechner</div>
+      <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
+        <div>
+          <div style="font-size:11px;color:#5f5e5a;margin-bottom:3px;">Gewicht (kg)</div>
+          <input type="number" id="bmi-weight" placeholder="z.B. 52" min="20" max="300" step="0.1"
+            style="width:100px;padding:6px 10px;border:1px solid #b4b2a9;border-radius:6px;font-size:13px;background:#fff;"
+            oninput="calcBMI()">
+        </div>
+        <div>
+          <div style="font-size:11px;color:#5f5e5a;margin-bottom:3px;">Größe (cm)</div>
+          <input type="number" id="bmi-height" placeholder="z.B. 168" min="100" max="220" step="1"
+            style="width:100px;padding:6px 10px;border:1px solid #b4b2a9;border-radius:6px;font-size:13px;background:#fff;"
+            oninput="calcBMI()">
+        </div>
+        <div id="bmi-result" style="font-size:22px;font-weight:500;color:#2c2c2a;min-width:80px;">–</div>
+        <div id="bmi-label" style="font-size:12px;color:#5f5e5a;max-width:200px;line-height:1.4;"></div>
+      </div>
+    </div>`;
+
+  const bmiTable = `
+    <div style="overflow-x:auto;margin-bottom:1.25rem;">
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead>
+          <tr style="background:#f1efe8;border-bottom:2px solid #d3d1c7;">
+            <th style="padding:8px 10px;text-align:left;font-weight:500;white-space:nowrap;">BMI (kg/m²)</th>
+            <th style="padding:8px 10px;text-align:left;font-weight:500;">WHO-Klassifikation</th>
+            <th style="padding:8px 10px;text-align:left;font-weight:500;white-space:nowrap;">Schwere AN (ICD-11)</th>
+            <th style="padding:8px 10px;text-align:left;font-weight:500;">Klinische Konsequenz</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${BMI_ROWS.map((r,i)=>`
+            <tr style="border-bottom:1px solid #e8e6df;background:${i%2===0?'#fff':'#fafaf8'};">
+              <td style="padding:7px 10px;font-weight:500;font-family:'Courier New',monospace;white-space:nowrap;color:${r.farbe};">${r.bmi}</td>
+              <td style="padding:7px 10px;">
+                <span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;background:${r.bg};color:${r.farbe};font-weight:500;">${r.who}</span>
+              </td>
+              <td style="padding:7px 10px;font-size:11px;color:#5f5e5a;">${r.schwereAN}</td>
+              <td style="padding:7px 10px;font-size:12px;color:#1a1a18;line-height:1.5;">${r.klinisch}</td>
+            </tr>`).join("")}
+        </tbody>
+      </table>
+    </div>`;
+
+  const somatikAN = `
+    <div style="margin-bottom:1.25rem;">
+      <div class="section-title" style="margin-bottom:0.5rem;">Somatische Komplikationen – Anorexia Nervosa</div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr style="background:#FCEBEB;border-bottom:1px solid #F7C1C1;">
+              <th style="padding:7px 10px;text-align:left;font-weight:500;white-space:nowrap;color:#791F1F;">Organsystem</th>
+              <th style="padding:7px 10px;text-align:left;font-weight:500;color:#791F1F;">Befund / Komplikation</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${SOMATIK_AN.map((r,i)=>`
+              <tr style="border-bottom:1px solid #e8e6df;background:${i%2===0?'#fff':'#fafaf8'};">
+                <td style="padding:7px 10px;font-weight:500;white-space:nowrap;color:#791F1F;">${r.system}</td>
+                <td style="padding:7px 10px;line-height:1.5;">${r.befund}</td>
+              </tr>`).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+
+  const somatikBN = `
+    <div style="margin-bottom:1.25rem;">
+      <div class="section-title" style="margin-bottom:0.5rem;">Somatische Zeichen – Bulimia Nervosa (durch Purging)</div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr style="background:#FAEEDA;border-bottom:1px solid #FAC775;">
+              <th style="padding:7px 10px;text-align:left;font-weight:500;white-space:nowrap;color:#633806;">Befundbereich</th>
+              <th style="padding:7px 10px;text-align:left;font-weight:500;color:#633806;">Klinischer Befund</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${SOMATIK_BN.map((r,i)=>`
+              <tr style="border-bottom:1px solid #e8e6df;background:${i%2===0?'#fff':'#fafaf8'};">
+                <td style="padding:7px 10px;font-weight:500;white-space:nowrap;color:#633806;">${r.system}</td>
+                <td style="padding:7px 10px;line-height:1.5;">${r.befund}</td>
+              </tr>`).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+
+  const refeedingBox = `
+    <div style="margin-bottom:1.25rem;">
+      <div class="section-title" style="margin-bottom:0.5rem;">Refeeding-Syndrom – Prävention und Management</div>
+      <div class="info-box red" style="margin-bottom:0;">
+        <div class="info-box-title">⚠ Lebensbedrohliche Komplikation bei Wiederernährung</div>
+        ${REFEEDING.map(r=>`
+          <div style="margin-top:8px;">
+            <span style="font-size:12px;font-weight:500;">${r.punkt}:</span>
+            <span style="font-size:12px;"> ${r.inhalt}</span>
+          </div>`).join("")}
+      </div>
+    </div>`;
+
+  const normgewichtHinweis = `
+    <div class="info-box blue" style="margin-bottom:1.25rem;">
+      <div class="info-box-title">Wichtig: BMI ist nicht gleich Schwere der Essstörung</div>
+      <div style="font-size:13px;line-height:1.6;">Bei BN und BED liegt das Körpergewicht meist im Normalbereich oder darüber – die Erkrankung ist durch den BMI allein nicht erkennbar. Schwere der Essstörung wird durch Häufigkeit der Symptome, Leidensdruck, Komorbiditäten und Funktionsbeeinträchtigung bestimmt, nicht durch das Gewicht.</div>
+    </div>`;
+
+  return `<div class="pt1">
+    ${BMI_RECHNER}
+    <div class="section-title" style="margin-bottom:0.5rem;">BMI-Klassifikation & Klinische Relevanz bei Essstörungen</div>
+    ${bmiTable}
+    ${normgewichtHinweis}
+    ${d.id==="an" || d.id==="bn" ? somatikAN : ""}
+    ${d.id==="bn" ? somatikBN : ""}
+    ${d.id==="an" ? refeedingBox : ""}
+    <div class="note">BMI = Körpergewicht (kg) ÷ Körpergröße² (m²). Bei Kindern und Jugendlichen: alters- und geschlechtsbezogene Perzentilen verwenden. WHO-Klassifikation gilt für Erwachsene ≥ 18 Jahre.</div>
+  </div>`;
+}
+
+function calcBMI() {
+  const w = parseFloat(document.getElementById("bmi-weight").value);
+  const h = parseFloat(document.getElementById("bmi-height").value);
+  const res = document.getElementById("bmi-result");
+  const lbl = document.getElementById("bmi-label");
+  if(!w||!h||w<20||h<100){res.textContent="–";lbl.textContent="";return;}
+  const bmi = (w / ((h/100)**2));
+  res.textContent = bmi.toFixed(1);
+  const cats = [
+    [10,"Extrem starkes Untergewicht","#791F1F"],
+    [14,"Starkes Untergewicht","#993C1D"],
+    [16,"Mäßiges Untergewicht (AN schwer)","#BA7517"],
+    [17,"Leichtes Untergewicht (AN leicht)","#BA7517"],
+    [18.5,"Grenzbereich AN / Normalgewicht","#5f5e5a"],
+    [25,"Normalgewicht","#3B6D11"],
+    [30,"Übergewicht","#3C3489"],
+    [35,"Adipositas Grad I","#3C3489"],
+    [40,"Adipositas Grad II","#3C3489"],
+    [999,"Adipositas Grad III (morbide)","#3C3489"]
+  ];
+  const cat = cats.find(c=>bmi<c[0]);
+  res.style.color = cat?cat[2]:"#1a1a18";
+  lbl.textContent = cat?cat[1]:"–";
+  lbl.style.color = cat?cat[2]:"#5f5e5a";
+}
+
+function renderDDX(d) {
+  // DDX as table
+  const ddxBlock = d.ddx && d.ddx.length ? `
+    <div class="section">
+      <div class="section-title">Differenzialdiagnostik</div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr style="background:#f1efe8;border-bottom:2px solid #d3d1c7;">
+              <th style="padding:8px 12px;text-align:left;font-weight:500;white-space:nowrap;width:30%;">Differenzialdiagnose</th>
+              <th style="padding:8px 12px;text-align:left;font-weight:500;">Unterscheidungsmerkmal / Abgrenzung</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${d.ddx.map((dd,i)=>`
+              <tr style="border-bottom:1px solid #e8e6df;background:${i%2===0?'#fff':'#fafaf8'};">
+                <td style="padding:8px 12px;font-weight:500;color:#0C447C;vertical-align:top;white-space:nowrap;">${dd.n}</td>
+                <td style="padding:8px 12px;line-height:1.55;">${dd.h}</td>
+              </tr>`).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>` : "";
+
+  // Psychodiagnostic instruments as table
+  const instBlock = d.diagnostik_inst && d.diagnostik_inst.length ? `
+    <div class="section">
+      <div class="section-title">Psychodiagnostische Verfahren</div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr style="background:#E6F1FB;border-bottom:1px solid #B5D4F4;">
+              <th style="padding:7px 12px;text-align:left;font-weight:500;color:#0C447C;width:35%;">Instrument</th>
+              <th style="padding:7px 12px;text-align:left;font-weight:500;color:#0C447C;">Beschreibung / Verwendung</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${d.diagnostik_inst.map((v,i)=>{
+              const parts = v.split(':');
+              const name = parts[0].trim();
+              const desc = parts.slice(1).join(':').trim();
+              return `<tr style="border-bottom:1px solid #e8e6df;background:${i%2===0?'#fff':'#fafaf8'};">
+                <td style="padding:7px 12px;font-weight:500;vertical-align:top;white-space:nowrap;">${name}</td>
+                <td style="padding:7px 12px;line-height:1.5;">${desc||'–'}</td>
+              </tr>`;
+            }).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>` : "";
+
+  // Somatic diagnostics as table
+  const somBlock = d.diagnostik_som && d.diagnostik_som.length ? `
+    <div class="section">
+      <div class="section-title">Somatische Diagnostik & Laborparameter</div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr style="background:#FCEBEB;border-bottom:1px solid #F7C1C1;">
+              <th style="padding:7px 12px;text-align:left;font-weight:500;color:#791F1F;width:35%;">Parameter</th>
+              <th style="padding:7px 12px;text-align:left;font-weight:500;color:#791F1F;">Klinische Relevanz</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${d.diagnostik_som.map((v,i)=>{
+              const parts = v.split(':');
+              const name = parts[0].trim();
+              const desc = parts.slice(1).join(':').trim();
+              return `<tr style="border-bottom:1px solid #e8e6df;background:${i%2===0?'#fff':'#fafaf8'};">
+                <td style="padding:7px 12px;font-weight:500;vertical-align:top;color:#791F1F;white-space:nowrap;">${name}</td>
+                <td style="padding:7px 12px;line-height:1.5;">${desc||'–'}</td>
+              </tr>`;
+            }).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>` : "";
+
+  return `<div class="pt1">${ddxBlock}${instBlock}${somBlock}</div>`;
+}
+
+function renderModelleKonzept(d) {
+  const neuroBlock = d.modelle && d.modelle.neuro && d.modelle.neuro.length ? `
+    <div class="section">
+      <div class="section-title">Neurobiologische Erklärungsmodelle</div>
+      ${d.modelle.neuro.map(m=>`
+        <div style="margin-bottom:.9rem;border:1px solid #d3d1c7;border-radius:10px;overflow:hidden;background:#fff;">
+          <div style="background:#E6F1FB;padding:8px 14px;border-bottom:1px solid #B5D4F4;">
+            <span style="font-size:13px;font-weight:500;color:#0C447C;">${m.name}</span>
+          </div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:12px;color:#1a1a18;line-height:1.65;margin-bottom:7px;">${m.beschreibung}</div>
+            <div style="font-size:11px;font-weight:500;color:#3B6D11;margin-bottom:2px;">Klinische Relevanz</div>
+            <div style="font-size:12px;color:#1a1a18;background:#EAF3DE;border-radius:6px;padding:5px 9px;line-height:1.55;">${m.klinisch}</div>
+          </div>
+        </div>`).join("")}
+    </div>` : "";
+  const vtModellBlock = d.modelle && d.modelle.vt && d.modelle.vt.length ? `
+    <div class="section">
+      <div class="section-title">Verhaltenstherapeutische Erklärungsmodelle</div>
+      ${d.modelle.vt.map(m=>`
+        <div style="margin-bottom:.9rem;border:1px solid #d3d1c7;border-radius:10px;overflow:hidden;background:#fff;">
+          <div style="background:#FAEEDA;padding:8px 14px;border-bottom:1px solid #FAC775;">
+            <span style="font-size:13px;font-weight:500;color:#633806;">${m.name}</span>
+          </div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:12px;color:#1a1a18;line-height:1.65;margin-bottom:7px;">${m.beschreibung}</div>
+            <div style="font-size:11px;font-weight:500;color:#3B6D11;margin-bottom:2px;">Klinische Relevanz</div>
+            <div style="font-size:12px;color:#1a1a18;background:#EAF3DE;border-radius:6px;padding:5px 9px;line-height:1.55;">${m.klinisch}</div>
+          </div>
+        </div>`).join("")}
+    </div>` : "";
+  const fallkonzeptBlock = d.fallkonzept && d.fallkonzept.length ? `
+    <div class="section">
+      <div class="section-title">Fallkonzept – Bausteine</div>
+      <div class="criteria-block">
+        <ul class="criteria-list">${d.fallkonzept.map(f=>`<li>${f}</li>`).join("")}</ul>
+      </div>
+    </div>` : "";
+  return `<div class="pt1">${neuroBlock}${vtModellBlock}${fallkonzeptBlock}</div>`;
+}
+
+function renderTherapie(d) {
+  return `<div class="pt1">
+    <div class="section"><div class="section-title">Beziehungsgestaltung & therapeutische Haltung</div>
+      <div class="info-box amber"><div style="font-size:13px;">${d.beziehung}</div></div>
+    </div>
+    <div class="section"><div class="section-title">VT Einzeltherapie</div>
+      <div class="criteria-block"><ul class="criteria-list">${d.vt_einzel.map(v=>`<li>${v}</li>`).join("")}</ul></div>
+    </div>
+    <div class="section"><div class="section-title">VT Gruppentherapie / Stationäres Setting</div>
+      <div class="criteria-block"><ul class="criteria-list">${d.vt_gruppe.map(v=>`<li>${v}</li>`).join("")}</ul></div>
+      <div class="info-box green" style="margin-top:8px;">
+        <div class="info-box-title">Gruppentherapeutischer Wirkmechanismus</div>
+        <div style="font-size:13px;">Im stationären Setting ermöglicht die Gruppe interpersonales Lernen, Normalisierung durch Universalität des Leidens, Peer-Unterstützung und häufig direkte Exposition.</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderPharma(d) {
+  const drugs = PHARMA_DB[d.id] || [];
+  const overview = `<div class="pharmako-box"><div class="info-box-title" style="margin-bottom:6px;">Pharmakotherapie – Überblick</div><div style="font-size:13px;">${d.pharmako}</div></div>`;
+
+  // Comparison summary table if multiple drugs
+  const compTable = drugs.length > 1 ? `
+    <div style="overflow-x:auto;margin-bottom:1.25rem;">
+      <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:500px;">
+        <thead>
+          <tr style="background:#f1efe8;border-bottom:2px solid #d3d1c7;">
+            <th style="padding:8px 10px;text-align:left;font-weight:500;white-space:nowrap;">Substanz</th>
+            <th style="padding:8px 10px;text-align:left;font-weight:500;white-space:nowrap;">Klasse</th>
+            <th style="padding:8px 10px;text-align:center;font-weight:500;white-space:nowrap;">Zulassung</th>
+            <th style="padding:8px 10px;text-align:left;font-weight:500;white-space:nowrap;">Wirkungseintritt</th>
+            <th style="padding:8px 10px;text-align:left;font-weight:500;white-space:nowrap;">Therapeutische Breite</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${drugs.map((drug,i)=>`
+            <tr style="border-bottom:1px solid #e8e6df;background:${i%2===0?'#fff':'#fafaf8'};">
+              <td style="padding:7px 10px;font-weight:500;">${drug.name}</td>
+              <td style="padding:7px 10px;color:#5f5e5a;">${drug.klasse}</td>
+              <td style="padding:7px 10px;text-align:center;">${drug.zulassung?'<span style="color:#3B6D11;font-weight:500;">✓</span>':'<span style="color:#888780;">off-label</span>'}</td>
+              <td style="padding:7px 10px;">${drug.wirkungseintritt.split('.')[0]}</td>
+              <td style="padding:7px 10px;">${drug.breite.length>60?drug.breite.substring(0,58)+'…':drug.breite}</td>
+            </tr>`).join("")}
+        </tbody>
+      </table>
+    </div>` : "";
+
+  const detail = drugs.length ? drugs.map(drug => `
+    <div style="border:1px solid #d3d1c7;border-radius:10px;background:#fff;margin-bottom:12px;overflow:hidden;">
+      <div style="background:#f1efe8;padding:10px 14px;border-bottom:1px solid #d3d1c7;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
+        <div>
+          <span style="font-size:14px;font-weight:500;">${drug.name}</span>
+          <span style="font-size:11px;color:#5f5e5a;margin-left:8px;">${drug.klasse}</span>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          ${drug.zulassung?`<span style="padding:2px 8px;border-radius:4px;font-size:11px;background:#EAF3DE;color:#3B6D11;border:1px solid #C0DD97;">✓ Zugelassen</span>`:`<span style="padding:2px 8px;border-radius:4px;font-size:11px;background:#FAEEDA;color:#633806;border:1px solid #FAC775;">Off-label</span>`}
+          <span style="padding:2px 8px;border-radius:4px;font-size:11px;background:#E6F1FB;color:#0C447C;border:1px solid #B5D4F4;">${drug.wirkungseintritt}</span>
+        </div>
+      </div>
+      <div style="padding:12px 14px;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:10px;">
+          <tr style="border-bottom:1px solid #e8e6df;">
+            <td style="padding:6px 8px 6px 0;font-weight:500;color:#888780;white-space:nowrap;vertical-align:top;width:140px;">Wirkfaktor</td>
+            <td style="padding:6px 0;line-height:1.5;">${drug.wirkfaktor}</td>
+          </tr>
+          <tr style="border-bottom:1px solid #e8e6df;">
+            <td style="padding:6px 8px 6px 0;font-weight:500;color:#888780;white-space:nowrap;vertical-align:top;">Therap. Breite</td>
+            <td style="padding:6px 0;line-height:1.5;">${drug.breite}</td>
+          </tr>
+          <tr style="border-bottom:1px solid #e8e6df;background:#FCEBEB;">
+            <td style="padding:6px 8px 6px 0;font-weight:500;color:#791F1F;white-space:nowrap;vertical-align:top;">Nebenwirkungen</td>
+            <td style="padding:6px 0;line-height:1.5;color:#791F1F;">${drug.nw}</td>
+          </tr>
+          <tr style="border-bottom:1px solid #e8e6df;background:#FAEEDA;">
+            <td style="padding:6px 8px 6px 0;font-weight:500;color:#633806;white-space:nowrap;vertical-align:top;">Kontraindikationen</td>
+            <td style="padding:6px 0;line-height:1.5;color:#633806;">${drug.ki}</td>
+          </tr>
+          <tr style="${drug.hinweis?'border-bottom:1px solid #e8e6df;':''}">
+            <td style="padding:6px 8px 6px 0;font-weight:500;color:#888780;white-space:nowrap;vertical-align:top;">Wechselwirkungen</td>
+            <td style="padding:6px 0;line-height:1.5;">${drug.ww}</td>
+          </tr>
+          ${drug.hinweis?`<tr>
+            <td colspan="2" style="padding:6px 0;font-size:11px;color:#5f5e5a;">⚠ ${drug.hinweis}</td>
+          </tr>`:''}
+        </table>
+      </div>
+    </div>`).join("") : "";
+
+  return `<div class="pt1">${overview}${compTable}${detail}
+    <div class="note">Pharmakotherapie immer in Kombination mit Psychotherapie planen. S3-Leitlinien (DGPPN, AWMF) und Fachinformation beachten. Dosierung immer individuell anpassen.</div>
+  </div>`;
+}
+
+// ─── PHARMA DATABASE ─────────────────────────────────────────────
+
+
+// ═══════════════════════════════════════════════════════════════
+// THERAPY METHODS VIEW
+// ═══════════════════════════════════════════════════════════════
+let activeTxCat = "Alle";
+let activeTx = null;
+
+function initTxView() {
+  renderTxCatNav(); renderTxGrid();
+}
+
+function renderTxCatNav() {
+  document.getElementById("tx-cat-nav").innerHTML = TX_CATS.map(c =>
+    `<button class="cat-btn${activeTxCat===c?' active':''}" onclick="setTxCat('${c}')">${c}</button>`
+  ).join("");
+}
+
+function setTxCat(cat) { activeTxCat=cat; renderTxCatNav(); renderTxGrid(); }
+
+function renderTxGrid() {
+  const filtered = activeTxCat==="Alle" ? METHODS : METHODS.filter(m=>m.cat===activeTxCat);
+  document.getElementById("tx-grid").innerHTML = filtered.map(m =>
+    `<div class="tx-card${activeTx===m.id?' active':''}" onclick="showTx('${m.id}')">
+      <div class="tx-name">${m.name}</div>
+      <div class="tx-short">${m.short}</div>
+      <div><span class="tx-cat-pill ${m.catStyle}">${m.cat}</span></div>
+    </div>`
+  ).join("");
+}
+
+function showTx(id) {
+  activeTx=id;
+  const m=METHODS.find(x=>x.id===id);
+  if(!m) return;
+  document.getElementById("tx-list-view").style.display="none";
+  const td=document.getElementById("tx-detail");
+  td.classList.add("visible");
+  document.getElementById("tx-title").textContent=m.name+" – "+m.short;
+  document.getElementById("tx-meta").innerHTML=
+    `<span class="tx-meta-badge" style="background:#f1efe8;border:1px solid #d3d1c7;">${m.cat}</span>`;
+  const tabNames=["Überblick","Wirkfaktoren","Methoden & Techniken","Indikation & Evidenz","Haltung & Gruppe"];
+  document.getElementById("tx-tabs").innerHTML=tabNames.map((t,i)=>
+    `<button class="tab-btn${i===0?' active':''}" onclick="setTxTab(${i},this)">${t}</button>`
+  ).join("");
+  document.getElementById("tx-panels").innerHTML=
+    `<div class="tab-panel active">${renderTxUeberblick(m)}</div>
+     <div class="tab-panel">${renderTxWirkfaktoren(m)}</div>
+     <div class="tab-panel">${renderTxMethoden(m)}</div>
+     <div class="tab-panel">${renderTxEvidenz(m)}</div>
+     <div class="tab-panel">${renderTxHaltung(m)}</div>`;
+  td.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function setTxTab(i,btn) {
+  document.querySelectorAll("#tx-tabs .tab-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  document.querySelectorAll("#tx-panels .tab-panel").forEach((p,idx)=>p.classList.toggle("active",idx===i));
+}
+
+function showTxList() {
+  activeTx=null;
+  document.getElementById("tx-list-view").style.display="block";
+  document.getElementById("tx-detail").classList.remove("visible");
+  renderTxGrid();
+}
+
+function renderTxUeberblick(m) {
+  return `<div class="pt1">
+    <div class="tx-section"><div class="tx-section-title">Prägende Figuren</div>
+      <div>${m.personen.map(p=>`<span class="person-badge">${p}</span>`).join("")}</div>
+    </div>
+    <div class="tx-section"><div class="tx-section-title">Kurzbeschreibung</div>
+      <div class="tx-block" style="line-height:1.7;">${m.beschreibung}</div>
+    </div>
+    <div class="tx-section"><div class="tx-section-title">Indikationen (Überblick)</div>
+      <div class="tx-block"><ul>${m.indikation.map(i=>`<li>${i}</li>`).join("")}</ul></div>
+    </div></div>`;
+}
+
+function renderTxWirkfaktoren(m) {
+  return `<div class="pt1">
+    <div class="tx-section"><div class="tx-section-title">Zentrale Wirkfaktoren</div>
+      <div class="tx-block"><ul>${m.wirkfaktoren.map(w=>`<li>${w}</li>`).join("")}</ul></div>
+    </div></div>`;
+}
+
+function renderTxMethoden(m) {
+  const cards = TECHNIKEN_DB[m.id] || [];
+  const methodenList = m.methoden && m.methoden.length ? `
+    <div class="section">
+      <div class="section-title">Methoden & Techniken</div>
+      <div class="criteria-block"><ul class="criteria-list">${m.methoden.map(v=>`<li>${v}</li>`).join("")}</ul></div>
+    </div>` : "";
+  const kartenBlock = cards.length ? `
+    <div class="section">
+      <div class="section-title" style="margin-bottom:.75rem;">Technik-Karten (${cards.length})</div>
+      ${cards.map((c,i) => renderTechnikKarte(c, m.id, i, m.name)).join("")}
+    </div>` : "";
+  return `<div class="pt1">${methodenList}${kartenBlock}</div>`;
+}
+
+function renderGtMethoden(g) {
+  const cards = TECHNIKEN_DB[g.id] || [];
+  const methodenList = g.methoden && g.methoden.length ? `
+    <div class="section">
+      <div class="section-title">Methoden</div>
+      <div class="criteria-block"><ul class="criteria-list">${g.methoden.map(v=>`<li>${v}</li>`).join("")}</ul></div>
+    </div>` : "";
+  const kartenBlock = cards.length ? `
+    <div class="section">
+      <div class="section-title" style="margin-bottom:.75rem;">Technik-Karten (${cards.length})</div>
+      ${cards.map((c,i) => renderTechnikKarte(c, g.id, i, g.name)).join("")}
+    </div>` : "";
+  return `<div class="pt1">${methodenList}${kartenBlock}</div>`;
+}
+
+// ─── TECHNIQUE CARD RENDERING ────────────────────────────────
+
+
+function technikKey(methodId, cardIdx) { return `${methodId}::${cardIdx}`; }
+
+function renderTechnikKarte(c, methodId, idx, methodName) {
+  const key = technikKey(methodId, idx);
+  const isFav = typeof favoritesMap !== 'undefined' && favoritesMap.has(key);
+  const katBg = FAV_KAT_COLORS[c.kat] || "#f1efe8";
+  return `<div id="techkarte-${methodId}-${idx}" style="border:1px solid ${isFav?'#F9A825':'#d3d1c7'};border-radius:12px;background:${isFav?'#FFFDE7':'#fff'};margin-bottom:.9rem;overflow:hidden;transition:all .2s;">
+    <div style="background:${isFav?'#FFF9C4':'#f5f4ef'};padding:10px 14px;border-bottom:1px solid ${isFav?'#FFE082':'#d3d1c7'};display:flex;align-items:center;justify-content:space-between;gap:8px;">
+      <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+        <span style="font-size:13px;font-weight:500;flex:1;">${c.name}</span>
+        <span style="font-size:10px;padding:2px 7px;border-radius:4px;background:${katBg};border:1px solid #d3d1c7;white-space:nowrap;">${c.kat}</span>
+      </div>
+      <button onclick="toggleFavorite('${methodId}',${idx},'${c.name.replace(/'/g,"\\'")}','${methodName.replace(/'/g,"\\'")}','${c.kat.replace(/'/g,"\\'")}',this)"
+        style="border:none;background:transparent;cursor:pointer;font-size:18px;padding:0 4px;line-height:1;color:${isFav?'#F9A825':'#b4b2a9'};transition:color .15s;"
+        title="${isFav?'Aus Favoriten entfernen':'Als Favorit speichern'}">${isFav?'★':'☆'}</button>
+    </div>
+    <div style="padding:12px 14px;">
+      <div style="font-size:12px;line-height:1.65;color:#1a1a18;margin-bottom:8px;">${c.beschreibung}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <div style="background:#f5f4ef;border-radius:7px;padding:7px 10px;">
+          <div style="font-size:10px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;">Indikation</div>
+          <div style="font-size:12px;color:#1a1a18;">${c.indikation}</div>
+        </div>
+        <div style="background:#f5f4ef;border-radius:7px;padding:7px 10px;">
+          <div style="font-size:10px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;">Tipps</div>
+          <div style="font-size:12px;color:#1a1a18;">${c.tipps}</div>
+        </div>
+      </div>
+      <div style="background:#FAEEDA;border-radius:7px;padding:8px 10px;border-left:3px solid #FAC775;">
+        <div style="font-size:10px;font-weight:500;color:#633806;margin-bottom:3px;">Beispiel</div>
+        <div style="font-size:12px;color:#633806;line-height:1.55;font-style:italic;">${c.beispiel}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── FAVORITES SYSTEM ────────────────────────────────────────
+const favoritesMap = new Map(); // key -> {methodId, idx, cardName, methodName, kat}
+(function(){try{const s=JSON.parse(localStorage.getItem("psych_fav_v1")||"[]");s.forEach(([k,v])=>favoritesMap.set(k,v));}catch(e){}})();
+
+function isFavorite(methodId, idx) { return favoritesMap.has(technikKey(methodId, idx)); }
+
+function saveFavorites(){try{localStorage.setItem("psych_fav_v1",JSON.stringify([...favoritesMap.entries()]));}catch(e){}autoSave();}
+function toggleFavorite(methodId, idx, cardName, methodName, kat, btn) {
+  const key = technikKey(methodId, idx);
+  const adding = !favoritesMap.has(key);
+  if(adding) {
+    favoritesMap.set(key, {methodId, idx, cardName, methodName, kat});
+  } else {
+    favoritesMap.delete(key);
+  }
+  saveFavorites();
+  btn.textContent = adding ? '★' : '☆';
+  btn.style.color = adding ? '#F9A825' : '#b4b2a9';
+  btn.title = adding ? 'Aus Favoriten entfernen' : 'Als Favorit speichern';
+  const card = document.getElementById(`techkarte-${methodId}-${idx}`);
+  if(card) {
+    card.style.borderColor = adding ? '#F9A825' : '#d3d1c7';
+    card.style.background = adding ? '#FFFDE7' : '#fff';
+    const header = card.children[0];
+    if(header) header.style.background = adding ? '#FFF9C4' : '#f5f4ef';
+    if(header) header.style.borderBottomColor = adding ? '#FFE082' : '#d3d1c7';
+  }
+  updateFavBadge();
+}
+
+function updateFavBadge() {
+  const count = favoritesMap.size;
+  const btn = document.getElementById("nav-fav");
+  if(btn) btn.textContent = count > 0 ? `★ Favoriten (${count})` : '★ Favoriten';
+}
+
+function renderFavView() {
+  const count = favoritesMap.size;
+  const countEl = document.getElementById("fav-count");
+  const gridEl = document.getElementById("fav-grid");
+  const emptyEl = document.getElementById("fav-empty");
+  const filterEl = document.getElementById("fav-filter");
+  if(countEl) countEl.textContent = `${count} gespeichert`;
+  if(count === 0) {
+    if(gridEl) gridEl.innerHTML = "";
+    if(emptyEl) emptyEl.style.display = "block";
+    if(filterEl) filterEl.innerHTML = "";
+    return;
+  }
+  if(emptyEl) emptyEl.style.display = "none";
+  // Collect all favorites with data
+  const favItems = [];
+  favoritesMap.forEach((meta, key) => {
+    const cards = TECHNIKEN_DB[meta.methodId] || [];
+    const card = cards[meta.idx];
+    if(card) favItems.push({...card, ...meta, key});
+  });
+  // Group by method
+  const byMethod = {};
+  favItems.forEach(item => {
+    if(!byMethod[item.methodName]) byMethod[item.methodName] = [];
+    byMethod[item.methodName].push(item);
+  });
+  // Build filter buttons
+  const methods = Object.keys(byMethod);
+  filterEl.innerHTML = `<div class="cat-nav" style="margin-bottom:1rem;">${
+    ['Alle', ...methods].map(m =>
+      `<button class="cat-btn${favFilterActive===(m)?' active':''}" onclick="setFavFilter('${m.replace(/'/g,"\\'")}')">` +
+      (m==='Alle' ? `Alle (${count})` : m) + `</button>`
+    ).join("")
+  }</div>`;
+  // Render cards
+  let html = '';
+  if(favFilterActive === 'Alle') {
+    Object.entries(byMethod).forEach(([mName, items]) => {
+      html += `<div style="font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.07em;margin:1rem 0 .6rem;padding-bottom:.4rem;border-bottom:1px solid #e8e6df;">${mName}</div>`;
+      items.forEach(item => { html += renderTechnikKarte(item, item.methodId, item.idx, item.methodName); });
+    });
+  } else {
+    const filtered = favItems.filter(i => i.methodName === favFilterActive);
+    filtered.forEach(item => { html += renderTechnikKarte(item, item.methodId, item.idx, item.methodName); });
+  }
+  if(gridEl) gridEl.innerHTML = html;
+}
+
+let favFilterActive = 'Alle';
+function setFavFilter(m) { favFilterActive = m; renderFavView(); }
+function renderTxEvidenz(m) {
+  return `<div class="pt1">
+    <div class="tx-section"><div class="tx-section-title">Indikationen</div>
+      <div class="tx-block"><ul>${m.indikation.map(i=>`<li>${i}</li>`).join("")}</ul></div>
+    </div>
+    <div class="tx-section"><div class="tx-section-title">Evidenzlage</div>
+      <div class="info-box green"><div style="font-size:13px;">${m.evidenz}</div></div>
+    </div></div>`;
+}
+
+function renderTxHaltung(m) {
+  return `<div class="pt1">
+    <div class="tx-section"><div class="tx-section-title">Therapeutische Haltung</div>
+      <div class="info-box amber"><div style="font-size:13px;">${m.haltung}</div></div>
+    </div>
+    <div class="tx-section"><div class="tx-section-title">Gruppenformat</div>
+      <div class="info-box blue"><div style="font-size:13px;">${m.gruppe}</div></div>
+    </div></div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FLASHCARDS
+// ═══════════════════════════════════════════════════════════════
+const QTYPES=["ICD-Codes","ICD-Subkodes","Hauptkriterien","Nebenkriterien","Klinischer Hinweis","Differenzialdiagnosen","Psychodiagnostik","Somatische Diagnostik","Neurobiologisches Modell","VT-Modell","Fallkonzept","VT-Interventionen","Gruppentherapie","Beziehungsgestaltung","Pharmakotherapie","Pharmako-Detail","Merkhilfe"];
+const FC_CATS=["Alle","Affektiv","Psychotisch","Angststörungen","Trauma","Persönlichkeitsstörungen","Zwangsspektrum","Neurodevelopmental","Sucht","Essstörungen"];
+
+// ═══════════════════════════════════════════════════════════════
+// SRS ENGINE (Spaced-Repetition, localStorage-persistent)
+// ═══════════════════════════════════════════════════════════════
+
+// Card states: 0=new, 1=learning, 2=review, 3=mastered
+// Storage key
+
+
+let srsData = {}; // cardId → {state, due, interval, easeFactor, reviews, correct, lastSeen}
+
+function cardId(c) {
+  // Stable ID from category + question hash
+  const s = (c.cat||'') + '||' + (c.qtype||'') + '||' + (c.q||'').slice(0,60);
+  let h = 0;
+  for (let i = 0; i < s.length; i++) { h = ((h << 5) - h) + s.charCodeAt(i); h |= 0; }
+  return 'c' + Math.abs(h);
+}
+
+function srsLoad() {
+  try { srsData = JSON.parse(localStorage.getItem(SRS_KEY) || '{}'); } catch(e) { srsData = {}; }
+}
+
+function srsSave() {
+  try { localStorage.setItem(SRS_KEY, JSON.stringify(srsData)); } catch(e) {}
+  autoSave();
+}
+
+function srsGet(c) {
+  const id = cardId(c);
+  if (!srsData[id]) srsData[id] = {state:0, due:0, interval:1, easeFactor:2.5, reviews:0, correct:0};
+  return srsData[id];
+}
+
+// SM-2 algorithm simplified
+function srsUpdate(c, known) {
+  const r = srsGet(c);
+  const id = cardId(c);
+  const now = Date.now();
+  r.reviews++;
+  if (known === true) {
+    r.correct++;
+    if (r.state === 0) { r.state = 1; r.interval = 1; }
+    else if (r.state === 1) { r.state = 2; r.interval = 3; }
+    else {
+      r.easeFactor = Math.max(1.3, r.easeFactor + 0.1);
+      r.interval = Math.round(r.interval * r.easeFactor);
+      if (r.interval >= 21) r.state = 3;
+    }
+  } else if (known === false) {
+    r.state = Math.max(0, r.state - 1);
+    r.easeFactor = Math.max(1.3, r.easeFactor - 0.2);
+    r.interval = 1;
+  }
+  // null = skip: no change
+  r.due = now + r.interval * 86400000;
+  r.lastSeen = now;
+  srsData[id] = r;
+}
+
+function srsIsDue(c) {
+  const r = srsGet(c);
+  return r.state < 3 && (r.state === 0 || r.due <= Date.now() + 3600000); // 1h grace
+}
+
+function srsStats(allCards) {
+  srsLoad();
+  let nNew=0, nLearn=0, nReview=0, nMastered=0, nDue=0;
+  allCards.forEach(c => {
+    const r = srsGet(c);
+    if (r.state===0) nNew++;
+    else if (r.state===1) nLearn++;
+    else if (r.state===2) { nReview++; if(srsIsDue(c)) nDue++; }
+    else nMastered++;
+  });
+  return {nNew, nLearn, nReview, nMastered, nDue, total:allCards.length};
+}
+
+function srsUpdateUI(allCards) {
+  srsLoad();
+  const st = srsStats(allCards);
+  const set = id => { const el=document.getElementById(id); if(el) el.textContent=st['n'+id.split('-')[1].charAt(0).toUpperCase()+id.split('-')[1].slice(1)]; };
+  const el = id => document.getElementById(id);
+  if(el('stat-new')) el('stat-new').textContent = st.nNew;
+  if(el('stat-learn')) el('stat-learn').textContent = st.nLearn;
+  if(el('stat-review')) el('stat-review').textContent = st.nReview;
+  if(el('stat-mastered')) el('stat-mastered').textContent = st.nMastered;
+  // Progress bar
+  const bar = el('srs-progress-visual');
+  if(bar && st.total > 0) {
+    const pNew=st.nNew/st.total*100, pL=st.nLearn/st.total*100, pR=st.nReview/st.total*100, pM=st.nMastered/st.total*100;
+    bar.innerHTML = `<div class="srs-bar-new" style="width:${pNew}%"></div><div class="srs-bar-learn" style="width:${pL}%"></div><div class="srs-bar-review" style="width:${pR}%"></div><div class="srs-bar-mastered" style="width:${pM}%"></div>`;
+  }
+  // Streak
+  updateStreak();
+}
+
+// Streak tracking
+function updateStreak() {
+  try {
+    const today = new Date().toDateString();
+    let streak = JSON.parse(localStorage.getItem(SRS_STREAK_KEY) || '{"count":0,"last":""}');
+    const sd = document.getElementById('srs-streak-display');
+    const sn = document.getElementById('srs-streak-num');
+    if (streak.count > 0) {
+      if(sd) sd.style.display='inline-flex';
+      if(sn) sn.textContent = streak.count;
+    }
+  } catch(e) {}
+}
+
+function recordDayActivity() {
+  try {
+    const today = new Date().toDateString();
+    let streak = JSON.parse(localStorage.getItem(SRS_STREAK_KEY) || '{"count":0,"last":""}');
+    if (streak.last === today) return;
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    streak.count = streak.last === yesterday ? streak.count + 1 : 1;
+    streak.last = today;
+    localStorage.setItem(SRS_STREAK_KEY, JSON.stringify(streak));
+    autoSave();
+  } catch(e) {}
+}
+
+function resetSrsData() {
+  if (!confirm('Lernfortschritt für alle Karteikarten zurücksetzen?')) return;
+  try { localStorage.removeItem(SRS_KEY); localStorage.removeItem(SRS_STREAK_KEY); } catch(e) {}
+  srsData = {};
+  const dis = getFcDisorders();
+  const allCards = buildCards(dis).filter(c => fcConfig.qtypes.has(c.qtype));
+  srsUpdateUI(allCards);
+  alert('Lernfortschritt zurückgesetzt.');
+}
+
+// ── Deck-Modus ────────────────────────────────────────────────
+let fcMode = 'smart';
+
+function setFcMode(mode, btn) {
+  fcMode = mode;
+  document.querySelectorAll('#fc-mode-filters .fc-deck-pill').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  updateCardCount();
+}
+
+function getFilteredDeck(allCards) {
+  srsLoad();
+  switch(fcMode) {
+    case 'smart': {
+      // Prüfungs-Modus: Fällige + Lernkarten + max 20 neue, nach Priorität sortiert
+      const due = allCards.filter(c => { const r=srsGet(c); return (r.state===1||r.state===2) && srsIsDue(c); });
+      const newC = allCards.filter(c => srsGet(c).state===0).slice(0,20);
+      const combined = [...due, ...newC];
+      // Deduplicate
+      const seen = new Set();
+      return combined.filter(c => { const id=cardId(c); if(seen.has(id))return false; seen.add(id); return true; });
+    }
+    case 'due':
+      return allCards.filter(c => srsIsDue(c));
+    case 'wrong':
+      return allCards.filter(c => { const r=srsGet(c); return r.reviews>0 && r.state<=1; });
+    case 'new':
+      return allCards.filter(c => srsGet(c).state===0);
+    default:
+      return allCards;
+  }
+}
+
+let fcConfig={cats:["Alle"],qtypes:new Set(QTYPES),shuffle:true};
+let fcDeck=[],fcIndex=0,fcRight=0,fcWrong=0,fcWrongCards=[],fcFlipped=false;
+
+function initFcView() {
+  srsLoad();
+  document.getElementById("fc-cat-filters").innerHTML=FC_CATS.map(c=>
+    `<button class="fc-toggle${(c==="Alle"&&fcConfig.cats.includes("Alle"))||fcConfig.cats.includes(c)?' on':''}" onclick="toggleFcCat('${c}',this)">${c}</button>`
+  ).join("");
+  document.getElementById("fc-qtype-filters").innerHTML=QTYPES.map(q=>
+    `<button class="fc-toggle${fcConfig.qtypes.has(q)?' on':''}" onclick="toggleFcQtype('${q}',this)">${q}</button>`
+  ).join("");
+  document.getElementById("fc-order-filters").innerHTML=
+    `<button class="fc-toggle${fcConfig.shuffle?' on':''}" onclick="toggleShuffle(this)">Zufällig mischen</button>
+     <button class="fc-toggle${!fcConfig.shuffle?' on':''}" onclick="toggleOrder(this)">Sortiert nach Störungsbild</button>`;
+  updateCardCount();
+  const _dis=getFcDisorders();const _ac=buildCards(_dis).filter(c=>fcConfig.qtypes.has(c.qtype));srsUpdateUI(_ac);
+}
+
+function toggleFcCat(cat,btn) {
+  if(cat==="Alle"){fcConfig.cats=["Alle"];document.querySelectorAll("#fc-cat-filters .fc-toggle").forEach((b,i)=>b.classList.toggle("on",i===0));}
+  else{fcConfig.cats=fcConfig.cats.filter(c=>c!=="Alle");
+    if(fcConfig.cats.includes(cat))fcConfig.cats=fcConfig.cats.filter(c=>c!==cat);
+    else fcConfig.cats.push(cat);
+    if(fcConfig.cats.length===0)fcConfig.cats=["Alle"];
+    document.querySelectorAll("#fc-cat-filters .fc-toggle").forEach((b,i)=>b.classList.toggle("on",fcConfig.cats.includes(FC_CATS[i])));}
+  updateCardCount();
+}
+
+function toggleFcQtype(q,btn){if(fcConfig.qtypes.has(q))fcConfig.qtypes.delete(q);else fcConfig.qtypes.add(q);btn.classList.toggle("on");updateCardCount();}
+function toggleShuffle(btn){fcConfig.shuffle=true;document.querySelectorAll("#fc-order-filters .fc-toggle").forEach((b,i)=>b.classList.toggle("on",i===0));}
+function toggleOrder(btn){fcConfig.shuffle=false;document.querySelectorAll("#fc-order-filters .fc-toggle").forEach((b,i)=>b.classList.toggle("on",i===1));}
+
+function getFcDisorders(){return fcConfig.cats.includes("Alle")?DISORDERS:DISORDERS.filter(d=>fcConfig.cats.includes(d.cat));}
+
+function updateCardCount(){
+  srsLoad();
+  const dis=getFcDisorders();const all=buildCards(dis).filter(c=>fcConfig.qtypes.has(c.qtype));
+  const deck=getFilteredDeck(all);
+  const modeLabels={'smart':'Prüfungs-Modus','due':'Fällige Karten','wrong':'Fehlerkarten','new':'Neue Karten','all':'Alle Karten'};
+  document.getElementById("fc-card-count").textContent=`${deck.length} Karten · ${modeLabels[fcMode]||''} (${all.length} gesamt, ${dis.length} Störungsbilder)`;
+  document.getElementById("fc-start-btn").disabled=deck.length===0;
+}
+
+function buildCards(disorders) {
+  const cards=[];
+  disorders.forEach(d=>{
+    // ICD-Codes (Kurzform)
+    cards.push({cat:d.name,qtype:"ICD-Codes",
+      q:`Welche ICD-10 und ICD-11 Codes hat die ${d.name}?`,
+      a:`<strong>ICD-10:</strong> ${d.icd10}<br><strong>ICD-11:</strong> ${d.icd11}`});
+
+    // ICD-Subkodes
+    if(d.icd10_detail) cards.push({cat:d.name,qtype:"ICD-Subkodes",
+      q:`Nennen Sie die wichtigsten ICD-10-Subkodes und ICD-11-Spezifikatoren der ${d.name}.`,
+      a:`<div style="margin-bottom:6px;"><strong>ICD-10:</strong><br><span style="font-size:12px;">${d.icd10_detail.split(' · ').slice(0,5).join(' · ')}</span></div>`+
+        (d.icd11_detail?`<div><strong>ICD-11:</strong><br><span style="font-size:12px;">${d.icd11_detail.split(' · ').slice(0,5).join(' · ')}</span></div>`:"")});
+
+    // Hauptkriterien
+    cards.push({cat:d.name,qtype:"Hauptkriterien",
+      q:`Nennen Sie die Hauptkriterien der ${d.name}.`,
+      a:`<ul>${d.haupt.map(k=>`<li class="main">${k}</li>`).join("")}</ul>`});
+
+    // Nebenkriterien
+    cards.push({cat:d.name,qtype:"Nebenkriterien",
+      q:`Nennen Sie wichtige Nebenkriterien / Zusatzsymptome der ${d.name}.`,
+      a:`<ul>${d.neben.map(k=>`<li>${k}</li>`).join("")}</ul>`});
+
+    // Klinischer Hinweis
+    cards.push({cat:d.name,qtype:"Klinischer Hinweis",
+      q:`Welche klinischen Besonderheiten (Dauer, Schweregrad, Subtypen) bei der ${d.name}?`,
+      a:`${d.hinweis}<br><em style="color:#5f5e5a;font-size:12px;">Schweregrad: ${d.schwere||'–'}</em>`});
+
+    // Differenzialdiagnosen
+    if(d.ddx && d.ddx.length>=2) cards.push({cat:d.name,qtype:"Differenzialdiagnosen",
+      q:`Welche Differenzialdiagnosen sind bei ${d.name} wichtig und wie grenzen Sie ab?`,
+      a:`<ul>${d.ddx.slice(0,4).map(dd=>`<li><strong>${dd.n}:</strong> ${dd.h}</li>`).join("")}</ul>`});
+
+    // Psychodiagnostik
+    if(d.diagnostik_inst && d.diagnostik_inst.length) cards.push({cat:d.name,qtype:"Psychodiagnostik",
+      q:`Welche psychodiagnostischen Verfahren und Instrumente setzen Sie bei ${d.name} ein?`,
+      a:`<ul>${d.diagnostik_inst.slice(0,6).map(v=>`<li>${v}</li>`).join("")}</ul>`});
+
+    // Somatische Diagnostik
+    if(d.diagnostik_som && d.diagnostik_som.length) cards.push({cat:d.name,qtype:"Somatische Diagnostik",
+      q:`Welche somatischen Diagnostikparameter und Laborwerte sind bei ${d.name} relevant?`,
+      a:`<ul>${d.diagnostik_som.slice(0,6).map(v=>`<li>${v}</li>`).join("")}</ul>`});
+
+    // Neurobiologisches Modell
+    if(d.modelle && d.modelle.neuro && d.modelle.neuro.length) {
+      d.modelle.neuro.forEach(m=>{
+        cards.push({cat:d.name,qtype:"Neurobiologisches Modell",
+          q:`Erklären Sie das neurobiologische Modell "${m.name}" bei ${d.name}.`,
+          a:`<div style="margin-bottom:6px;font-size:13px;">${m.beschreibung}</div><div style="font-size:12px;background:#EAF3DE;border-radius:6px;padding:5px 8px;"><strong>Klinisch:</strong> ${m.klinisch}</div>`});
+      });
+    }
+
+    // VT-Modell
+    if(d.modelle && d.modelle.vt && d.modelle.vt.length) {
+      d.modelle.vt.forEach(m=>{
+        cards.push({cat:d.name,qtype:"VT-Modell",
+          q:`Erklären Sie das VT-Modell "${m.name}" zur Entstehung/Aufrechterhaltung der ${d.name}.`,
+          a:`<div style="margin-bottom:6px;font-size:13px;">${m.beschreibung}</div><div style="font-size:12px;background:#EAF3DE;border-radius:6px;padding:5px 8px;"><strong>Klinisch:</strong> ${m.klinisch}</div>`});
+      });
+    }
+
+    // Fallkonzept
+    cards.push({cat:d.name,qtype:"Fallkonzept",
+      q:`Welche Bausteine enthält das Fallkonzept bei ${d.name}?`,
+      a:`<ul>${d.fallkonzept.map(f=>`<li>${f}</li>`).join("")}</ul>`});
+
+    // VT-Interventionen
+    cards.push({cat:d.name,qtype:"VT-Interventionen",
+      q:`Welche VT-Methoden und Interventionen setzen Sie bei ${d.name} in der Einzeltherapie ein?`,
+      a:`<ul>${d.vt_einzel.slice(0,5).map(v=>`<li>${v}</li>`).join("")}</ul>`});
+
+    // Gruppentherapie
+    cards.push({cat:d.name,qtype:"Gruppentherapie",
+      q:`Wie sieht die VT-Gruppentherapie bei ${d.name} aus? Besonderheiten?`,
+      a:`<ul>${d.vt_gruppe.map(v=>`<li>${v}</li>`).join("")}</ul>`});
+
+    // Beziehungsgestaltung
+    cards.push({cat:d.name,qtype:"Beziehungsgestaltung",
+      q:`Was müssen Sie bei der therapeutischen Beziehungsgestaltung bei ${d.name} beachten?`,
+      a:`<span style="font-size:13px;">${d.beziehung}</span>`});
+
+    // Pharmakotherapie (Überblick)
+    cards.push({cat:d.name,qtype:"Pharmakotherapie",
+      q:`Welche Pharmakotherapie ist bei ${d.name} indiziert? (Überblick)`,
+      a:`<span style="font-size:13px;">${d.pharmako}</span>`});
+
+    // Pharmako-Detail (aus PHARMA_DB)
+    const drugs = (typeof PHARMA_DB !== 'undefined' && PHARMA_DB[d.id]) ? PHARMA_DB[d.id] : [];
+    drugs.forEach(drug=>{
+      cards.push({cat:d.name,qtype:"Pharmako-Detail",
+        q:`Beschreiben Sie ${drug.name} (${drug.klasse}) bei ${d.name}: Wirkfaktor, Wirkungseintritt, wichtigste NW und Kontraindikationen.`,
+        a:`<div style="font-size:12px;margin-bottom:5px;"><strong>Wirkfaktor:</strong> ${drug.wirkfaktor}</div>`+
+          `<div style="font-size:12px;margin-bottom:5px;"><strong>Wirkungseintritt:</strong> ${drug.wirkungseintritt}</div>`+
+          `<div style="font-size:12px;margin-bottom:5px;color:#791F1F;"><strong>NW:</strong> ${drug.nw}</div>`+
+          `<div style="font-size:12px;color:#633806;"><strong>KI:</strong> ${drug.ki}</div>`+
+          (drug.hinweis?`<div style="font-size:12px;margin-top:5px;color:#5f5e5a;">⚠ ${drug.hinweis}</div>`:"")+
+          (drug.zulassung?"":`<div style="font-size:11px;margin-top:4px;background:#FAEEDA;border-radius:4px;padding:2px 6px;display:inline-block;">Off-label</div>`)});
+    });
+
+    // Merkhilfe
+    if(d.mnemonic) cards.push({cat:d.name,qtype:"Merkhilfe",
+      q:`Wie lautet die Merkhilfe "${d.mnemonic.titel}" bei ${d.name}?`,
+      a:`<ul>${d.mnemonic.items.map(i=>`<li>${i}</li>`).join("")}</ul>`});
+  });
+  return cards;
+}
+
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function startFlashcards(){
+  srsLoad();
+  const dis=getFcDisorders();const allCards=buildCards(dis).filter(c=>fcConfig.qtypes.has(c.qtype));
+  let cards=getFilteredDeck(allCards);
+  if(fcConfig.shuffle)cards=shuffle(cards);
+  fcDeck=cards;fcIndex=0;fcRight=0;fcWrong=0;fcWrongCards=[];
+  document.getElementById("fc-config-screen").style.display="none";
+  document.getElementById("fc-session").style.display="block";
+  document.getElementById("fc-results").style.display="none";
+  const modeLabels={'smart':'🎯 Prüfungs-Modus','due':'📅 Fällige Karten','wrong':'✗ Fehlerkarten','new':'✦ Neue Karten','all':'Alle Karten'};
+  document.getElementById("fc-session-label").textContent=`${fcDeck.length} Karten · ${modeLabels[fcMode]||''}`;
+  recordDayActivity();
+  showCard();
+}
+
+function showCard(){
+  if(fcIndex>=fcDeck.length){showResults();return;}
+  const c=fcDeck[fcIndex];fcFlipped=false;
+  document.getElementById("fc-card").classList.remove("flipped");
+  document.getElementById("fc-front-cat").textContent=c.cat;
+  // SRS badge
+  const _r=srsGet(c);const _badges=["Neu","Lerne","Wiederholen","Beherrscht"];const _bcls=["srs-new","srs-learn","srs-review","srs-mastered"];
+  const _catEl=document.getElementById("fc-front-cat");
+  _catEl.innerHTML=c.cat+'<span class="fc-srs-badge '+_bcls[_r.state]+'">'+_badges[_r.state]+'</span>';
+  document.getElementById("fc-front-qtype").textContent=c.qtype;
+  document.getElementById("fc-front-q").textContent=c.q;
+  document.getElementById("fc-back-a").innerHTML=c.a;
+  document.getElementById("fc-flip-hint").style.display="block";
+  document.getElementById("fc-actions").style.display="none";
+  const left=fcDeck.length-fcIndex;
+  document.getElementById("fc-cnt-right").textContent=fcRight;
+  document.getElementById("fc-cnt-wrong").textContent=fcWrong;
+  document.getElementById("fc-cnt-left").textContent=left;
+  const pct=Math.round((fcIndex/fcDeck.length)*100);
+  document.getElementById("fc-progress-text").textContent=`Karte ${fcIndex+1} von ${fcDeck.length}`;
+  document.getElementById("fc-progress-pct").textContent=pct+"%";
+  document.getElementById("fc-progress-fill").style.width=pct+"%";
+}
+
+function flipCard(){if(fcFlipped)return;fcFlipped=true;document.getElementById("fc-card").classList.add("flipped");document.getElementById("fc-flip-hint").style.display="none";document.getElementById("fc-actions").style.display="flex";}
+
+function rateCard(known){const c=fcDeck[fcIndex];if(known===true)fcRight++;else if(known===false){fcWrong++;fcWrongCards.push(c);}srsUpdate(c,known);fcIndex++;showCard();}
+
+function showResults(){
+  srsSave();
+  document.getElementById("fc-session").style.display="none";
+  document.getElementById("fc-results").style.display="block";
+  const total=fcRight+fcWrong;const pct=total>0?Math.round((fcRight/total)*100):0;
+  document.getElementById("fc-res-score").textContent=pct+"%";
+  document.getElementById("fc-res-sub").textContent=`${fcRight} von ${total} Karten gewusst${fcDeck.length-total>0?" ("+(fcDeck.length-total)+" übersprungen)":""}`;
+  document.getElementById("fc-res-bar").style.width=pct+"%";
+  document.getElementById("fc-res-right-lbl").textContent=`${fcRight} gewusst`;
+  document.getElementById("fc-res-wrong-lbl").textContent=`${fcWrong} nicht gewusst`;
+  // SRS Fortschritt-Detail
+  const srsEl=document.getElementById("fc-res-srs");
+  const srsDetail=document.getElementById("fc-res-srs-detail");
+  if(srsEl && srsDetail && total>0) {
+    srsEl.style.display="block";
+    const dis=getFcDisorders();const allC=buildCards(dis).filter(c=>fcConfig.qtypes.has(c.qtype));
+    const st=srsStats(allC);
+    srsDetail.innerHTML=`✓ ${fcRight} Karten als gewusst markiert<br>✗ ${fcWrong} Karten zum Wiederholen<br>—<br><strong>Gesamt:</strong> ${st.nMastered} beherrscht · ${st.nReview} in Wiederholung · ${st.nLearn} im Lernen · ${st.nNew} neu`;
+  }
+}
+
+function restartWrong(){if(fcWrongCards.length===0){restartAll();return;}fcDeck=fcConfig.shuffle?shuffle([...fcWrongCards]):[...fcWrongCards];fcIndex=0;fcRight=0;fcWrong=0;fcWrongCards=[];document.getElementById("fc-results").style.display="none";document.getElementById("fc-session").style.display="block";document.getElementById("fc-session-label").textContent=`${fcDeck.length} Karten (Wiederholung)`;showCard();}
+function restartAll(){startFlashcards();}
+function restartDue(){const old=fcMode;fcMode="due";startFlashcards();fcMode=old;}
+function endSession(){document.getElementById("fc-session").style.display="none";document.getElementById("fc-results").style.display="none";document.getElementById("fc-config-screen").style.display="block";initFcView();}
+
+// ═══════════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════════
+function showView(v) {
+  ["learn","tx","gt","med","tech","fav","fc"].forEach(id=>{
+    document.getElementById("view-"+id).classList.toggle("visible",v===id);
+    document.getElementById("nav-"+id).classList.toggle("active",v===id);
+  });
+  if(v==="tx") initTxView();
+  if(v==="gt") initGtView();
+  if(v==="med") initMedView();
+  if(v==="tech") initTechView();
+  if(v==="fav") renderFavView();
+  if(v==="fc") initFcView();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DATA: GRUPPENTHERAPIE
+// ═══════════════════════════════════════════════════════════════
+
+
+// ═══════════════════════════════════════════════════════════════
+// GROUP THERAPY VIEW
+// ═══════════════════════════════════════════════════════════════
+let activeGtCat = "Alle";
+let activeGt = null;
+
+function initGtView() {
+  renderGtCatNav(); renderGtGrid();
+}
+
+function renderGtCatNav() {
+  document.getElementById("gt-cat-nav").innerHTML = GT_CATS.map(c =>
+    `<button class="cat-btn${activeGtCat===c?' active':''}" onclick="setGtCat('${c}')">${c}</button>`
+  ).join("");
+}
+
+function setGtCat(cat) { activeGtCat=cat; renderGtCatNav(); renderGtGrid(); }
+
+function renderGtGrid() {
+  const filtered = activeGtCat==="Alle" ? GROUP_THERAPY : GROUP_THERAPY.filter(g=>g.cat===activeGtCat);
+  document.getElementById("gt-grid").innerHTML = filtered.map(g =>
+    `<div class="tx-card${activeGt===g.id?' active':''}" onclick="showGt('${g.id}')">
+      <div class="tx-name">${g.name}</div>
+      <div class="tx-short">${g.short}</div>
+      <div><span class="tx-cat-pill ${g.catStyle}">${g.cat}</span></div>
+    </div>`
+  ).join("");
+}
+
+function showGt(id) {
+  activeGt=id;
+  const g=GROUP_THERAPY.find(x=>x.id===id);
+  if(!g) return;
+  document.getElementById("gt-list-view").style.display="none";
+  const gd=document.getElementById("gt-detail");
+  gd.classList.add("visible");
+  document.getElementById("gt-title").textContent=g.name;
+  document.getElementById("gt-meta").innerHTML=
+    `<span class="tx-meta-badge" style="background:#f1efe8;border:1px solid #d3d1c7;">${g.cat}</span>
+     <span class="tx-meta-badge" style="background:#f1efe8;border:1px solid #d3d1c7;font-weight:400;">${g.short}</span>`;
+  const tabNames=["Überblick","Wirkfaktoren & Methoden","Technik-Karten","Sitzungsverlauf","Indikationen & Besonderheiten"];
+  document.getElementById("gt-tabs").innerHTML=tabNames.map((t,i)=>
+    `<button class="tab-btn${i===0?' active':''}" onclick="setGtTab(${i},this)">${t}</button>`
+  ).join("");
+  document.getElementById("gt-panels").innerHTML=
+    `<div class="tab-panel active">${renderGtUeberblick(g)}</div>
+     <div class="tab-panel">${renderGtWirkfaktoren(g)}</div>
+     <div class="tab-panel">${renderGtMethoden(g)}</div>
+     <div class="tab-panel">${renderGtVerlauf(g)}</div>
+     <div class="tab-panel">${renderGtIndikationen(g)}</div>`;
+  gd.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function setGtTab(i,btn) {
+  document.querySelectorAll("#gt-tabs .tab-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  document.querySelectorAll("#gt-panels .tab-panel").forEach((p,idx)=>p.classList.toggle("active",idx===i));
+}
+
+function showGtList() {
+  activeGt=null;
+  document.getElementById("gt-list-view").style.display="block";
+  document.getElementById("gt-detail").classList.remove("visible");
+  renderGtGrid();
+}
+
+function renderGtUeberblick(g) {
+  return `<div class="pt1">
+    <div class="tx-section"><div class="tx-section-title">Ziel der Gruppe</div>
+      <div class="tx-block" style="line-height:1.7">${g.ziel}</div>
+    </div>
+    <div class="tx-section"><div class="tx-section-title">Gruppenformat</div>
+      <div class="info-box blue"><div class="info-box-title">Format & Setting</div>
+        <div style="font-size:13px">${g.gruppenformat}</div>
+      </div>
+    </div>
+    <div class="tx-section"><div class="tx-section-title">Indikationen (Überblick)</div>
+      <div class="tx-block"><ul>${g.indikation.map(i=>`<li>${i}</li>`).join("")}</ul></div>
+    </div>
+    <div class="tx-section"><div class="tx-section-title">Evidenz</div>
+      <div class="info-box green"><div style="font-size:13px">${g.evidenz}</div></div>
+    </div>
+  </div>`;
+}
+
+function renderGtWirkfaktoren(g) {
+  return `<div class="pt1">
+    <div class="tx-section"><div class="tx-section-title">Wirkfaktoren</div>
+      <div class="tx-block"><ul>${g.wirkfaktoren.map(w=>`<li>${w}</li>`).join("")}</ul></div>
+    </div>
+    <div class="tx-section"><div class="tx-section-title">Methoden & Techniken</div>
+      <div class="tx-block"><ul>${g.methoden.map(m=>`<li>${m}</li>`).join("")}</ul></div>
+    </div>
+    <div class="tx-section"><div class="tx-section-title">Therapeutische Haltung</div>
+      <div class="info-box amber"><div style="font-size:13px">${g.haltung}</div></div>
+    </div>
+  </div>`;
+}
+
+function renderGtVerlauf(g) {
+  const phaseFarben = ["blue","green","amber","purple","red"];
+  return `<div class="pt1">
+    <div style="font-size:12px;color:#5f5e5a;margin-bottom:1rem;">Idealtypischer Sitzungsverlauf mit therapeutischen Interventionen</div>
+    ${g.verlauf.map((phase,i)=>`
+      <div style="margin-bottom:1.25rem;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:.5rem;">
+          <div style="width:24px;height:24px;border-radius:50%;background:#2c2c2a;color:#f1efe8;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0">${i+1}</div>
+          <div style="font-size:13px;font-weight:500">${phase.phase}</div>
+        </div>
+        <div class="criteria-block" style="margin-left:32px;">
+          <ul class="criteria-list">
+            ${phase.interventionen.map(inv=>`<li>${inv}</li>`).join("")}
+          </ul>
+        </div>
+      </div>`).join("")}
+  </div>`;
+}
+
+function renderGtIndikationen(g) {
+  return `<div class="pt1">
+    <div class="tx-section"><div class="tx-section-title">Besonderheiten bei spezifischen Indikationen</div>
+      ${g.besonderheiten_indikationen.map(b=>`
+        <div class="ddx-item" style="margin-bottom:8px">
+          <div class="ddx-name">${b.stoerung}</div>
+          <div class="ddx-hint">${b.besonderheit}</div>
+        </div>`).join("")}
+    </div>
+    <div class="tx-section"><div class="tx-section-title">Alle Indikationen</div>
+      <div class="tx-block"><ul>${g.indikation.map(i=>`<li>${i}</li>`).join("")}</ul></div>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DATA: GESPRÄCHSTECHNIKEN
+// ═══════════════════════════════════════════════════════════════
+
+
+// ═══════════════════════════════════════════════════════════════
+// GESPRÄCHSTECHNIKEN VIEW
+// ═══════════════════════════════════════════════════════════════
+let activeTechCat = "Alle";
+let activeTech = null;
+
+function initTechView() {
+  renderTechCatNav(); renderTechGrid();
+}
+
+function renderTechCatNav() {
+  document.getElementById("tech-cat-nav").innerHTML = TECH_CATS.map(c =>
+    `<button class="cat-btn${activeTechCat===c?' active':''}" onclick="setTechCat('${c}')">${c}</button>`
+  ).join("");
+}
+
+function setTechCat(cat) { activeTechCat=cat; renderTechCatNav(); renderTechGrid(); }
+
+function renderTechGrid() {
+  const filtered = activeTechCat==="Alle" ? TECHNIQUES : TECHNIQUES.filter(t=>t.cat===activeTechCat);
+  document.getElementById("tech-grid").innerHTML = filtered.map(t => {
+    const catColors = {
+      "Basisfertigkeiten":"tx-pill-vt",
+      "Kognitive Techniken":"tx-pill-3w",
+      "Emotionale Techniken":"tx-pill-schema",
+      "Interaktionell":"tx-pill-mbt",
+      "Schwierige Situationen":"tx-pill-mbt",
+      "Abschluss & Moduswechsel":"tx-pill-acht"
+    };
+    const settingColor = t.setting==="Einzel"?"#E6F1FB":t.setting==="Gruppe"?"#EAF3DE":"#EEEDFE";
+    const settingText = t.setting==="Einzel"?"👤 Einzel":t.setting==="Gruppe"?"👥 Gruppe":"👤👥 Einzel/Gruppe";
+    return `<div class="tx-card${activeTech===t.id?' active':''}" onclick="showTech('${t.id}')">
+      <div class="tx-name">${t.name}</div>
+      <div class="tx-short">${t.kurz}</div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;">
+        <span class="tx-cat-pill ${catColors[t.cat]||'tx-pill-vt'}">${t.cat}</span>
+        <span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;background:${settingColor};color:#1a1a18;">${settingText}</span>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function showTech(id) {
+  activeTech=id;
+  const t=TECHNIQUES.find(x=>x.id===id);
+  if(!t) return;
+  document.getElementById("tech-list-view").style.display="none";
+  const td=document.getElementById("tech-detail");
+  td.classList.add("visible");
+  document.getElementById("tech-title").textContent=t.name;
+  const catColors = {"Basisfertigkeiten":"#E6F1FB","Kognitive Techniken":"#EEEDFE","Emotionale Techniken":"#FAEEDA","Interaktionell":"#FCEBEB","Schwierige Situationen":"#FCEBEB","Abschluss & Moduswechsel":"#EAF3DE"};
+  const settingBg = t.setting==="Einzel"?"#E6F1FB":t.setting==="Gruppe"?"#EAF3DE":"#EEEDFE";
+  const settingLabel = t.setting==="Einzel"?"👤 Einzel":t.setting==="Gruppe"?"👥 Gruppe":"👤👥 Einzel & Gruppe";
+  document.getElementById("tech-meta").innerHTML=
+    `<span class="tx-meta-badge" style="background:${catColors[t.cat]||'#f1efe8'};border:1px solid #d3d1c7;">${t.cat}</span>
+     <span class="tx-meta-badge" style="background:${settingBg};border:1px solid #d3d1c7;font-weight:500;">${settingLabel}</span>`;
+  const tabNames=["Beschreibung & Anwendung","Gesprächsbeispiele","Hinweise"];
+  document.getElementById("tech-tabs").innerHTML=tabNames.map((n,i)=>
+    `<button class="tab-btn${i===0?' active':''}" onclick="setTechTab(${i},this)">${n}</button>`
+  ).join("");
+  document.getElementById("tech-panels").innerHTML=
+    `<div class="tab-panel active">${renderTechBeschreibung(t)}</div>
+     <div class="tab-panel">${renderTechBeispiele(t)}</div>
+     <div class="tab-panel">${renderTechHinweis(t)}</div>`;
+  td.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function setTechTab(i,btn){
+  document.querySelectorAll("#tech-tabs .tab-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  document.querySelectorAll("#tech-panels .tab-panel").forEach((p,idx)=>p.classList.toggle("active",idx===i));
+}
+
+function showTechList(){
+  activeTech=null;
+  document.getElementById("tech-list-view").style.display="block";
+  document.getElementById("tech-detail").classList.remove("visible");
+  renderTechGrid();
+}
+
+function renderTechBeschreibung(t){
+  const settingBg = t.setting==="Einzel"?"#E6F1FB":t.setting==="Gruppe"?"#EAF3DE":"#EEEDFE";
+  const settingBorder = t.setting==="Einzel"?"#B5D4F4":t.setting==="Gruppe"?"#C0DD97":"#AFA9EC";
+  const settingColor = t.setting==="Einzel"?"#0C447C":t.setting==="Gruppe"?"#3B6D11":"#3C3489";
+  const settingLabel = t.setting==="Einzel"?"👤 Einzeltherapie":t.setting==="Gruppe"?"👥 Gruppentherapie":"👤👥 Einzel- & Gruppentherapie";
+  return `<div class="pt1">
+    <div style="margin-bottom:1rem;">
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:6px;border:1px solid ${settingBorder};background:${settingBg};color:${settingColor};font-size:12px;font-weight:500;">${settingLabel}</span>
+    </div>
+    <div class="tx-section"><div class="tx-section-title">Was ist das?</div>
+      <div class="tx-block" style="line-height:1.7">${t.beschreibung}</div>
+    </div>
+    <div class="tx-section"><div class="tx-section-title">Wann & Wie anwenden</div>
+      <div class="tx-block"><ul>${t.anwendung.map(a=>`<li>${a}</li>`).join("")}</ul></div>
+    </div>
+  </div>`;
+}
+
+function renderTechBeispiele(t){
+  if(!t.beispiele || !t.beispiele.length) return `<div class="pt1"><div style="color:#888780;font-size:13px;">Keine Gesprächsbeispiele hinterlegt.</div></div>`;
+  return `<div class="pt1">
+    <div style="font-size:12px;color:#5f5e5a;margin-bottom:1rem;">Beispielhafte Gesprächsausschnitte – Th. = Therapeutin, Pat. = Patient</div>
+    ${t.beispiele.map((b,i)=>`
+      <div style="margin-bottom:1.25rem;">
+        <div style="font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Beispiel ${i+1}: ${b.kontext}</div>
+        <div style="background:#f1efe8;border-radius:8px;padding:.75rem 1rem;border-left:3px solid #2c2c2a;">
+          <div style="font-size:12px;color:#5f5e5a;margin-bottom:4px;font-weight:500;">Th.:</div>
+          <div style="font-size:13px;line-height:1.6;color:#1a1a18;font-style:italic;">"${b.th}"</div>
+        </div>
+      </div>`).join("")}
+  </div>`;
+}
+
+function renderTechHinweis(t){
+  const items = t.hinweise && t.hinweise.length ? t.hinweise : (t.hinweis ? [t.hinweis] : []);
+  if(!items.length) return `<div class="pt1"><div style="color:#888780;font-size:13px;">Keine Hinweise hinterlegt.</div></div>`;
+  return `<div class="pt1">
+    <div class="info-box amber">
+      <div class="info-box-title">Klinische Hinweise</div>
+      ${items.length===1
+        ? `<div style="font-size:13px;line-height:1.7">${items[0]}</div>`
+        : `<ul style="margin:0;padding-left:18px;">${items.map(h=>`<li style="font-size:13px;line-height:1.7;margin-bottom:4px;">${h}</li>`).join('')}</ul>`
+      }
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DATA: MEDIZINISCHE GRUNDLAGEN
+// ═══════════════════════════════════════════════════════════════
+
+
+// ═══════════════════════════════════════════════════════════════
+// MED VIEW
+// ═══════════════════════════════════════════════════════════════
+let activeMedCat = "Alle";
+let activeMed = null;
+
+
+// Progress tracking (in-memory)
+let medRead = new Set();
+const medSectionRead = {}; // topicId-sectionIdx -> bool
+
+function initMedView() {
+  medUpdateProgress();
+  renderMedCatNav();
+  renderMedGrid();
+}
+
+function medUpdateProgress() {
+  const total = MED_TOPICS.length;
+  const done = medRead.size;
+  const el = document.getElementById("med-progress-label");
+  const bar = document.getElementById("med-progress-bar");
+  if(el) el.textContent = `${done} / ${total} gelesen`;
+  if(bar) bar.style.width = total ? `${(done/total)*100}%` : "0%";
+}
+
+function medResetProgress() {
+  medRead.clear();
+  Object.keys(medSectionRead).forEach(k=>delete medSectionRead[k]);
+  medUpdateProgress();
+  renderMedGrid();
+}
+
+function medToggleRead() {
+  if(!activeMed) return;
+  if(medRead.has(activeMed)) medRead.delete(activeMed);
+  else medRead.add(activeMed);
+  updateMarkBtn();
+  medUpdateProgress();
+  updateMedTopicProgress();
+}
+
+function updateMarkBtn() {
+  const done = medRead.has(activeMed);
+  const btn = document.getElementById("med-mark-btn");
+  if(!btn) return;
+  btn.textContent = done ? "✓ Gelesen" : "Als gelesen markieren";
+  btn.style.background = done ? "#2c2c2a" : "#EAF3DE";
+  btn.style.color = done ? "#f1efe8" : "#3B6D11";
+  btn.style.borderColor = done ? "#2c2c2a" : "#C0DD97";
+}
+
+function renderMedCatNav() {
+  const cats = ["Alle", ...new Set(MED_TOPICS.map(t=>t.cat))];
+  document.getElementById("med-cat-nav").innerHTML = cats.map(c =>
+    `<button class="cat-btn${activeMedCat===c?' active':''}" onclick="setMedCat('${c}')">${c}</button>`
+  ).join("");
+}
+
+function setMedCat(cat) { activeMedCat=cat; renderMedCatNav(); renderMedGrid(); }
+
+function renderMedGrid() {
+  const filtered = activeMedCat==="Alle" ? MED_TOPICS : MED_TOPICS.filter(t=>t.cat===activeMedCat);
+  // Group by category
+  const byCat = {};
+  filtered.forEach(t => { if(!byCat[t.cat]) byCat[t.cat]=[];  byCat[t.cat].push(t); });
+
+  let html = "";
+  Object.entries(byCat).forEach(([cat, topics]) => {
+    const catBg = MED_CAT_COLORS[cat] || "#f1efe8";
+    const catBorder = MED_CAT_BORDER[cat] || "#d3d1c7";
+    if(activeMedCat === "Alle") {
+      html += `<div style="font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.07em;margin:1.25rem 0 .6rem;">${cat}</div>`;
+    }
+    html += `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:${activeMedCat==='Alle'?'0':'12px'};">`;
+    topics.forEach((t, idx) => {
+      const done = medRead.has(t.id);
+      const diffBg = MED_DIFF_COLOR[t.schwierigkeit||"Grundlagen"];
+      const diffBorder = MED_DIFF_BORDER[t.schwierigkeit||"Grundlagen"];
+      const quizCount = t.quiz ? t.quiz.length : 0;
+      const sectionCount = t.inhalt ? t.inhalt.length : 0;
+      // recommended sequence number within category
+      const globalIdx = MED_TOPICS.indexOf(t) + 1;
+      html += `
+        <div onclick="showMed('${t.id}')" style="border:1px solid ${done?'#2c2c2a':'#d3d1c7'};border-radius:12px;padding:14px;background:${done?'#f5f4ef':'#fff'};cursor:pointer;transition:all .15s;position:relative;overflow:hidden;">
+          ${done?`<div style="position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;background:#2c2c2a;display:flex;align-items:center;justify-content:center;font-size:10px;color:#f1efe8;">✓</div>`:''}
+          <div style="font-size:10px;color:#888780;margin-bottom:4px;">Lektion ${globalIdx}</div>
+          <div style="font-size:13px;font-weight:500;margin-bottom:4px;line-height:1.4;">${t.name}</div>
+          <div style="font-size:11px;color:#5f5e5a;margin-bottom:10px;line-height:1.4;">${t.kurz}</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;">
+            <span style="font-size:10px;padding:2px 7px;border-radius:4px;background:${catBg};color:#1a1a18;border:1px solid ${catBorder};">${cat}</span>
+            <span style="font-size:10px;padding:2px 7px;border-radius:4px;background:${diffBg};border:1px solid ${diffBorder};">${t.schwierigkeit||'Grundlagen'}</span>
+            <span style="font-size:10px;padding:2px 7px;border-radius:4px;background:#f1efe8;border:1px solid #d3d1c7;">${sectionCount} Abschnitte · ${quizCount} Quiz</span>
+          </div>
+        </div>`;
+    });
+    html += `</div>`;
+  });
+  document.getElementById("med-grid").innerHTML = html;
+}
+
+function showMed(id) {
+  activeMed=id;
+  const t=MED_TOPICS.find(x=>x.id===id);
+  if(!t) return;
+  document.getElementById("med-course-view").style.display="none";
+  const md=document.getElementById("med-detail");
+  md.classList.add("visible");
+
+  // Breadcrumb
+  document.getElementById("med-breadcrumb").innerHTML =
+    `<span style="cursor:pointer;color:#5f5e5a;" onclick="showMedList()">Med. Grundlagen</span>
+     <span style="margin:0 4px;">›</span>
+     <span style="color:#888780;">${t.cat}</span>
+     <span style="margin:0 4px;">›</span>
+     <span style="color:#1a1a18;">${t.name}</span>`;
+
+  // Title + meta
+  document.getElementById("med-title").textContent = t.name;
+  const diffBg = MED_DIFF_COLOR[t.schwierigkeit||"Grundlagen"];
+  const diffBorder = MED_DIFF_BORDER[t.schwierigkeit||"Grundlagen"];
+  const catBg = MED_CAT_COLORS[t.cat]||"#f1efe8";
+  const catBorder = MED_CAT_BORDER[t.cat]||"#d3d1c7";
+  document.getElementById("med-meta").innerHTML =
+    `<span class="tx-meta-badge" style="background:${catBg};border:1px solid ${catBorder};">${t.cat}</span>
+     <span class="tx-meta-badge" style="background:${diffBg};border:1px solid ${diffBorder};">${t.schwierigkeit||'Grundlagen'}</span>
+     ${t.lernziele?`<span class="tx-meta-badge" style="background:#f1efe8;border:1px solid #d3d1c7;">${t.lernziele.length} Lernziele</span>`:''}
+     ${t.quiz?`<span class="tx-meta-badge" style="background:#f1efe8;border:1px solid #d3d1c7;">${t.quiz.length} Quiz-Fragen</span>`:''}`;
+
+  updateMarkBtn();
+  updateMedTopicProgress();
+
+  // Render all content
+  document.getElementById("med-content").innerHTML = renderMedFull(t);
+
+  // TOC
+  if(t.inhalt && t.inhalt.length) {
+    document.getElementById("med-toc").innerHTML = `
+      <div style="background:#f5f4ef;border-radius:10px;padding:12px 16px;border:1px solid #d3d1c7;">
+        <div style="font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Inhaltsverzeichnis</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:4px;">
+          ${t.inhalt.map((s,i)=>`<a href="#med-section-${t.id}-${i}" onclick="event.preventDefault();document.getElementById('med-section-${t.id}-${i}').scrollIntoView({behavior:'smooth',block:'start'})" style="font-size:12px;color:#0C447C;text-decoration:none;padding:2px 0;display:flex;align-items:center;gap:5px;"><span style="color:#b4b2a9;">${i+1}.</span>${s.titel}</a>`).join("")}
+          <a href="#med-lernziele-${t.id}" onclick="event.preventDefault();document.getElementById('med-lernziele-${t.id}').scrollIntoView({behavior:'smooth',block:'start'})" style="font-size:12px;color:#3B6D11;text-decoration:none;padding:2px 0;">📋 Lernziele</a>
+          ${t.quiz?`<a href="#med-quiz-${t.id}" onclick="event.preventDefault();document.getElementById('med-quiz-${t.id}').scrollIntoView({behavior:'smooth',block:'start'})" style="font-size:12px;color:#633806;text-decoration:none;padding:2px 0;">✏ Quiz (${t.quiz.length} Fragen)</a>`:''}
+        </div>
+      </div>`;
+  }
+
+  md.scrollIntoView({behavior:"smooth",block:"start"});
+  updateMedNavBtns();
+}
+
+function updateMedTopicProgress() {
+  if(!activeMed) return;
+  const t = MED_TOPICS.find(x=>x.id===activeMed);
+  if(!t) return;
+  const total = (t.inhalt||[]).length + (t.quiz?1:0) + (t.lernziele?1:0);
+  const done = medRead.has(activeMed) ? total : 0;
+  const el = document.getElementById("med-topic-progress");
+  if(!el) return;
+  el.innerHTML = done===total && total>0 ?
+    `<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#3B6D11;"><span style="display:inline-block;width:16px;height:16px;border-radius:50%;background:#3B6D11;text-align:center;line-height:16px;color:#fff;font-size:9px;">✓</span> Thema abgeschlossen</div>` : "";
+}
+
+function showMedList() {
+  activeMed=null;
+  document.getElementById("med-course-view").style.display="block";
+  document.getElementById("med-detail").classList.remove("visible");
+  renderMedGrid();
+}
+
+function medNavigate(dir) {
+  const idx = MED_TOPICS.findIndex(t=>t.id===activeMed);
+  const next = MED_TOPICS[idx+dir];
+  if(next) showMed(next.id);
+}
+
+function updateMedNavBtns() {
+  const idx = MED_TOPICS.findIndex(t=>t.id===activeMed);
+  const prev = document.getElementById("med-prev-btn");
+  const next = document.getElementById("med-next-btn");
+  if(prev) { prev.disabled=idx===0; prev.style.opacity=idx===0?".4":"1"; prev.textContent = idx>0 ? `← ${MED_TOPICS[idx-1].name}` : "← Vorheriges"; }
+  if(next) { next.disabled=idx===MED_TOPICS.length-1; next.style.opacity=idx===MED_TOPICS.length-1?".4":"1"; next.textContent = idx<MED_TOPICS.length-1 ? `${MED_TOPICS[idx+1].name} →` : "Nächstes →"; }
+}
+
+// ── MASTER RENDER FUNCTION ─────────────────────────────────────
+// Comparison tables for specific topics
+
+
+function renderMedFull(t) {
+  const catBg = MED_CAT_COLORS[t.cat]||"#f1efe8";
+  const catBorder = MED_CAT_BORDER[t.cat]||"#d3d1c7";
+
+  // 1. Lernziele block
+  let html = "";
+  if(t.lernziele && t.lernziele.length) {
+    html += `<div id="med-lernziele-${t.id}" style="margin-bottom:1.5rem;border:1px solid ${catBorder};border-radius:12px;overflow:hidden;background:${catBg};">
+      <div style="padding:10px 16px;border-bottom:1px solid ${catBorder};display:flex;align-items:center;gap:8px;">
+        <span style="font-size:15px;">📋</span>
+        <span style="font-size:13px;font-weight:500;">Lernziele – Was Sie nach diesem Kapitel können</span>
+      </div>
+      <div style="padding:12px 16px;">
+        <ol style="margin:0;padding-left:1.25rem;">
+          ${t.lernziele.map(z=>`<li style="font-size:13px;line-height:1.7;margin-bottom:3px;">${z}</li>`).join("")}
+        </ol>
+      </div>
+    </div>`;
+  }
+
+  // 2. Content sections
+  if(t.inhalt && t.inhalt.length) {
+    t.inhalt.forEach((s, i) => {
+      html += renderMedSection(t, s, i);
+    });
+  }
+
+  // 3. Klinische Relevanz
+  if(t.klinisch) {
+    html += `<div style="margin-bottom:1.5rem;border:1px solid #C0DD97;border-radius:12px;overflow:hidden;background:#EAF3DE;">
+      <div style="padding:10px 16px;border-bottom:1px solid #C0DD97;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:15px;">🏥</span>
+        <span style="font-size:13px;font-weight:500;color:#3B6D11;">Klinische Relevanz für Psychotherapeuten</span>
+      </div>
+      <div style="padding:12px 16px;font-size:13px;line-height:1.75;color:#1a1a18;">${t.klinisch}</div>
+    </div>`;
+  }
+
+  // 3b. Comparison table (topic-specific)
+  if(MED_VERGLEICH[t.id]) {
+    html += MED_VERGLEICH[t.id];
+  }
+
+  // 4. Praktische Anwendung
+  if(t.praxis && t.praxis.length) {
+    html += `<div style="margin-bottom:1.5rem;border:1px solid #FAC775;border-radius:12px;overflow:hidden;background:#FAEEDA;">
+      <div style="padding:10px 16px;border-bottom:1px solid #FAC775;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:15px;">💡</span>
+        <span style="font-size:13px;font-weight:500;color:#633806;">Praktische Anwendung</span>
+      </div>
+      <div style="padding:12px 16px;">
+        <ul style="margin:0;padding-left:1.25rem;">
+          ${t.praxis.map(p=>`<li style="font-size:13px;line-height:1.7;margin-bottom:4px;">${p}</li>`).join("")}
+        </ul>
+      </div>
+    </div>`;
+  }
+
+  // 5. Fallbeispiel
+  if(t.fallbeispiel) {
+    html += `<div style="margin-bottom:1.5rem;border:1px solid #d3d1c7;border-radius:12px;overflow:hidden;background:#fff;">
+      <div style="padding:10px 16px;background:#f1efe8;border-bottom:1px solid #d3d1c7;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:15px;">📂</span>
+        <span style="font-size:13px;font-weight:500;">Fallbeispiel</span>
+      </div>
+      <div style="padding:12px 16px;font-size:13px;line-height:1.75;font-style:italic;color:#2c2c2a;">${t.fallbeispiel}</div>
+    </div>`;
+  }
+
+  // 6. Quiz (inline, after content)
+  if(t.quiz && t.quiz.length) {
+    html += renderMedQuizFull(t);
+  }
+
+  return `<div class="pt1" style="padding-top:0;">${html}</div>`;
+}
+
+// ── Render single section ──────────────────────────────────────
+function renderMedSection(t, s, i) {
+  const catBg = MED_CAT_COLORS[t.cat]||"#f1efe8";
+  const catBorder = MED_CAT_BORDER[t.cat]||"#d3d1c7";
+  return `
+    <div id="med-section-${t.id}-${i}" style="margin-bottom:1.25rem;border:1px solid #d3d1c7;border-radius:12px;overflow:hidden;background:#fff;">
+      <div style="background:#f5f4ef;padding:10px 16px;border-bottom:1px solid #d3d1c7;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:${catBg};border:1px solid ${catBorder};font-size:11px;font-weight:500;color:#1a1a18;flex-shrink:0;">${i+1}</span>
+          <span style="font-size:13px;font-weight:500;">${s.titel}</span>
+        </div>
+        ${s.merke?`<span style="font-size:10px;padding:2px 7px;border-radius:4px;background:#FAEEDA;color:#633806;border:1px solid #FAC775;white-space:nowrap;">★ Merksatz</span>`:''}
+      </div>
+      <div style="padding:14px 16px;font-size:13px;line-height:1.8;color:#1a1a18;">${s.text}</div>
+      ${s.merke?`<div style="margin:0 16px 14px;background:#FAEEDA;border-radius:8px;padding:9px 12px;border-left:3px solid #FAC775;">
+        <div style="font-size:11px;font-weight:500;color:#633806;margin-bottom:3px;">★ Merksatz</div>
+        <div style="font-size:12px;color:#633806;line-height:1.5;">${s.merke}</div>
+      </div>`:''}
+    </div>`;
+}
+
+// ── Full quiz renderer ─────────────────────────────────────────
+function renderMedQuizFull(t) {
+  const qHtml = t.quiz.map((q,qi) => {
+    const opts = q.o.map((opt,oi) =>
+      `<button onclick="medAnswer(${qi},${oi})" id="mq-${qi}-${oi}"
+        style="display:block;width:100%;text-align:left;padding:9px 14px;margin:5px 0;border-radius:8px;border:1px solid #d3d1c7;background:#f5f4ef;cursor:pointer;font-size:13px;font-family:inherit;transition:all .15s;line-height:1.5;">
+        <span style="display:inline-block;min-width:20px;font-weight:500;color:#888780;">${String.fromCharCode(65+oi)}.</span> ${opt}
+      </button>`).join("");
+    return `<div id="mq-block-${qi}" style="margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid #e8e6df;">
+      <div style="font-size:13px;font-weight:500;margin-bottom:.75rem;line-height:1.6;color:#1a1a18;">${qi+1}. ${q.f}</div>
+      <div id="mq-opts-${qi}">${opts}</div>
+      <div id="mq-feedback-${qi}" style="display:none;margin-top:.75rem;font-size:13px;border-radius:8px;padding:10px 14px;line-height:1.6;"></div>
+    </div>`;
+  }).join("");
+
+  return `<div id="med-quiz-${t.id}" style="margin-bottom:1.5rem;border:1px solid #d3d1c7;border-radius:12px;overflow:hidden;background:#fff;">
+    <div style="background:#f1efe8;padding:10px 16px;border-bottom:1px solid #d3d1c7;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:15px;">✏</span>
+        <span style="font-size:13px;font-weight:500;">Wissenscheck – ${t.quiz.length} Fragen</span>
+      </div>
+      <span style="font-size:11px;color:#5f5e5a;">Klicken Sie eine Antwort an</span>
+    </div>
+    <div style="padding:16px;">
+      ${qHtml}
+      <div id="mq-score-${t.id}" style="display:none;text-align:center;padding:1.25rem;background:#EAF3DE;border-radius:10px;border:1px solid #C0DD97;">
+        <div style="font-size:24px;font-weight:500;color:#3B6D11;" id="mq-score-num-${t.id}"></div>
+        <div style="font-size:13px;color:#3B6D11;margin-top:4px;">Quiz abgeschlossen! 🎉</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── Quiz answer handler ────────────────────────────────────────
+const medQuizState = {};
+
+function medAnswer(qi, oi) {
+  if(!activeMed) return;
+  const t = MED_TOPICS.find(x=>x.id===activeMed);
+  if(!t||!t.quiz||!t.quiz[qi]) return;
+  const q = t.quiz[qi];
+  const stateKey = `${activeMed}-${qi}`;
+  if(medQuizState[stateKey]) return;
+  medQuizState[stateKey] = true;
+  const correct = oi === q.r;
+  if(correct) medQuizState[`${activeMed}-${qi}-correct`] = true;
+  const feedbackEl = document.getElementById(`mq-feedback-${qi}`);
+  for(let i=0;i<q.o.length;i++) {
+    const btn = document.getElementById(`mq-${qi}-${i}`);
+    if(!btn) continue;
+    if(i===q.r) { btn.style.background="#EAF3DE"; btn.style.borderColor="#C0DD97"; btn.style.color="#3B6D11"; }
+    else if(i===oi&&!correct) { btn.style.background="#FCEBEB"; btn.style.borderColor="#F7C1C1"; btn.style.color="#791F1F"; }
+    btn.style.cursor="default";
+  }
+  if(feedbackEl) {
+    feedbackEl.style.display="block";
+    feedbackEl.style.background = correct?"#EAF3DE":"#FCEBEB";
+    feedbackEl.style.color = correct?"#3B6D11":"#791F1F";
+    feedbackEl.style.border = `1px solid ${correct?"#C0DD97":"#F7C1C1"}`;
+    feedbackEl.innerHTML = `<strong>${correct?"✓ Richtig!":"✗ Leider falsch."}</strong> ${q.a}`;
+  }
+  const allDone = t.quiz.every((_,i)=>medQuizState[`${activeMed}-${i}`]);
+  if(allDone) {
+    let correctCount = 0;
+    t.quiz.forEach((_,i)=>{ if(medQuizState[`${activeMed}-${i}-correct`]) correctCount++; });
+    const scoreEl = document.getElementById(`mq-score-${activeMed}`);
+    const numEl = document.getElementById(`mq-score-num-${activeMed}`);
+    if(scoreEl) scoreEl.style.display="block";
+    if(numEl) numEl.textContent = `${correctCount} / ${t.quiz.length} richtig`;
+    if(correctCount === t.quiz.length) { medRead.add(activeMed); updateMarkBtn(); medUpdateProgress(); }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// VERLAUF DATA – add to disorders via verlauf field
+// ═══════════════════════════════════════════════════════════════
+// Verlauf is rendered in renderKrit via d.verlauf_data
+
+
+function renderVerlauf(d) {
+  const v = VERLAUF_DB[d.id];
+  if(!v) return "";
+  const rows = [
+    ["⏱ Akutphase", v.akut, "#E6F1FB","#B5D4F4"],
+    ["✓ Remission", v.remission, "#EAF3DE","#C0DD97"],
+    ["⟳ Chronifizierung", v.chronizitaet, "#FAEEDA","#FAC775"],
+    ["↺ Rezidiv/Rückfall", v.rezidiv, "#FCEBEB","#F7C1C1"],
+    ["◈ Prognose", v.prognose, "#EEEDFE","#AFA9EC"]
+  ];
+  return `<div class="section" style="margin-top:.75rem;">
+    <div class="section-title">Krankheitsverlauf & Prognose</div>
+    <div style="overflow-x:auto;border-radius:10px;border:1px solid #d3d1c7;overflow:hidden;">
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <tbody>
+          ${rows.map(([label,val,bg,border],i)=>`
+            <tr style="${i<rows.length-1?'border-bottom:1px solid #e8e6df;':''}">
+              <td style="padding:9px 12px;font-weight:500;white-space:nowrap;width:150px;background:${bg};border-right:2px solid ${border};vertical-align:top;">${label}</td>
+              <td style="padding:9px 12px;line-height:1.6;background:${i%2===0?'#fff':'#fafaf8'};">${val}</td>
+            </tr>`).join("")}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+// ── Patch renderKrit to include verlauf table ──────────────────
+const _origRenderKrit = renderKrit;
+renderKrit = function(d) {
+  const base = _origRenderKrit(d);
+  const vt = renderVerlauf(d);
+  if(!vt) return base;
+  // Insert before the last </div> of the base
+  const lastDiv = base.lastIndexOf('</div>');
+  return base.substring(0, lastDiv) + vt + base.substring(lastDiv);
+};
+
+// ── Extend QTYPES and buildCards ───────────────────────────────
+QTYPES.push("Krankheitsverlauf","Med. Grundlagen: Neurobiologie","Med. Grundlagen: Pharmakologie","AAP Prüfungsfragen");
+
+const _origBuildCards = buildCards;
+buildCards = function(disorders) {
+  const cards = _origBuildCards(disorders);
+  // Krankheitsverlauf cards
+  disorders.forEach(d => {
+    const v = VERLAUF_DB[d.id];
+    if(v) cards.push({cat:d.name, qtype:"Krankheitsverlauf",
+      q:`Beschreiben Sie Akutphase, Remission, Chronifizierungsrisiko und Prognose der ${d.name}.`,
+      a:`<table style="font-size:12px;width:100%;border-collapse:collapse;">` +
+        [["Akutphase",v.akut],["Remission",v.remission],["Chronifizierung",v.chronizitaet],["Rezidiv",v.rezidiv],["Prognose",v.prognose]]
+        .map(([k,val]) => `<tr><td style="font-weight:500;padding:3px 8px 3px 0;white-space:nowrap;vertical-align:top;">${k}:</td><td style="padding:3px 0;line-height:1.5;">${val}</td></tr>`)
+        .join("") + `</table>`
+    });
+  });
+  // Med. Grundlagen Neurobiologie cards
+  MED_TOPICS.forEach(t => {
+    (t.inhalt||[]).slice(0, 4).forEach(s => {
+      cards.push({cat:"Med. Grundlagen", qtype:"Med. Grundlagen: Neurobiologie",
+        q:`Was versteht man unter „${s.titel}"? (Thema: ${t.name})`,
+        a:`<div style="font-size:13px;line-height:1.65;">${s.text}</div>` +
+          (s.merke ? `<div style="margin-top:8px;background:#FAEEDA;border-radius:6px;padding:6px 10px;font-size:12px;color:#633806;"><strong>★ Merksatz:</strong> ${s.merke}</div>` : "")
+      });
+    });
+  });
+  // Pharmakologie Wechselwirkungen cards
+  Object.keys(PHARMA_DB).forEach(did => {
+    PHARMA_DB[did].forEach(drug => {
+      cards.push({cat:"Med. Grundlagen", qtype:"Med. Grundlagen: Pharmakologie",
+        q:`Nennen Sie die wichtigsten Wechselwirkungen und Kontraindikationen von ${drug.name} (${drug.klasse}).`,
+        a:`<div style="font-size:12px;margin-bottom:6px;"><strong>Wechselwirkungen:</strong> ${drug.ww}</div>` +
+          `<div style="font-size:12px;color:#633806;margin-bottom:6px;"><strong>KI:</strong> ${drug.ki}</div>` +
+          (drug.hinweis ? `<div style="font-size:12px;color:#5f5e5a;">⚠ ${drug.hinweis}</div>` : "")
+      });
+    });
+  });
+
+  // AAP Prüfungsfragen – Angststörungen (Lorenz 2025)
+  const AAP_CARDS = [{cat:"Angststörungen",qtype:"Epidemiologie",tags:["aap","Angststörungen"],q:"Wie hoch ist die 1-Jahres-Prävalenz von Angststörungen in Deutschland und den USA?",a:"<b>Deutschland:</b> 15,3% · <b>USA:</b> 18,1% (Jacobi et al. 2014; Kessler et al. 2005). Panikstörung + Agoraphobie: 2–4%. Geschlechterverhältnis Frauen:Männer = 2:1. Ca. 83% haben mindestens eine weitere psychische Störung. Nur ca. 18% erhalten psychotherapeutische Behandlung."},{cat:"Angststörungen",qtype:"Epidemiologie",tags:["aap","Angststörungen"],q:"Geben Sie Lifetime- und 1-Jahres-Prävalenzen der wichtigsten Angststörungen an.",a:"<table style='font-size:12px;border-collapse:collapse;width:100%;'><tr style='background:#f1efe8;'><th style='padding:4px 8px;text-align:left;'>Störung</th><th style='padding:4px 8px;'>Lifetime</th><th style='padding:4px 8px;'>1-Jahres</th></tr><tr><td style='padding:4px 8px;'>Spezifische Phobie</td><td style='padding:4px 8px;text-align:center;'>8%</td><td style='padding:4px 8px;text-align:center;'>4–10%</td></tr><tr style='background:#fafaf8;'><td style='padding:4px 8px;'>Panikstörung m. Agoraphobie</td><td style='padding:4px 8px;text-align:center;'>2–4%</td><td style='padding:4px 8px;text-align:center;'>2–3%</td></tr><tr><td style='padding:4px 8px;'>Soziale Phobie</td><td style='padding:4px 8px;text-align:center;'>4–12%</td><td style='padding:4px 8px;text-align:center;'>2%</td></tr><tr style='background:#fafaf8;'><td style='padding:4px 8px;'>Generalisierte Angststörung</td><td style='padding:4px 8px;text-align:center;'>4–6%</td><td style='padding:4px 8px;text-align:center;'>2%</td></tr><tr><td style='padding:4px 8px;'>Zwangsstörung</td><td style='padding:4px 8px;text-align:center;'>2%</td><td style='padding:4px 8px;text-align:center;'>3,8%</td></tr></table>"},{cat:"Angststörungen",qtype:"Differenzialdiagnosen",tags:["aap","Angststörungen"],q:"Was unterscheidet die verschiedenen Angststörungen hinsichtlich ihrer zentralen Befürchtungen?",a:"<b>Spezifische Phobie:</b> keine konkreten Befürchtungen (implizit konditioniert) · <b>Panikstörung:</b> Versagen des Körpers (Herzinfarkt, Schlaganfall, Ohnmacht, Verrücktwerden) – 1–2 konkrete Krankheitsbilder · <b>Agoraphobie:</b> Keine Fluchtmöglichkeit / Hilfe kommt nicht rechtzeitig · <b>Soziale Phobie:</b> Negative Bewertung durch andere (dumm, lächerlich, unzulänglich) · <b>GAD:</b> Unkontrollierbare, übermäßige Sorgen in ≥2 Bereichen (Familie, Finanzen, Gesundheit, Job)"},{cat:"Angststörungen",qtype:"Differenzialdiagnosen",tags:["aap","Angststörungen"],q:"Was ist das Kernmerkmal der sozialen Phobie, das sie von der Agoraphobie unterscheidet?",a:"Bei der <b>Sozialen Phobie</b> ist die Befürchtung spezifisch die <b>negative Bewertung durch andere</b> Menschen. Die Angst ist an soziale Beurteilungssituationen gebunden. Die Agoraphobie hingegen dreht sich um die Unmöglichkeit zu fliehen oder Hilfe zu bekommen – ohne sozialen Bewertungsaspekt."},{cat:"Angststörungen",qtype:"VT-Interventionen",tags:["aap","Angststörungen"],q:"Welche Konfrontationstypen gibt es und wie unterscheiden sie sich (in sensu/in vivo × graduiert/massiert)?",a:"<table style='font-size:12px;border-collapse:collapse;width:100%;'><tr style='background:#f1efe8;'><th></th><th style='padding:4px 8px;'>Graduiert</th><th style='padding:4px 8px;'>Massiert</th></tr><tr><td style='padding:4px 8px;font-weight:500;'>In sensu</td><td style='padding:4px 8px;'>Habituation in sensu</td><td style='padding:4px 8px;'>Implosion</td></tr><tr style='background:#fafaf8;'><td style='padding:4px 8px;font-weight:500;'>In vivo</td><td style='padding:4px 8px;'>Angstbewältigungstraining</td><td style='padding:4px 8px;'><b>Flooding</b> (Schwerpunkt wenn möglich)</td></tr><tr><td style='padding:4px 8px;font-weight:500;'>Graduiert + Entspannung</td><td style='padding:4px 8px;'>Systematische Desensibilisierung</td><td></td></tr></table><br>Ausnahme: Spezifische Phobie immer graduiert (nie massiert – Dissoziationsgefahr!); BSV-Phobie: immer gestuft + Applied Tension."},{cat:"Angststörungen",qtype:"VT-Interventionen",tags:["aap","Angststörungen"],q:"Was sind die 4 Vermeidungsstrategietypen und welche langfristigen Konsequenzen haben sie?",a:"<b>1. Flucht:</b> Angst kurz ↓, aber Erwartungsangst ↑, Körper lernt Situation ist gefährlich · <b>2. Ablenkung</b> (Musik, Atmung, Handy): Angst ↓, Situation bewältigt – aber immer neue Ablenkungen nötig · <b>3. Hilfsmittel/Hilfspersonen</b> (Wasserflasche, Partner): Abhängigkeiten entstehen · <b>4. Vermeidung:</b> Angst nicht da – aber massive psychosoziale Einschränkungen. <b>Alle 4 Typen:</b> helfen kurzfristig, halten Angst langfristig aufrecht und erhöhen Erwartungsangst!"},{cat:"Angststörungen",qtype:"VT-Interventionen",tags:["aap","Angststörungen"],q:"Was sind die Voraussetzungen für Expositionstherapie (Kontraindikationen/Voraussetzungen)?",a:"<b>Voraussetzungen:</b> Somatische Abklärung (Herz, Gefäße, Schilddrüse, Hirn, Asthma, Aneurysmen) · Keine akute Psychose · Keine Schwangerschaft (bei Exposition) · Therapie- und Veränderungsmotivation vorhanden. <b>Medikamentös:</b> Benzodiazepine kontraindiziert (Abhängigkeitsrisiko, Rebound, verhindert Habituation); Antidepressiva (z.B. Sertralin) können Daueranspannung statt Panikattacken erzeugen."},{cat:"Angststörungen",qtype:"VT-Interventionen",tags:["aap","Angststörungen"],q:"Welche Eigenschaften soll leitliniengerechte Expositionstherapie aufweisen (6 Kriterien nach Craske et al./Rief)?",a:"<b>1. Intensiv</b> · <b>2. Multiple Kontexte</b> (3–4 verschiedene Kontexte exponieren damit Erfahrung generalisiert) · <b>3. Häufig</b> (im besten Fall täglich; 1× die Woche reicht nicht) · <b>4. Begleitet</b> (Therapeutin zunächst dabei; korrekte Ausführung sichern) · <b>5. Zeitoffen</b> (kein Zeitlimit; kein 'Retten über die Zeit') · <b>6. Nah an Befürchtung</b> (befürchtungsnahe Konfrontation; Verhaltensexperiment)"},{cat:"Angststörungen",qtype:"VT-Interventionen",tags:["aap","Angststörungen"],q:"Wie wird das Expositionsrational über das Gedankenexperiment hergeleitet?",a:"<b>Prinzip:</b> Schlimmstmögliche Situation ohne zeitliche/physische/moralische Grenzen durchspielen, ohne Vermeidung/Sicherheitsverhalten, ohne Sterben. Patient notiert: Angstverlauf über Zeit, Symptome, Befürchtungen. <b>Haltung Th.:</b> Kritisch, jede Veränderung hinterfragen ('Warum soll das besser werden? Die Situation ist doch gleich.'). <b>Wichtig:</b> Habituation/Widerlegung NICHT verraten – Patient muss selbst darauf kommen. Hilfsmittel: Timeshift ('Sie spüren seit 3 Tagen, dass Sie gleich einen Herzinfarkt bekommen?')"},{cat:"Angststörungen",qtype:"Neurobiologisches Modell",tags:["aap","Angststörungen"],q:"Erklären Sie den physiologischen Sinn von 5 typischen Angstsymptomen.",a:"<b>Palpitationen/Herzrasen:</b> Erhöhte Sauerstoff-/Nährstoffverteilung · <b>Hyperventilation/Luftnot:</b> Erhöhter O₂-Bedarf, zu viel CO₂-Abatmung → Pfötchenstellung, Kribbeln · <b>Schwitzen:</b> Überhitzungsschutz (Muskelwärme) · <b>Übelkeit/Durchfall/Kloß im Hals:</b> Abschaltung Verdauung (Ballastabwurf) + keine Speichelproduktion = Globusgefühl · <b>Kalte Hände/Füße:</b> Zentralisierung des Blutflusses zu Organen/großen Muskeln (Verblutungsschutz)"},{cat:"Angststörungen",qtype:"Neurobiologisches Modell",tags:["aap","Angststörungen"],q:"Was ist die Zwei-Faktoren-Theorie der Angst (Mowrer 1960) und was ist ihre klinische Einschränkung?",a:"<b>1. Faktor:</b> Klassische Konditionierung – neutraler Reiz wird mit Angst assoziiert · <b>2. Faktor:</b> Operante Konditionierung – Vermeidung führt zu Angstreduktion (negative Verstärkung) → Aufrechterhaltung. <b>Einschränkungen:</b> (1) Kognitive Komponenten ausgeblendet; (2) Die meisten Patienten erinnern sich nicht an das ursprüngliche Konditionierungsereignis. <b>Dr. Lorenz:</b> 'Eher nutzlos für Patienten, aber wichtig für Approbationsprüfung.'"},{cat:"Panikstörung / Agoraphobie",qtype:"VT-Interventionen",tags:["aap","Angststörungen"],q:"Beschreiben Sie die interozeptive Exposition bei Panikstörung: Übungen, Auswertung, Hausaufgabe.",a:"<b>Übungen:</b> Kopfschütteln (60s), Vorne auf Stuhlkante sitzen dann hochschnellen, Treppensteigen/Joggen, Ausatmen-Luftanhalten, alles anspannen, schnelles Atmen (Hecheln), Nase halb zudrücken, 1 Min. nicht blinzeln. <b>Therapeutin macht mit!</b> <b>2 Ergebnisvarianten:</b> (a) Symptomstärke = Angststärke → Exposition lockert Verbindung; (b) Symptomstärke > Angststärke → Pat. erkennt: er erzeugt Symptome selbst → kein Bedrohungsgefühl, erstes Erfolgserlebnis. <b>Hausaufgabe:</b> 3× täglich in verschiedenen Kontexten. Cave: Kiss-Syndrom → kein Kopfschütteln; Epilepsie → kein Starren."},{cat:"Panikstörung / Agoraphobie",qtype:"VT-Interventionen",tags:["aap","Angststörungen"],q:"Was sind die No-Go's bei der Exposition in vivo?",a:"<b>Verboten:</b> Absprachen brechen · Shoppen gehen während Patient Panik schiebt · Patient im Panikraum vergessen · Plaudern · Selbst in Panik verfallen · Zu früh abbrechen · Patient beruhigen (Motivation ja – Relativieren nein!)"},{cat:"Panikstörung / Agoraphobie",qtype:"VT-Interventionen",tags:["aap","Angststörungen"],q:"Wie unterscheiden sich Herzinfarkt und Panikattacke symptomatisch?",a:"<b>Herzinfarkt:</b> Große Schwäche, Brustschmerzen, Brennen in der Brust, Reißen die Arme entlang, Schmerzen zwischen Schulterblättern, Atemnot, schleichend, steigend mit Anstrengung · <b>Panikattacke:</b> Unscharfes Sehen, Symptome weniger stark, Herzrasen, Schwitzen/Hitzewellen, Zittern, Magenprobleme, Schwindel, schnelle oberflächliche Atmung, plötzlich, in Ruhe- UND Anstrengungsphasen"},{cat:"Panikstörung / Agoraphobie",qtype:"Epidemiologie",tags:["aap","Angststörungen"],q:"Wie hoch sind Responderraten bei Expositionstherapie und was sind Non-Response-Prädiktoren?",a:"<b>Responder-Rate:</b> 55–66% (Wambach & Rief 2012; Taylor et al. 2012). → 33–45% Non-Responder. <b>Non-Response-Prädiktoren:</b> Getrenntlebend/Geschieden/Verwitwet (Faktor 2,8↑) · Hohes Alter · Gut ausgebildet (abgeschlossene Lehre oder noch in Ausbildung) · Hohe Angst vor körperlichen Krisen · Hohe Mobilitätsvermeidung allein · <b>Nicht signifikant:</b> Geschlecht, Schulabschluss, Komorbiditäten, Störungsdauer. <b>Katamnese:</b> Nach 8 Jahren bleiben 77% rückfallsfrei (Fava et al. 2001)!"},{cat:"Spezifische Phobie",qtype:"VT-Interventionen",tags:["aap","Angststörungen"],q:"Was ist bei der BSV-Phobie das besondere Problem und wie wird die Exposition modifiziert?",a:"<b>Problem:</b> Biphasische vasovagale Reaktion: (1) Herzrate/Blutdruck steigen durch Angst, dann (2) rapider Abfall (Verblutungsschutz) → tatsächliche Ohnmacht möglich. Bei Ohnmacht: keine Habituation möglich! <b>Lösung:</b> Applied Tension (Öst & Sterner 1987) = PMR nur OHNE Lockerlassen. <b>Effekt:</b> Verhindert 90% der Ohnmachtsanfälle. <b>Exposition daher:</b> gestuft (nie massiert), mit Applied Tension."},{cat:"Spezifische Phobie",qtype:"VT-Interventionen",tags:["aap","Angststörungen"],q:"Was ist Guided Mastery nach Ritter (1969) und welche Elemente enthält es?",a:"<b>Guided Mastery</b> ist die Methode der Wahl bei spezifischer Phobie (Ritter 1969 – In-vivo deutlich effektiver als Modelllernen). Elemente: <b>Unteraufgaben/Zwischenziele</b> (erst weit weg vom Objekt, dann annähern) · <b>Tätliche Unterstützung</b> (z.B. am Arm führen) · <b>Gestufte Dauer</b> (immer länger exponieren) · <b>Modelllernen</b> (Th. führt Aufgabe zuerst aus) · <b>Sicherheitsverhalten unterbinden</b> · <b>Variierende Ausführung</b> (verschiedene Situationen). Cave: immer gestuft – nie massiert (Dissoziationsgefahr)!"},{cat:"Spezifische Phobie",qtype:"Klinischer Hinweis",tags:["aap","Angststörungen"],q:"Was sind die klinischen Besonderheiten der Emetophobie?",a:"<b>Kernmerkmal:</b> Angst vor dem Erbrechen selbst (nicht vor Folgen). Häufige Komorbiditäten: Nahrungsrestriktion (→ DD Essstörung bei hochkalorischen Lebensmitteln), massive Hygiene (→ DD Zwangsstörung). Sehr häufig mit histrionischer PS assoziiert. <b>Exposition:</b> Befürchtungen widerlegen durch Vermeidung unterlassen; Bilder/Videos bis zur Habituation. Erbrechen induzieren hilft oft nicht (wie Herzinfarkt bei Panikstörung)."},{cat:"Soziale Angststörung",qtype:"VT-Interventionen",tags:["aap","Angststörungen"],q:"Warum ist Gesprächsführung bei sozialer Phobie besonders herausfordernd und wie passen Therapeuten sie an?",a:"<b>Problem:</b> Symptome beeinflussen direkt die Kommunikation; Bewertungsängste gelten auch für Therapeutin; Lob wird ggf. nicht geglaubt. <b>Anpassungen:</b> Ängste und Befürchtungen antizipieren und offen ansprechen · Entpathologisieren ('kenn ich schon') · Zu Beginn mehr psychoedukativ, wenig geleitetes Entdecken (keine Prüfungssituation!) · Sachliche störungsbezogene Informationen geben ('Pause' von Interaktionsverhalten)"},{cat:"Soziale Angststörung",qtype:"VT-Interventionen",tags:["aap","Angststörungen"],q:"Warum sollen Shame Attacks bei sozialer Phobie vermieden werden?",a:"<b>Shame Attacks</b> (z.B. mit Zahnbürste Gassi gehen, mit Salami am Ohr telefonieren): Früher Methode der Wahl. <b>Problem:</b> Sie fallen tatsächlich negativ auf und bestärken Befürchtungen und negative Selbstüberzeugungen statt sie zu widerlegen. Daher: lieber lassen! Stattdessen: realitätsnähere Verhaltensexperimente die Befürchtungen direkt testen."},{cat:"Soziale Angststörung",qtype:"Neurobiologisches Modell",tags:["aap","Angststörungen"],q:"Was ist Behavioral Inhibition (Kagan 1987) und welche Rolle spielt SKT?",a:"<b>Behavioral Inhibition:</b> Genetisch bedingte Tendenz, auf Neues scheu und gehemmt zu reagieren. <b>Preparedness:</b> Evolutionär begründete Tendenz, Angst vor kritischen/abwertenden Personen zu entwickeln. <b>Soziale Lerntheorie:</b> Soziale Phobie als Folge von Defiziten in sozialen Kompetenzen – ABER: in 50% der Fälle liegen gar keine Defizite vor! Sondern: Hemmung vorhandener Kompetenzen. <b>Konsequenz:</b> SKT nur bei tatsächlichem Defizit! Sonst: Exposition + kognitive Umstrukturierung."},{cat:"Generalisierte Angststörung",qtype:"VT-Interventionen",tags:["aap","Angststörungen"],q:"Erklären Sie das Sorgenmodell der GAD: Warum sind Sorgen Vermeidungsverhalten?",a:"<b>Mechanismus:</b> Wahrgenommene Bedrohung erzeugt physiologische Erregung → Sorgen sind kognitiv und verbal (nicht bildhaft) und wirken dieser Erregung entgegen (Illusion der Kontrolle) → je mehr Sorgen, desto mehr wahrgenommene 'Gefahr' → Teufelskreis. <b>Metakognitionen (Wells 2004):</b> Typ 1: 'Wenn ich mich genug sorge, bin ich vorbereitet' (positive MK) · Typ 2: 'Sorgen schädigen mich' (negative MK). <b>Sorgenketten:</b> Springen von Thema zu Thema ohne Abschluss."},{cat:"Generalisierte Angststörung",qtype:"VT-Interventionen",tags:["aap","Angststörungen"],q:"Was ist der Sorgenentscheidungsbaum und wann wird Sorgenkonfrontation vs. Problemlösetraining eingesetzt?",a:"<b>Baum:</b> Nicht belastend → kein Problem. Belastend + kontrollierbar → Problemlösetraining. Belastend + unkontrollierbar → Übermäßig? Nein → kein Problem. Ja → <b>Sorgenkonfrontation.</b> <b>Sorgenkonfrontation:</b> Sorgenskript (Ich-Form, Präsens, alle Sinneswahrnehmungen, bis zur Katastrophe). Hausaufgabe: täglich aufsprechen und abhören. <b>Nicht kombinierbar</b> mit Angewandter Entspannung (konträre Ansätze)!"},{cat:"Generalisierte Angststörung",qtype:"Klinischer Hinweis",tags:["aap","Angststörungen"],q:"Wann ist Angewandte Entspannung (Öst) bei GAD indiziert und welche Stufenfolge hat sie?",a:"<b>Indiziert wenn:</b> Körperliche Symptome im Vordergrund ODER Sorgenexposition nicht möglich ODER Schwangerschaft. Cave: hohe Abbruchrate; NICHT mit Sorgenkonfrontation kombinierbar! <b>Stufenfolge:</b> PMR-Langform → Muskelgruppen zusammenfassen → Entspannung ohne Anspannung (5–7 min) → Mit Selbstinstruktion (Hinweiswort, 2–5 min) → In allen Lagen (verschiedene Orte/Haltungen, 1–2 min) → Schnelle Entspannung (20–30 sek) → Anwendung bei Sorge (Finger heben wenn Angst kommt → entspannen)"}];
+  // Add to cards pool
+  AAP_CARDS.forEach(c => cards.push(c));
+  // AAP Flashcards (with tags)
+  if(typeof AAP_FLASHCARDS !== 'undefined') {
+    AAP_FLASHCARDS.forEach(c => cards.push(c));
+  }
+  return cards;
+};
+
+
+// ═══════════════════════════════════════════════════════════════
+// EXPORT / IMPORT – Lernfortschritt & Favoriten
+// ═══════════════════════════════════════════════════════════════
+
+// FILE SYSTEM ACCESS API – Automatisches Speichern in JSON-Datei
+// ═══════════════════════════════════════════════════════════════
+// Funktioniert in Chrome/Edge (File System Access API).
+// Firefox-Fallback: automatischer Download bei jeder Änderung.
+
+let _fileHandle = null;       // FileSystemFileHandle
+let _saveTimer = null;        // Debounce-Timer
+let _saving = false;
+let _fsa_supported = typeof window !== 'undefined' && 'showOpenFilePicker' in window;
+
+// ── Banner-Helpers ────────────────────────────────────────────
+function _setBanner(state, label) {
+  const b = document.getElementById('storage-banner');
+  const l = document.getElementById('storage-label');
+  const btnSave = document.getElementById('btn-save-now');
+  const btnDisc = document.getElementById('btn-disconnect');
+  const btnOpen = document.getElementById('btn-open-file');
+  if (!b) return;
+  b.className = state ? 'connected' : '';
+  if (b && state === 'saving') b.className = 'saving';
+  if (b && state === 'error') b.className = 'error';
+  if (l) l.textContent = label;
+  if (btnSave) btnSave.style.display = _fileHandle ? 'inline-block' : 'none';
+  if (btnDisc) btnDisc.style.display = _fileHandle ? 'inline-block' : 'none';
+  if (btnOpen) btnOpen.textContent = _fileHandle ? '📂 Datei wechseln' : '📂 Datei öffnen / anlegen';
+}
+
+// ── Daten zusammenstellen ─────────────────────────────────────
+function _buildUserData() {
+  return {
+    version: 2,
+    saved: new Date().toISOString(),
+    srs: srsData || {},
+    streak: (() => { try { return JSON.parse(localStorage.getItem(SRS_STREAK_KEY) || '{"count":0,"last":""}'); } catch(e) { return {count:0,last:''}; } })(),
+    favorites: [...favoritesMap.entries()]
+  };
+}
+
+// ── Daten laden ───────────────────────────────────────────────
+function _applyUserData(data) {
+  if (!data || !data.version) return;
+  // SRS
+  if (data.srs) { srsData = data.srs; }
+  // Streak
+  if (data.streak) { try { localStorage.setItem(SRS_STREAK_KEY, JSON.stringify(data.streak)); } catch(e) {} }
+  // Favorites
+  if (data.favorites) {
+    favoritesMap.clear();
+    data.favorites.forEach(([k,v]) => favoritesMap.set(k,v));
+    try { localStorage.setItem('psych_fav_v1', JSON.stringify(data.favorites)); } catch(e) {}
+  }
+}
+
+// ── In Datei schreiben (FSA) ──────────────────────────────────
+async function _writeToFile() {
+  if (!_fileHandle) return false;
+  try {
+    _saving = true;
+    _setBanner('saving', '💾 Speichert…');
+    const writable = await _fileHandle.createWritable();
+    await writable.write(JSON.stringify(_buildUserData(), null, 2));
+    await writable.close();
+    _saving = false;
+    const name = _fileHandle.name || 'lernfortschritt.json';
+    _setBanner('connected', '✓ Automatisch gespeichert in ' + name);
+    return true;
+  } catch(e) {
+    _saving = false;
+    _setBanner('error', '⚠ Fehler beim Speichern: ' + e.message);
+    return false;
+  }
+}
+
+// ── Debounced Auto-Save ───────────────────────────────────────
+function autoSave() {
+  if (!_fileHandle) {
+    // Kein File Handle: nur localStorage (wie bisher)
+    return;
+  }
+  if (_saveTimer) clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(async () => {
+    await _writeToFile();
+  }, 800); // 800ms Debounce – mehrere schnelle Änderungen werden gebündelt
+}
+
+// ── Datei öffnen oder anlegen ─────────────────────────────────
+async function openStorageFile() {
+  if (!_fsa_supported) {
+    // Firefox-Fallback: Import-Dialog
+    alert('Ihr Browser unterstützt die automatische Datei-Anbindung nicht (Chrome/Edge empfohlen).\n\nNutzen Sie den Backup-Export/Import.');
+    return;
+  }
+  try {
+    // Versuche existierende Datei zu öffnen
+    const [handle] = await window.showOpenFilePicker({
+      types: [{ description: 'Lernfortschritt JSON', accept: { 'application/json': ['.json'] } }],
+      multiple: false
+    });
+    _fileHandle = handle;
+    // Datei lesen und Daten laden
+    const file = await handle.getFile();
+    const text = await file.text();
+    try {
+      const data = JSON.parse(text);
+      _applyUserData(data);
+      // UI aktualisieren
+      const dis = getFcDisorders();
+      const allCards = buildCards(dis).filter(c => fcConfig.qtypes.has(c.qtype));
+      srsUpdateUI(allCards);
+      updateFavBadge();
+      _setBanner('connected', '✓ Verbunden: ' + handle.name + ' – wird automatisch gespeichert');
+    } catch(e) {
+      _setBanner('error', '⚠ Datei konnte nicht gelesen werden: ' + e.message);
+    }
+    // Dateinamen in localStorage merken (für Info-Anzeige)
+    try { localStorage.setItem('psych_last_file', handle.name); } catch(e) {}
+  } catch(e) {
+    if (e.name !== 'AbortError') {
+      // Neue Datei anlegen
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: 'lernfortschritt_psychiatrie.json',
+          types: [{ description: 'Lernfortschritt JSON', accept: { 'application/json': ['.json'] } }]
+        });
+        _fileHandle = handle;
+        await _writeToFile();
+        _setBanner('connected', '✓ Neue Datei angelegt: ' + handle.name + ' – wird automatisch gespeichert');
+        try { localStorage.setItem('psych_last_file', handle.name); } catch(err) {}
+      } catch(e2) {
+        if (e2.name !== 'AbortError') {
+          _setBanner('error', '⚠ Konnte keine Datei anlegen: ' + e2.message);
+        }
+      }
+    }
+  }
+}
+
+// ── Manuell speichern ─────────────────────────────────────────
+async function saveNow() {
+  if (_fileHandle) {
+    await _writeToFile();
+  } else {
+    exportUserData(); // Fallback: Download
+  }
+}
+
+// ── Datei trennen ─────────────────────────────────────────────
+function disconnectFile() {
+  _fileHandle = null;
+  try { localStorage.removeItem('psych_last_file'); } catch(e) {}
+  _setBanner(false, 'Keine Datei verbunden');
+}
+
+// ── Init: letzte Datei anzeigen ───────────────────────────────
+(function initStorageBanner() {
+  const last = (() => { try { return localStorage.getItem('psych_last_file'); } catch(e) { return null; } })();
+  if (last) {
+    _setBanner(false, 'Zuletzt: ' + last + ' – bitte wieder verbinden');
+  } else {
+    _setBanner(false, _fsa_supported
+      ? 'Keine Datei verbunden – Daten nur im Browser-Cache'
+      : 'Browser ohne Auto-Speicher (Firefox) – Backup-Export nutzen');
+  }
+})();
+
+
+function exportUserData() {
+  try {
+    const data = {
+      version: 1,
+      exported: new Date().toISOString(),
+      srs: JSON.parse(localStorage.getItem('psych_srs_v1') || '{}'),
+      streak: JSON.parse(localStorage.getItem('psych_srs_streak_v1') || '{"count":0,"last":""}'),
+      favorites: JSON.parse(localStorage.getItem('psych_fav_v1') || '[]'),
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'lernfortschritt_' + new Date().toISOString().slice(0,10) + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch(e) { alert('Export fehlgeschlagen: ' + e.message); }
+}
+
+function importUserData(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.version || !data.srs) throw new Error('Ungültiges Format');
+      if (!confirm('Lernfortschritt und Favoriten aus Datei laden? Bestehende Daten werden überschrieben.')) return;
+      localStorage.setItem('psych_srs_v1', JSON.stringify(data.srs));
+      if (data.streak) localStorage.setItem('psych_srs_streak_v1', JSON.stringify(data.streak));
+      if (data.favorites) localStorage.setItem('psych_fav_v1', JSON.stringify(data.favorites));
+      // Reload favorites into map
+      favoritesMap.clear();
+      (data.favorites||[]).forEach(([k,v]) => favoritesMap.set(k,v));
+      srsLoad();
+      // Refresh UI
+      const dis = getFcDisorders();
+      const allCards = buildCards(dis).filter(c => fcConfig.qtypes.has(c.qtype));
+      srsUpdateUI(allCards);
+      updateFavBadge();
+      alert('Import erfolgreich! ' + Object.keys(data.srs).length + ' Karteikarten-Einträge geladen.');
+    } catch(err) { alert('Import fehlgeschlagen: ' + err.message); }
+  };
+  reader.readAsText(file);
+}
+
+// Init
+initDisorders();
+</script>
+</body>
+</html>
