@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "saved": "2026-06-07T08:03:42.007Z",
+  "saved": "2026-06-07T10:04:03.880Z",
   "srs": {},
   "streak": {
     "count": 0,
@@ -14,7 +14,7 @@
         "idx": 0,
         "cardName": "Durch den Raum gehen",
         "methodName": "Angewandte Improvisation",
-        "kat": "Impro – Präsenz"
+        "kat": "Impro â PrÃ¤senz"
       }
     ],
     [
@@ -25,6 +25,16 @@
         "cardName": "Mentalisierungs-Stop & Rewind",
         "methodName": "MBT",
         "kat": "Kernintervention"
+      }
+    ],
+    [
+      "cft::1",
+      {
+        "methodId": "cft",
+        "idx": 1,
+        "cardName": "Mitfühlende Brief-Schreiben",
+        "methodName": "CFT",
+        "kat": "Schreiben"
       }
     ]
   ]
