@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="de">
+<head><meta charset="UTF-8"><title>Lernplattform – Anleitung</title>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:720px;margin:2rem auto;padding:0 1.5rem;color:#1a1a18;line-height:1.6;background:#fafaf8}
+  h1{font-size:22px;font-weight:600;margin-bottom:.25rem}
+  h2{font-size:15px;font-weight:600;margin:1.5rem 0 .5rem;border-bottom:1px solid #e8e6df;padding-bottom:4px}
+  code{background:#f1efe8;padding:1px 5px;border-radius:4px;font-size:13px;font-family:'SF Mono',Consolas,monospace}
+  pre{background:#f1efe8;border-radius:8px;padding:12px 16px;font-size:13px;overflow-x:auto}
+  .file{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;background:#fff;border:1px solid #e8e6df;border-radius:8px;margin:6px 0}
+  .file-name{font-weight:600;font-size:13px;white-space:nowrap;min-width:260px}
+  .file-desc{font-size:13px;color:#5f5e5a}
+  .tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+  .tag-data{background:#e6f0fb;color:#1a5fa8}
+  .tag-app{background:#e6f5ec;color:#1a6b3a}
+  .tag-all{background:#f1efe8;color:#5f5e5a}
+  ul li{margin:.3rem 0}
+  .warn{background:#fdf3dc;border:1px solid #f0b429;border-radius:8px;padding:10px 14px;font-size:13px}
+</style>
+</head>
+<body>
+<h1>🧠 Psychotherapie Lernplattform</h1>
+<p style="color:#5f5e5a;font-size:14px">Struktur &amp; Update-Anleitung — Stand Mai 2026</p>
+
+<h2>Dateien</h2>
+<div class="file">
+  <div class="file-name">📄 psychiatrie_daten.js <span class="tag tag-data">Daten</span></div>
+  <div class="file-desc">Alle Inhaltsdaten: Störungsbilder, Therapieverfahren, Gruppen, Techniken, Med. Grundlagen, AAP-Karten. <strong>Nur diese Datei</strong> für inhaltliche Updates bearbeiten. 604 KB.</div>
+</div>
+<div class="file">
+  <div class="file-name">🖥 psychiatrie_app.html <span class="tag tag-app">App</span></div>
+  <div class="file-desc">App-Logik, CSS und HTML-Struktur. Lädt <code>psychiatrie_daten.js</code> automatisch. Beide Dateien müssen im selben Ordner liegen. Funktioniert in Firefox direkt; in Chrome über lokalen Server.</div>
+</div>
+<div class="file">
+  <div class="file-name">📦 psychiatrie_lernplattform.html <span class="tag tag-all">Standalone</span></div>
+  <div class="file-desc">Alles-in-einer-Datei. Funktioniert überall ohne Server. Ideal als Backup und für Chrome lokal. Update-Aufwand höher (muss nach Änderungen neu generiert werden).</div>
+</div>
+
+<h2>Empfohlener Workflow für Updates</h2>
+<ol>
+  <li>Öffne <code>psychiatrie_daten.js</code> in einem Editor</li>
+  <li>Füge neue Daten hinzu (neues Störungsbild → <code>DISORDERS</code>-Array; neue AAP-Karten → <code>AAP_FLASHCARDS</code>-Array)</li>
+  <li>Syntaxcheck: <code>node --check psychiatrie_daten.js</code></li>
+  <li>Öffne <code>psychiatrie_app.html</code> im Browser → Änderungen sofort sichtbar</li>
+  <li>Optional: Standalone neu generieren mit dem Merge-Skript</li>
+</ol>
+
+<h2>Lernfortschritt sichern (wichtig!)</h2>
+<div class="warn">
+  ⚠️ <strong>Lernfortschritt und Favoriten</strong> werden im Browser-localStorage gespeichert. Beim Löschen von Browserdaten gehen sie verloren.
+  <br><br>
+  <strong>Lösung:</strong> Nutzen Sie die <strong>Export/Import-Funktion</strong> in der App (Header-Bereich). Exportieren Sie regelmäßig eine <code>.json</code>-Datei — diese können Sie jederzeit wieder einlesen.
+</div>
+
+<h2>Datenstruktur</h2>
+<pre>psychiatrie_daten.js enthält:
+
+const DISORDERS = [...]        // 26+ Störungsbilder mit allen Feldern
+const METHODS = [...]           // 17+ Therapieverfahren
+const GROUP_THERAPY = [...]     // 11+ Gruppentherapieformate
+const TECHNIQUES = [...]        // Gesprächstechniken
+const PHARMA_DB = {...}         // Medikamentendaten pro Störung
+const TECHNIKEN_DB = {...}      // Technik-Karten (28 Verfahren)
+const MED_TOPICS = [...]        // 12+ Med. Grundlagen-Themen
+const MED_VERGLEICH = {...}     // Vergleichstabellen
+const VERLAUF_DB = {...}        // Verlaufsdaten (18 Störungen)
+const AAP_FLASHCARDS = [...]    // 80+ AAP-Prüfungskarten</pre>
+
+<h2>Neues Störungsbild hinzufügen</h2>
+<pre>// In psychiatrie_daten.js, DISORDERS-Array, neuen Eintrag hinzufügen:
+{
+  id:"neue_stoerung",
+  name:"Name der Störung",
+  cat:"Kategorie",           // z.B. "Angststörungen"
+  icd10:"F40.x",
+  icd11:"6B0x",
+  haupt:["Kriterium A", "Kriterium B"],
+  neben:["Zusatzsymptom 1"],
+  hinweis:"Klinischer Hinweis...",
+  ddx:["Differentialdiagnose 1"],
+  diagnostik_inst:["Instrument 1"],
+  modelle:{neuro:[...], vt:[...]},
+  vt_einzel:["Intervention 1"],
+  fallkonzept:["Konzept 1"],
+  pharmako:"Pharmakotherapie..."
+}</pre>
+
+<h2>Neue AAP-Prüfungsfragen hinzufügen</h2>
+<pre>// In psychiatrie_daten.js, AAP_FLASHCARDS-Array am Ende:
+{
+  cat:"Kategoriename",
+  qtype:"AAP Prüfungsfragen",
+  tags:["aap","Themengebiet"],
+  q:"Die Frage...",
+  a:"Die Antwort (HTML erlaubt)..."
+}</pre>
+
+</body></html>
