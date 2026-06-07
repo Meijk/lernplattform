@@ -1,22 +1,12 @@
 {
   "version": 2,
-  "saved": "2026-06-07T10:04:03.880Z",
+  "saved": "2026-06-07T19:45:06.131Z",
   "srs": {},
   "streak": {
     "count": 0,
     "last": ""
   },
   "favorites": [
-    [
-      "impro_gruppe::0",
-      {
-        "methodId": "impro_gruppe",
-        "idx": 0,
-        "cardName": "Durch den Raum gehen",
-        "methodName": "Angewandte Improvisation",
-        "kat": "Impro â PrÃ¤senz"
-      }
-    ],
     [
       "mbt::0",
       {
@@ -32,7 +22,7 @@
       {
         "methodId": "cft",
         "idx": 1,
-        "cardName": "Mitfühlende Brief-Schreiben",
+        "cardName": "MitfÃ¼hlende Brief-Schreiben",
         "methodName": "CFT",
         "kat": "Schreiben"
       }
