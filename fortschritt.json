@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "saved": "2026-06-07T19:45:06.131Z",
+  "saved": "2026-06-13T14:11:55.258Z",
   "srs": {},
   "streak": {
     "count": 0,
@@ -22,9 +22,19 @@
       {
         "methodId": "cft",
         "idx": 1,
-        "cardName": "MitfÃ¼hlende Brief-Schreiben",
+        "cardName": "MitfÃÂ¼hlende Brief-Schreiben",
         "methodName": "CFT",
         "kat": "Schreiben"
+      }
+    ],
+    [
+      "cbasp::0",
+      {
+        "methodId": "cbasp",
+        "idx": 0,
+        "cardName": "Situationsanalyse (SA)",
+        "methodName": "CBASP",
+        "kat": "Kernintervention"
       }
     ]
   ]
