@@ -252,7 +252,8 @@ body{font-family:system-ui,-apple-system,sans-serif;color:#1a1a18;background:#f5
         <button class="tnav-btn" id="nav-gt" onclick="showView('gt')">Gruppentherapie</button>
         <button class="tnav-btn" id="nav-med" onclick="showView('med')">Med. Grundlagen</button>
         <button class="tnav-btn" id="nav-tech" onclick="showView('tech')">Gespr&#228;chstechniken</button>
-        <button class="tnav-btn" id="nav-fav" onclick="showView('fav')">&#9733; Favoriten</button>
+        <button class="tnav-btn" id="nav-fk" onclick="showView('fk')">Fallkonzept</button>
+        <button class="tnav-btn" id="nav-fav" onclick="showView('fav')" title="Favoriten">&#9733;</button>
         <button class="tnav-btn" id="nav-fc" onclick="showView('fc')">&#127183; Karteikarten</button>
       </div>
     </div>
@@ -368,6 +369,55 @@ body{font-family:system-ui,-apple-system,sans-serif;color:#1a1a18;background:#f5
       <div class="tx-meta-row" id="tech-meta"></div>
       <div class="tabs" id="tech-tabs"></div>
       <div id="tech-panels"></div>
+    </div>
+  </div>
+
+  <!-- VIEW: Fallkonzeptualisierung -->
+  <div class="view" id="view-fk">
+    <!-- COURSE LIST VIEW -->
+    <div id="fk-course-view">
+      <div style="margin-bottom:1.25rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:.75rem;">
+          <div>
+            <div style="font-size:18px;font-weight:500;">Fallkonzeptualisierung – Praxisleitfaden</div>
+            <div style="font-size:12px;color:#5f5e5a;margin-top:2px;">Von der Informationssammlung zum individuellen Fallkonzept – schulenübergreifend</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:12px;color:#5f5e5a;" id="fk-progress-label">0 / 0 gelesen</span>
+            <button onclick="fkResetProgress()" style="padding:4px 10px;border-radius:6px;border:1px solid #d3d1c7;background:transparent;color:#888780;font-size:11px;cursor:pointer;font-family:inherit;">Zurücksetzen</button>
+          </div>
+        </div>
+        <div style="background:#e8e6df;border-radius:4px;height:8px;">
+          <div id="fk-progress-bar" style="height:8px;border-radius:4px;background:#2c2c2a;width:0%;transition:width .5s;"></div>
+        </div>
+      </div>
+      <div class="cat-nav" id="fk-cat-nav"></div>
+      <div id="fk-grid"></div>
+    </div>
+
+    <!-- TOPIC DETAIL VIEW -->
+    <div class="tx-detail" id="fk-detail">
+      <!-- Top bar -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:1.25rem;">
+        <button class="back-btn" style="padding:0;" onclick="showFkList()">&#8592; Kursübersicht</button>
+        <button id="fk-mark-btn" onclick="fkToggleRead()" style="padding:6px 14px;border-radius:8px;border:1px solid #C0DD97;background:#EAF3DE;color:#3B6D11;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;">✓ Als gelesen markieren</button>
+      </div>
+      <!-- Breadcrumb -->
+      <div id="fk-breadcrumb" style="font-size:11px;color:#888780;margin-bottom:.5rem;"></div>
+      <!-- Title + meta -->
+      <div class="tx-detail-title" id="fk-title"></div>
+      <div class="tx-meta-row" id="fk-meta" style="margin-bottom:1rem;"></div>
+      <!-- Topic progress bar -->
+      <div id="fk-topic-progress" style="margin-bottom:1.25rem;"></div>
+      <!-- TOC -->
+      <div id="fk-toc" style="margin-bottom:1.25rem;"></div>
+      <!-- Content rendered directly (no tabs) -->
+      <div id="fk-content"></div>
+      <!-- Prev/Next -->
+      <div style="display:flex;justify-content:space-between;margin-top:2rem;padding-top:1rem;border-top:1px solid #d3d1c7;">
+        <button id="fk-prev-btn" onclick="fkNavigate(-1)" style="padding:8px 16px;border-radius:8px;border:1px solid #d3d1c7;background:#fff;color:#5f5e5a;font-size:13px;cursor:pointer;font-family:inherit;">← Vorheriges</button>
+        <button id="fk-next-btn" onclick="fkNavigate(1)" style="padding:8px 16px;border-radius:8px;border:1px solid #2c2c2a;background:#2c2c2a;color:#f1efe8;font-size:13px;cursor:pointer;font-family:inherit;">Nächstes →</button>
+      </div>
     </div>
   </div>
 
@@ -3850,7 +3900,7 @@ function endSession(){document.getElementById("fc-session").style.display="none"
 // NAVIGATION
 // ═══════════════════════════════════════════════════════════════
 function showView(v) {
-  ["learn","tx","gt","med","tech","fav","fc"].forEach(id=>{
+  ["learn","tx","gt","med","tech","fk","fav","fc"].forEach(id=>{
     document.getElementById("view-"+id).classList.toggle("visible",v===id);
     document.getElementById("nav-"+id).classList.toggle("active",v===id);
   });
@@ -3858,6 +3908,7 @@ function showView(v) {
   if(v==="gt") initGtView();
   if(v==="med") initMedView();
   if(v==="tech") initTechView();
+  if(v==="fk") initFkView();
   if(v==="fav") renderFavView();
   if(v==="fc") initFcView();
 }
@@ -5822,6 +5873,457 @@ function medAnswer(qi, oi) {
     if(scoreEl) scoreEl.style.display="block";
     if(numEl) numEl.textContent = `${correctCount} / ${t.quiz.length} richtig`;
     if(correctCount === t.quiz.length) { medRead.add(activeMed); updateMarkBtn(); medUpdateProgress(); }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FALLKONZEPTUALISIERUNG – PRAXISLEITFADEN
+// ═══════════════════════════════════════════════════════════════
+const FK_CATS = ["Alle","Grundlagen","Informationsgewinnung","Modelle","Synthese & Anwendung"];
+const FK_CAT_COLORS = {
+  "Grundlagen":"#E6F1FB","Informationsgewinnung":"#EAF3DE",
+  "Modelle":"#FAEEDA","Synthese & Anwendung":"#EEEDFE"
+};
+const FK_CAT_BORDER = {
+  "Grundlagen":"#B5D4F4","Informationsgewinnung":"#C0DD97",
+  "Modelle":"#FAC775","Synthese & Anwendung":"#AFA9EC"
+};
+
+const FK_TOPICS = [
+  {id:"fk_grundlagen",name:"Was leistet ein Fallkonzept?",cat:"Grundlagen",
+   kurz:"Funktion, Nutzen und Grenzen der Fallkonzeptualisierung – schulenübergreifend",schwierigkeit:"Grundlagen",
+   lernziele:["Die Funktion eines Fallkonzepts für Diagnostik, Therapieplanung und Beziehungsgestaltung benennen","Mikro- und Makroebene der Fallkonzeption unterscheiden","Die Grundperspektiven von KVT, Schematherapie und tiefenpsychologisch fundierten Ansätzen auf Fallkonzeption vergleichen","Typische Fehler bei der Fallkonzeption erkennen und vermeiden"],
+   inhalt:[
+     {titel:"Warum überhaupt ein Fallkonzept?",text:"Eine <strong>Diagnose</strong> (z.B. F33.1) beschreibt WAS vorliegt – ein Symptommuster, das viele unterschiedliche Patientinnen teilen. Ein <strong>Fallkonzept</strong> beschreibt WARUM und WIE: welche individuelle Lerngeschichte, welche aufrechterhaltenden Mechanismen und welche aktuellen Auslöser bei genau dieser Person zu genau diesem Symptombild geführt haben. Es übersetzt die nomothetische Diagnose in ein idiografisches, personenspezifisches Verständnis. Daraus leiten sich drei Funktionen ab: (1) Es liefert eine Auswahlregel für Interventionen – nicht jede evidenzbasierte Technik passt zu jedem Fall. (2) Es liefert eine gemeinsame Sprache mit der Patientin, die Zusammenhänge erklärbar macht. (3) Es hilft, Beziehungsabbrüche und Therapiehindernisse vorauszusehen, bevor sie eskalieren.",merke:"Diagnose sagt WAS, Fallkonzept sagt WARUM und WIE."},
+     {titel:"Mikro- vs. Makroebene",text:"Die <strong>Mikroebene</strong> analysiert eine einzelne, konkrete Episode in allen Details (z.B. mit der Verhaltensanalyse SORKC) – sie zeigt, wie ein Problem in einer bestimmten Situation entsteht und aufrechterhalten wird. Die <strong>Makroebene</strong> fasst das übergeordnete Muster zusammen, das sich über viele solcher Episoden und über die gesamte Lerngeschichte hinweg zeigt: biografische Entstehungsbedingungen, stabile dysfunktionale Kognitionen oder Schemata, generalisierte interpersonelle Muster. Ein vollständiges Fallkonzept braucht beide Ebenen – die Mikroebene ohne Makroebene bleibt punktuell, die Makroebene ohne Mikroebene bleibt abstrakt und schwer in konkrete Interventionen zu übersetzen.",merke:"Mikroebene = eine Episode im Detail. Makroebene = das übergeordnete Muster über die Zeit."},
+     {titel:"Schulenübergreifende Perspektiven",text:"Die <strong>klassische Verhaltenstherapie</strong> konzentriert sich auf Funktionsanalysen: welche Reize, Kognitionen und Konsequenzen halten ein Problemverhalten aufrecht. <strong>Tiefenpsychologisch fundierte Ansätze</strong> betonen unbewusste Konflikte und die biografische Entstehung überdauernder Beziehungsmuster. Die <strong>Schematherapie</strong> integriert beides über das Moduskonzept: Symptome werden bestimmten Schemamodi zugeordnet, deren biografischer Ursprung in frustrierten Grundbedürfnissen liegt. Moderne integrative Fallkonzepte – wie sie in dieser Plattform bei einzelnen Störungsbildern hinterlegt sind – kombinieren in der Praxis meist mehrere dieser Perspektiven, statt sich auf eine Schule zu beschränken.",merke:"Ein gutes Fallkonzept ist kein Glaubensbekenntnis zu einer Schule, sondern ein Werkzeug."},
+     {titel:"Typische Fehler",text:"Vier Fehler tauchen besonders häufig auf: (1) <strong>Vorzeitige Festlegung</strong> – die erste Hypothese wird nicht mehr hinterfragt, obwohl neue Informationen dagegen sprechen. (2) <strong>Reine Symptomliste</strong> ohne funktionale Verknüpfung – Symptome werden aufgezählt, aber nicht erklärt. (3) <strong>Defizitorientierung</strong> – Ressourcen, frühere Bewältigungserfolge und Stärken werden übersehen. (4) <strong>Statisches Dokument</strong> – das Fallkonzept wird einmal erstellt und nie wieder aktualisiert, obwohl jede Sitzung neue relevante Informationen liefert.",merke:"Ein Fallkonzept ist eine Arbeitshypothese – keine endgültige Wahrheit."}
+   ],
+   klinisch:"Die Wahl der Intervention folgt aus dem Fallkonzept, nicht aus der Diagnose allein: zwei Patientinnen mit identischer Panikstörung können sehr unterschiedliche Fallkonzepte haben (z.B. reine Katastrophenfehlinterpretation körperlicher Symptome vs. zusätzliche Vermeidung von Autonomiekonflikten in der Paarbeziehung) – und entsprechend unterschiedliche Behandlungsschwerpunkte benötigen.",
+   praxis:["Formulieren Sie das Fallkonzept zunächst als Hypothese und besprechen Sie es transparent mit der Patientin","Nutzen Sie einfache Visualisierungen (Pfeile, Kreisdiagramme), um Zusammenhänge sichtbar zu machen","Aktualisieren Sie das Fallkonzept aktiv nach jeder neuen bedeutsamen Information – auch im laufenden Therapieverlauf","Vermeiden Sie Fachjargon in der Präsentation gegenüber der Patientin – das Fallkonzept muss in ihrer Sprache funktionieren"],
+   fallbeispiel:"Ein Patient mit Panikstörung erhält zunächst reine Expositionsbehandlung gegen die körperlichen Symptome – mit nur mäßigem Erfolg. Erst eine erweiterte Fallkonzeption auf der Makroebene zeigt: Die Panikattacken treten vor allem dann auf, wenn der Patient kurz davor steht, sich gegenüber seinem Partner abzugrenzen. Die Symptomatik hat damit auch eine interpersonelle Vermeidungsfunktion, die in der reinen Mikroebenen-Analyse einzelner Attacken nicht sichtbar wurde. Erst die Kombination beider Ebenen führt zu einem passenden Behandlungsplan.",
+   quiz:[
+     {f:"Was unterscheidet eine Diagnose von einem Fallkonzept?",o:["Beide sind inhaltlich identisch","Die Diagnose beschreibt WAS vorliegt, das Fallkonzept erklärt WARUM und WIE bei dieser individuellen Person","Ein Fallkonzept ersetzt die Diagnose vollständig","Diagnosen sind immer individueller als Fallkonzepte"],r:1,a:"Die Diagnose ist nomothetisch (kategorial, vergleichend zwischen Personen), das Fallkonzept ist idiografisch (individuell, erklärend)."},
+     {f:"Was ist der Hauptunterschied zwischen Mikro- und Makroebene der Fallkonzeption?",o:["Die Mikroebene betrachtet eine konkrete Episode im Detail, die Makroebene das übergeordnete Muster über die Zeit","Die Makroebene ist immer wichtiger als die Mikroebene","Beide Ebenen meinen dasselbe","Die Mikroebene wird nur in der Schematherapie verwendet"],r:0,a:"Mikroebene = konkrete Episode (z.B. SORKC einer einzelnen Situation). Makroebene = übergeordnetes, biografisch gewachsenes Muster."},
+     {f:"Welcher der folgenden ist KEIN typischer Fehler bei der Fallkonzeption?",o:["Vorzeitige Festlegung auf eine erste Hypothese","Regelmäßige Aktualisierung des Fallkonzepts nach neuen Informationen","Reine Symptomliste ohne funktionale Verknüpfung","Vernachlässigung von Ressourcen"],r:1,a:"Die regelmäßige Aktualisierung ist erwünscht, nicht fehlerhaft – ein Fallkonzept sollte als lebendige Arbeitshypothese behandelt werden."}
+   ]},
+
+  {id:"fk_information",name:"Informationsgewinnung: Vom Symptom zur Biografie",cat:"Informationsgewinnung",
+   kurz:"Strukturierte Anamnese: Problemanalyse, Biografie, interpersonelle Muster, Ressourcen",schwierigkeit:"Grundlagen",
+   lernziele:["Eine strukturierte Problem- und Symptomanamnese durchführen","Biografische Informationen zielgerichtet erheben, ohne vorzeitig auf Traumanarrative zu drängen","Auffällige interpersonelle Muster im Hier-und-Jetzt der Sitzung beobachten","Ressourcen systematisch in die Informationsgewinnung integrieren"],
+   inhalt:[
+     {titel:"Problem- und Symptomanamnese",text:"Am Anfang steht die konkrete Beschreibung: Was genau tritt auf, wann, wie oft, wie stark, durch was ausgelöst, mit welchen Konsequenzen? Offene W-Fragen ('Was ist passiert? Wie hat sich das gezeigt? Was kam danach?') liefern zunächst reicheres Material als vorzeitig strukturierte Instrumente. Erst wenn das individuelle Bild klar ist, ergänzen strukturierte Verfahren (z.B. SKID, DIPS) die kategoriale Einordnung. Wichtig: mindestens eine konkrete, datierte Episode im Detail erheben – abstrakte Beschreibungen ('Ich bin halt oft traurig') liefern kaum verwertbares Material für ein Fallkonzept.",merke:"Erst konkret, dann kategorial. Eine Episode im Detail ist wertvoller als zehn abstrakte Aussagen."},
+     {titel:"Biografische Informationen",text:"Biografische Exploration dient nicht der vollständigen Lebensgeschichte, sondern der gezielten Suche nach Entstehungsbedingungen des aktuellen Musters: frühe Bindungserfahrungen, prägende Beziehungen zu Bezugspersonen, kritische Lebensereignisse, Lerngeschichte des Symptoms (wann trat es zum ersten Mal auf, was war damals anders). Diese Exploration sollte behutsam und ohne Druck erfolgen – Details müssen nicht erzwungen werden, besonders bei traumaassoziierten Themen. Ziel ist ein Verständnis dafür, wie aktuelle Muster historisch sinnvoll entstanden sind, nicht eine vollständige Rekonstruktion.",merke:"Biografie wird gezielt für das aktuelle Muster erhoben – nicht als vollständige Lebensgeschichte."},
+     {titel:"Interpersonelle Muster beobachten",text:"Eine oft unterschätzte Informationsquelle ist das Beziehungsverhalten der Patientin in der Sitzung selbst. Modelle wie der Kiesler-Kreis (Kontrolle dominant↔submissiv, Affiliation freundlich↔feindselig) helfen, das eigene Erleben in der Interaktion systematisch einzuordnen: Welchen 'Sog' übe ich als Therapeutin gerade aus? Werde ich in eine bestimmte komplementäre Rolle gedrängt? Diese In-vivo-Beobachtung ergänzt die berichteten Beziehungsmuster aus dem Alltag und ist oft aussagekräftiger, weil sie nicht von der subjektiven Selbstdarstellung der Patientin abhängt.",merke:"Das Beziehungsverhalten in der Sitzung selbst ist eine eigenständige, oft unterschätzte Datenquelle."},
+     {titel:"Ressourcen nicht vergessen",text:"Eine rein defizitorientierte Anamnese erfasst nur die Hälfte des Bildes. Systematisch sollten erhoben werden: frühere erfolgreiche Bewältigungsstrategien (auch wenn sie aktuell nicht greifen), soziales Netzwerk, persönliche Interessen und Fähigkeiten, Phasen geringerer Symptomatik und was diese ermöglicht hat. Ressourcen sind nicht nur motivierend für die Patientin, sondern liefern oft direkte Hinweise auf Interventionsansätze – wer früher erfolgreich Sport zur Stimmungsregulation genutzt hat, hat bereits eine funktionierende Strategie, die reaktiviert werden kann.",merke:"Ressourcen liefern nicht nur Motivation, sondern oft direkt verwertbare Interventionsansätze."}
+   ],
+   klinisch:"Die Qualität der Informationsgewinnung entscheidet maßgeblich über die Tragfähigkeit des späteren Fallkonzepts. Eine vorschnelle, oberflächliche Anamnese führt zu einem Fallkonzept, das zwar plausibel klingt, aber bei der ersten Abweichung im Therapieverlauf zusammenbricht.",
+   praxis:["Stellen Sie zu Beginn offene Fragen, bevor Sie strukturierte Instrumente einsetzen","Erheben Sie mindestens eine konkrete, datierte Episode im Detail – nicht nur abstrakte Beschreibungen","Beobachten Sie das Beziehungsverhalten in der Sitzung selbst als zusätzliche Datenquelle","Fragen Sie aktiv und gezielt nach Ressourcen, nicht nur nach Problemen"],
+   fallbeispiel:"Eine Patientin berichtet zunächst nur allgemein: 'Ich bin im Job total überfordert.' Erst die konkrete Nachfrage nach einer Episode der letzten Woche ('Was genau ist am Dienstag passiert?') legt offen, dass die Überforderung vor allem dann auftritt, wenn sie um Hilfe bitten müsste – ein Muster, das sich biografisch bis zu einem Elternhaus zurückverfolgen lässt, in dem Bedürftigkeit abgewertet wurde. Diese Verknüpfung wäre ohne die konkrete Episodenanalyse nicht sichtbar geworden.",
+   quiz:[
+     {f:"Warum ist eine konkrete, datierte Episode für die Fallkonzeption wertvoller als eine abstrakte Problembeschreibung?",o:["Konkrete Episoden sind immer dramatischer","Abstrakte Beschreibungen sind grundsätzlich unwahr","Konkrete Episoden liefern verwertbares Material für funktionale Zusammenhänge, abstrakte Aussagen bleiben unspezifisch","Patientinnen erinnern sich an abstrakte Aussagen besser"],r:2,a:"Nur an einer konkreten Episode lassen sich Auslöser, Reaktionsebenen und Konsequenzen tatsächlich nachvollziehen."},
+     {f:"Welche Funktion hat die Beobachtung des Beziehungsverhaltens in der Sitzung selbst?",o:["Sie ist verzichtbar, wenn die Patientin gut berichten kann","Sie liefert eine zusätzliche, von der Selbstdarstellung unabhängige Datenquelle für interpersonelle Muster","Sie dient ausschließlich der Beziehungsgestaltung, nicht der Diagnostik","Sie ersetzt die biografische Anamnese vollständig"],r:1,a:"In-vivo-Verhalten ergänzt berichtete Muster und ist oft aussagekräftiger, weil es nicht von subjektiver Selbstdarstellung abhängt."},
+     {f:"Was ist das Ziel der biografischen Exploration im Rahmen der Fallkonzeption?",o:["Eine vollständige, lückenlose Lebensgeschichte zu rekonstruieren","Gezielt Entstehungsbedingungen des aktuellen Musters zu verstehen","Traumatische Erinnerungen möglichst detailliert hervorzuholen","Ausschließlich die Eltern-Kind-Beziehung zu analysieren"],r:1,a:"Ziel ist das Verständnis, wie das aktuelle Muster historisch entstanden ist – nicht eine vollständige biografische Rekonstruktion."}
+   ]},
+
+  {id:"fk_sorkc",name:"Mikroebene: Verhaltensanalyse (SORKC)",cat:"Modelle",
+   kurz:"Die operante Verhaltensanalyse als diagnostisches Kernwerkzeug der VT – praktische Durchführung",schwierigkeit:"Grundlagen",
+   lernziele:["Die fünf Variablen des SORKC-Schemas benennen und unterscheiden","Eine geeignete Episode für die Verhaltensanalyse auswählen","Alle vier Reaktionsebenen (kognitiv, emotional, physiologisch, behavioral) systematisch explorieren","Kurz- und langfristige Konsequenzen vollständig erfassen und für die Intervention nutzen"],
+   inhalt:[
+     {titel:"Das SORKC-Schema im Überblick",text:"<strong>S</strong> (Stimulus/Situation) – externe und interne Auslöser. <strong>O</strong> (Organismus) – biologische und psychologische Ausgangsbedingungen, Lerngeschichte. <strong>R</strong> (Reaktion) – das Problemverhalten auf vier Ebenen: kognitiv, emotional, physiologisch, behavioral. <strong>K</strong> (Kontingenz) – wie regelmäßig die Konsequenz auf das Verhalten folgt. <strong>C</strong> (Konsequenz) – was auf das Verhalten folgt, kurz- und langfristig, positiv und negativ. Das Modell macht sichtbar, warum ein Verhalten trotz langfristig negativer Folgen aufrechterhalten wird: meist liegt es an einer zuverlässigen kurzfristigen Erleichterung.",merke:"S-O-R-K-C: Situation – Organismus – Reaktion – Kontingenz – Konsequenz."},
+     {titel:"Eine konkrete Episode auswählen",text:"Die Verhaltensanalyse funktioniert nur an einer konkreten, abgrenzbaren Episode – niemals an einer generalisierten Beschreibung. Geeignet sind Episoden, die (a) typisch für das Problemverhalten sind, (b) zeitlich nah genug zurückliegen, dass Details noch erinnerbar sind, und (c) genug emotionale Beteiligung der Patientin zeigen, um aufschlussreich zu sein. Eine gute Eröffnungsfrage lautet: 'Erzählen Sie mir von der letzten Situation, in der das aufgetreten ist – möglichst genau, Schritt für Schritt.'",merke:"Immer eine konkrete, datierte Episode wählen – nie 'generell' oder 'meistens'."},
+     {titel:"Die vier Reaktionsebenen systematisch explorieren",text:"Patientinnen berichten meist spontan nur eine Ebene – häufig das Verhalten oder eine diffuse Emotion. Eine vollständige Analyse fragt aktiv alle vier Ebenen getrennt ab: Was ist Ihnen durch den Kopf gegangen (kognitiv)? Was haben Sie gefühlt, und wie stark (emotional)? Was hat Ihr Körper gemacht (physiologisch)? Was haben Sie konkret getan (behavioral)? Diese Trennung verhindert, dass eine Ebene übersehen wird, die für die spätere Intervention entscheidend sein könnte.",merke:"Alle vier R-Ebenen getrennt erfragen – Patientinnen nennen meist nur eine."},
+     {titel:"Konsequenzen vollständig erfassen",text:"Konsequenzen sollten in vier Feldern erfasst werden: kurzfristig positiv, kurzfristig negativ, langfristig positiv, langfristig negativ. Der entscheidende aufrechterhaltende Faktor ist fast immer die kurzfristig positive Konsequenz (negative Verstärkung durch Erleichterung), die im Bewusstsein der Patientin oft gar nicht als 'Verstärkung' erscheint, sondern einfach als Erleichterung erlebt wird. Erst die explizite Gegenüberstellung mit den langfristigen Kosten macht den Teufelskreis sichtbar und motiviert für Veränderung.",merke:"Kurzfristige Erleichterung ist meist der stärkste aufrechterhaltende Faktor – auch wenn sie der Patientin nicht bewusst ist."}
+   ],
+   klinisch:"Die SORKC-Analyse liefert die direkte Grundlage für die Interventionsplanung: Ansatzpunkte ergeben sich aus jeder einzelnen Variable – Stimuluskontrolle (S), Beeinflussung von Schlaf/Medikation (O), kognitive Umstrukturierung oder Verhaltensaktivierung (R), Veränderung von Verstärkerplänen (C).",
+   praxis:["Wählen Sie immer eine konkrete, datierte Episode – nie eine generalisierte Beschreibung","Erfragen Sie alle vier Reaktionsebenen getrennt, auch wenn die Patientin nur eine spontan berichtet","Fragen Sie explizit nach der kurzfristigen Erleichterung – sie ist oft der stärkste aufrechterhaltende Faktor und wird selten spontan berichtet","Nutzen Sie ein SORKC-Protokoll als Hausaufgabe für wiederkehrende Episoden, um Muster über mehrere Vorfälle zu erkennen"],
+   fallbeispiel:"Ein Patient mit sozialer Angst vermeidet ein Teammeeting (S: Einladung zum Meeting, intern: Gedanke 'Ich werde mich blamieren'). O: chronisch niedriger Selbstwert, frühere Bloßstellungserfahrung in der Schule. R kognitiv: 'Alle werden merken, dass ich keine Ahnung habe.' R emotional: Angst 85/100. R physiologisch: Herzrasen, Schwitzen. R behavioral: krankmeldet sich kurzfristig. K: tritt bei nahezu jeder Einladung auf. C kurzfristig positiv: sofortige Erleichterung, keine Anspannung mehr. C langfristig negativ: zunehmende Isolation im Team, Verstärkung des Vermeidungsmusters, kein korrigierendes Lernerlebnis möglich.",
+   quiz:[
+     {f:"Wofür steht das K im SORKC-Schema?",o:["Kognition","Kontingenz – wie regelmäßig die Konsequenz auf das Verhalten folgt","Konflikt","Kontrolle"],r:1,a:"K steht für Kontingenz: je konsistenter eine Konsequenz auf ein Verhalten folgt, desto stärker die Verhaltenssteuerung."},
+     {f:"Warum ist es wichtig, alle vier Reaktionsebenen getrennt zu erfragen?",o:["Weil Patientinnen meist nur eine Ebene spontan berichten und so wichtige Information verloren ginge","Weil das Modell sonst nicht vollständig ist – aus rein formalen Gründen","Weil sonst die Diagnose nicht gestellt werden kann","Weil die kognitive Ebene immer am wichtigsten ist"],r:0,a:"Patientinnen nennen typischerweise nur Verhalten oder Emotion – ohne aktives Nachfragen bleiben kognitive und physiologische Reaktionen oft unentdeckt."},
+     {f:"Welche Konsequenz ist meist der stärkste aufrechterhaltende Faktor für ein Vermeidungsverhalten?",o:["Die langfristig negative Konsequenz","Die kurzfristig positive Konsequenz (z.B. Erleichterung)","Die kurzfristig negative Konsequenz","Es gibt keinen typischen Faktor"],r:1,a:"Die kurzfristige Erleichterung wirkt als negative Verstärkung und ist oft der entscheidende, aber der Patientin selten bewusste aufrechterhaltende Mechanismus."}
+   ]},
+
+  {id:"fk_kognitiv",name:"Kognitive Modelle: Grundannahmen, automatische Gedanken und das ABC-Modell",cat:"Modelle",
+   kurz:"Drei-Ebenen-Modell der Kognition als Fallkonzeptions-Werkzeug",schwierigkeit:"Grundlagen",
+   lernziele:["Die drei Ebenen der Kognition (Grundannahmen, bedingte Annahmen, automatische Gedanken) unterscheiden","Drei Typen automatischer Gedanken differenzieren und ihre jeweilige Interventionsimplikation ableiten","Das ABC-Modell als schnelles Erhebungsinstrument einsetzen","Mit der Pfeil-Abwärts-Technik von einem automatischen Gedanken zur zugrundeliegenden Grundannahme gelangen"],
+   inhalt:[
+     {titel:"Drei Ebenen der Kognition",text:"<strong>Grundannahmen</strong> sind stabile, situationsunabhängige Überzeugungen über sich selbst, andere und die Welt (z.B. 'Ich bin wertlos') – sie sind nicht unmittelbar bewusst zugänglich. <strong>Bedingte Annahmen</strong> leiten sich daraus ab und funktionieren nach dem Wenn-Dann-Prinzip (z.B. 'Nur wenn ich perfekt bin, bin ich etwas wert'). <strong>Automatische Gedanken</strong> sind situationsabhängig und unmittelbar bewusst zugänglich (z.B. 'Das wird schiefgehen'). Diese Hierarchie ist entscheidend für die Fallkonzeption: automatische Gedanken sind leicht zu erheben, aber oft nur Symptom einer tieferliegenden Grundannahme.",merke:"Grundannahme → bedingte Annahme → automatischer Gedanke. Nur die unterste Ebene ist direkt bewusst."},
+     {titel:"Drei Typen automatischer Gedanken",text:"Nicht jeder automatische Gedanke ist gleich zu behandeln: (1) <strong>Verzerrt trotz objektiver Gegenbeweise</strong> – klassischer Fall für kognitive Disputation. (2) <strong>Zutreffend, aber mit falscher Schlussfolgerung</strong> – die Beobachtung stimmt, die Ableitung daraus ist überzogen. (3) <strong>Zutreffend und tatsächlich dysfunktional</strong> – hier hilft Disputation wenig, stattdessen ist Problemlösen oder eine funktionalere Formulierung gefragt. Diese Unterscheidung entscheidet, welche Intervention sinnvoll ist – reines Disputieren bei einem zutreffenden Gedanken erzeugt Widerstand, weil die Patientin sich nicht verstanden fühlt.",merke:"Verzerrt → disputieren. Zutreffend-dysfunktional → Problemlösen statt Disputieren."},
+     {titel:"Das ABC-Modell als schnelles Erhebungsinstrument",text:"Für den schnellen Einsatz in der Sitzung eignet sich das einfachere ABC-Modell: <strong>A</strong> (auslösendes Ereignis), <strong>B</strong> (Bewertung/Beliefs – meist eine der vier irrationalen Bewertungssubtypen: absolute Forderungen, globale Selbst- oder Fremdabwertung, Katastrophisieren, geringe Frustrationstoleranz), <strong>C</strong> (Konsequenz in Gefühl und Verhalten). Es ist weniger differenziert als das Drei-Ebenen-Modell, dafür schneller einsetzbar und gut geeignet, um der Patientin den Zusammenhang zwischen Bewertung und Konsequenz erstmals zu verdeutlichen.",merke:"ABC = schnelle Variante. Drei-Ebenen-Modell = differenzierter, für die vertiefte Fallkonzeption."},
+     {titel:"Von der automatischen Gedanken-Ebene zur Grundannahme",text:"Die <strong>Pfeil-Abwärts-Technik</strong> führt systematisch von einem konkreten automatischen Gedanken zur darunterliegenden Grundannahme: 'Angenommen das stimmt – was würde das für Sie bedeuten?' wird wiederholt gefragt, bis eine grundlegende, generalisierende Aussage über das Selbst erscheint. Diese Technik ist zentral für die Fallkonzeption, weil sie die Brücke zwischen der leicht beobachtbaren Mikroebene (automatischer Gedanke in einer Situation) und der Makroebene (überdauernde Grundannahme) explizit herstellt.",merke:"Pfeil-Abwärts: 'Angenommen das stimmt – was würde das bedeuten?' – wiederholt fragen, bis die Grundannahme sichtbar wird."}
+   ],
+   klinisch:"Die Ebene, auf der interveniert wird, sollte zur Fallkonzeption passen: bei akuten Krisen reicht oft die Arbeit auf der Ebene automatischer Gedanken (Gedankenprotokoll), bei chronischen oder Persönlichkeitsstörungs-Mustern ist die Arbeit an Grundannahmen notwendig, da sonst nur Symptome an der Oberfläche behandelt werden.",
+   praxis:["Erheben Sie immer zuerst die automatischen Gedanken in einer konkreten Situation, bevor Sie nach Grundannahmen fragen","Nutzen Sie die Pfeil-Abwärts-Technik gezielt, um von einem Gedanken zur zugrundeliegenden Grundannahme zu gelangen","Unterscheiden Sie, ob ein Gedanke verzerrt oder zutreffend-aber-dysfunktional ist – das ändert die passende Intervention grundlegend","Vermeiden Sie vorzeitiges Disputieren, bevor Sie die Funktion und den Wahrheitsgehalt des Gedankens verstanden haben"],
+   fallbeispiel:"Eine Patientin berichtet den automatischen Gedanken 'Mein Chef hält mich für unfähig', nachdem dieser ihre Präsentation kurz kommentiert hat. Pfeil-Abwärts: 'Angenommen das stimmt – was würde das bedeuten?' → 'Dass ich meinen Job verlieren könnte.' → 'Und wenn das passiert?' → 'Dass ich es nie zu etwas bringe.' → 'Und was würde das über mich aussagen?' → 'Dass ich grundsätzlich nicht gut genug bin.' Damit ist die Grundannahme ('Ich bin nicht gut genug') sichtbar geworden, die weit über die konkrete Arbeitssituation hinausreicht und das eigentliche Ziel der Intervention ist.",
+   quiz:[
+     {f:"Welche der drei kognitiven Ebenen ist unmittelbar bewusst zugänglich?",o:["Grundannahmen","Bedingte Annahmen","Automatische Gedanken","Keine von ihnen"],r:2,a:"Automatische Gedanken sind situationsabhängig und direkt bewusst zugänglich – Grundannahmen und bedingte Annahmen liegen tiefer und sind nicht unmittelbar bewusst."},
+     {f:"Welche Intervention passt am wenigsten zu einem zutreffenden, aber dysfunktionalen Gedanken?",o:["Problemlösetraining","Funktionalere Neuformulierung","Reine kognitive Disputation des Wahrheitsgehalts","Akzeptanz der Realität bei gleichzeitiger Suche nach handlungsfähigeren Bewertungen"],r:2,a:"Disputation zielt auf verzerrte Gedanken. Bei zutreffenden, aber dysfunktionalen Gedanken erzeugt reine Disputation Widerstand, da die Patientin sich nicht verstanden fühlt."},
+     {f:"Wozu dient die Pfeil-Abwärts-Technik in der Fallkonzeption?",o:["Um automatische Gedanken zu widerlegen","Um von einem konkreten automatischen Gedanken systematisch zur zugrundeliegenden Grundannahme zu gelangen","Um die Stärke einer Emotion zu quantifizieren","Um Verhaltensexperimente zu planen"],r:1,a:"Die Technik stellt die Brücke zwischen Mikroebene (Gedanke in der Situation) und Makroebene (überdauernde Grundannahme) her."}
+   ]},
+
+  {id:"fk_schemamodi",name:"Schemamodi-Modell: transdiagnostische Fallkonzeption",cat:"Modelle",
+   kurz:"Das Moduskonzept als integrativer Rahmen über Diagnosegrenzen hinweg",schwierigkeit:"Aufbauend",
+   lernziele:["Die vier Modusgruppen (Kindmodi, Elternmodi, Bewältigungsmodi, gesunder Erwachsener) unterscheiden","Symptome anhand emotionaler Qualität und Funktion dem passenden Modus zuordnen","Begründen, warum das Modusmodell transdiagnostisch eingesetzt werden kann","Modusspezifische Interventionsstrategien grob zuordnen"],
+   inhalt:[
+     {titel:"Vier Modusgruppen im Überblick",text:"<strong>Dysfunktionale Kindmodi</strong> tragen intensive negative Gefühle (z.B. verlassenes, ängstliches oder wütendes Kind). <strong>Dysfunktionale Elternmodi</strong> äußern sich als Selbstabwertung oder übertriebener Perfektionismus, oft als internalisierte kritische Stimme. <strong>Dysfunktionale Bewältigungsmodi</strong> regulieren die belastenden Kind- und Elternmodi durch Vermeidung, Überkompensation oder Unterwerfung. Der <strong>gesunde Erwachsenenmodus</strong> ist die Zielinstanz: er kann die Kindmodi versorgen, die Elternmodi begrenzen und auf Bewältigungsmodi zunehmend verzichten.",merke:"Kindmodus fühlt, Elternmodus bewertet, Bewältigungsmodus reguliert, gesunder Erwachsener integriert."},
+     {titel:"Symptome modusspezifisch zuordnen",text:"In der Praxis wird jedes berichtete Symptom oder Problemverhalten anhand seiner emotionalen Qualität und Funktion einem Modus zugeordnet: Plötzliche, überwältigende Verzweiflung beim kleinsten Anzeichen von Zurückweisung passt typischerweise zum verlassenen Kindmodus. Eine harsche innere Stimme nach jedem Fehler passt zum strafenden Elternmodus. Sozialer Rückzug nach Konflikten kann ein distanzierter Beschützer-Modus sein. Wichtig ist, zunächst mit wenigen zentralen Modi zu arbeiten und das Modell erst bei Bedarf zu verfeinern, statt von Beginn an ein komplexes Vollmodell zu konstruieren.",merke:"Erst 2–3 zentrale Modi identifizieren, dann verfeinern – nicht von Anfang an ein Vollmodell konstruieren."},
+     {titel:"Warum transdiagnostisch?",text:"Das Modusmodell ordnet Symptome nicht primär kategorialen Diagnosen zu, sondern ihrer Funktion – dadurch lassen sich auch komorbide oder unterschwellige Störungen problemlos in ein einziges, kohärentes Fallkonzept integrieren. Eine Patientin mit Depression, sozialer Angst und unterschwelligen Borderline-Zügen benötigt im Modusmodell kein separates Konzept pro Diagnose, sondern ein gemeinsames Moduskonzept, das alle drei Symptombilder funktional erklärt.",merke:"Ein Moduskonzept statt drei Diagnose-spezifischer Fallkonzepte bei komorbiden Bildern."},
+     {titel:"Vom Modusmodell zur Intervention",text:"Jede Modusgruppe zieht typische Interventionen nach sich: bei dysfunktionalen Kindmodi steht emotionsfokussierte Versorgung im Vordergrund (limitierte elterliche Fürsorge, Imagery Rescripting); bei dysfunktionalen Elternmodi geht es um Schwächung der internalisierten kritischen Stimme (Stuhldialog, Externalisierung); bei dysfunktionalen Bewältigungsmodi um schrittweisen Abbau der Vermeidungs- oder Unterwerfungsstrategie, sobald die darunterliegenden Modi stabiler versorgt sind. Der gesunde Erwachsenenmodus wird über den gesamten Verlauf gezielt gestärkt.",merke:"Kindmodus → versorgen. Elternmodus → schwächen. Bewältigungsmodus → schrittweise abbauen. Gesunder Erwachsener → stärken."}
+   ],
+   klinisch:"Das Modusmodell eignet sich besonders bei Persönlichkeitsstörungen und chronischen, schulübergreifend schwer fassbaren Problembildern, weil es Symptome nicht isoliert behandelt, sondern in ein gemeinsames, biografisch verankertes Verständnis einbettet.",
+   praxis:["Lassen Sie die Patientin eigene, persönliche Namen für ihre Modi finden – das erhöht die Wiedererkennbarkeit im Alltag deutlich","Ordnen Sie zunächst nur 2–3 zentrale Modi zu, bevor Sie das Modell verfeinern","Nutzen Sie Modus-Mapping (Visualisierung als Liste oder Zeichnung) zur gemeinsamen Veranschaulichung","Prüfen Sie bei jedem neuen Symptom zuerst, ob es einem bereits identifizierten Modus entspricht, bevor Sie einen neuen Modus postulieren"],
+   fallbeispiel:"Eine Patientin berichtet drei scheinbar unzusammenhängende Probleme: plötzliche Wutausbrüche, episodischen sozialen Rückzug und eine ständige innere Stimme, die sie als 'nutzlos' bezeichnet. Im Modusmodell lassen sich alle drei einem kohärenten Bild zuordnen: die innere Stimme ist der strafende Elternmodus, der Rückzug ist ein distanzierter Beschützer (Bewältigungsmodus), und die Wutausbrüche treten auf, wenn das darunterliegende ärgerliche Kind kurzfristig die Kontrolle übernimmt. Statt drei getrennter Probleme entsteht ein einziges, behandelbares Moduskonzept.",
+   quiz:[
+     {f:"Welche Modusgruppe trägt typischerweise intensive negative Gefühle wie Verlassenheitsangst oder Wut?",o:["Dysfunktionale Elternmodi","Dysfunktionale Kindmodi","Dysfunktionale Bewältigungsmodi","Der gesunde Erwachsenenmodus"],r:1,a:"Dysfunktionale Kindmodi (z.B. verlassenes, ängstliches, wütendes Kind) tragen die intensiven negativen Grundgefühle."},
+     {f:"Warum eignet sich das Modusmodell besonders für komorbide oder unterschwellige Störungsbilder?",o:["Weil es jede Diagnose separat behandelt","Weil es Symptome funktional statt kategorial-diagnostisch zuordnet und so in ein gemeinsames Fallkonzept integriert","Weil es nur bei einer einzigen Diagnose anwendbar ist","Weil es ausschließlich biologische Faktoren berücksichtigt"],r:1,a:"Die funktionale, nicht kategoriale Zuordnung erlaubt die Integration mehrerer Symptombilder in ein einziges, kohärentes Moduskonzept."},
+     {f:"Welches Vorgehen wird beim ersten Aufbau eines Modusmodells empfohlen?",o:["Sofort ein vollständiges, hochdifferenziertes Modusmodell mit allen denkbaren Modi erstellen","Zunächst nur 2–3 zentrale Modi identifizieren und das Modell bei Bedarf verfeinern","Ausschließlich mit dem gesunden Erwachsenenmodus beginnen","Modi ausschließlich anhand der ICD-Diagnose festlegen"],r:1,a:"Ein schrittweiser Aufbau mit wenigen zentralen Modi vermeidet ein überkomplexes, schwer vermittelbares Erstmodell."}
+   ]},
+
+  {id:"fk_synthese",name:"Synthese & Präsentation: Vom Modell zum gemeinsamen Fallkonzept",cat:"Synthese & Anwendung",
+   kurz:"Die Modelle integrieren, Therapieziele ableiten und das Fallkonzept gemeinsam mit der Patientin entwickeln",schwierigkeit:"Aufbauend",
+   lernziele:["Verschiedene Fallkonzeptions-Modelle (SORKC, kognitives Modell, Schemamodi, Biografie) zu einem kohärenten Gesamtbild kombinieren","Aus dem Fallkonzept eine priorisierte Therapieziel-Hierarchie ableiten","Das Fallkonzept kollaborativ statt belehrend präsentieren","Das Fallkonzept als revidierbares, lebendiges Arbeitsdokument über den Therapieverlauf pflegen"],
+   inhalt:[
+     {titel:"Modelle kombinieren statt isoliert nutzen",text:"Die einzelnen Werkzeuge beantworten unterschiedliche Fragen und ergänzen sich: SORKC erklärt eine konkrete Episode im Detail, das kognitive Modell erklärt den Inhalt und die Struktur der Bewertungen, das Schemamodi-Modell ordnet die emotionale Qualität über Situationen hinweg ein, die Biografie erklärt die Entstehung. Ein vollständiges Fallkonzept verknüpft diese Ebenen zu einer einzigen, in sich konsistenten Geschichte: eine biografisch entstandene Grundannahme oder ein Schema wird durch aktuelle Auslöser aktiviert (Mikroebene SORKC), äußert sich in spezifischen automatischen Gedanken (kognitives Modell) und wird durch ein wiederkehrendes Bewältigungsmuster aufrechterhalten (Schemamodi oder Verhaltensanalyse).",merke:"Nicht ein Modell wählen, sondern Modelle so kombinieren, dass eine einzige kohärente Geschichte entsteht."},
+     {titel:"Die Therapieziel-Hierarchie ableiten",text:"Aus dem fertigen Fallkonzept lässt sich eine sinnvolle Reihenfolge von Behandlungsschritten ableiten – nicht alle Ziele können oder sollten gleichzeitig bearbeitet werden. Eine typische Hierarchie beginnt mit akuter Sicherheit (z.B. Suizidalität, selbstschädigendes Verhalten), geht über zentrale aufrechterhaltende Mechanismen (z.B. Vermeidungsverhalten, dominantes Bewältigungsmuster) zu tieferliegenden Themen (Grundannahmen, biografische Bearbeitung) und schließt mit Rückfallprophylaxe. Diese Hierarchie sollte transparent mit der Patientin besprochen werden, damit sie nachvollziehen kann, warum gerade dieser Schritt zuerst kommt.",merke:"Erst Sicherheit, dann aufrechterhaltende Mechanismen, dann Tiefenarbeit, zuletzt Rückfallprophylaxe."},
+     {titel:"Das Fallkonzept präsentieren",text:"Ein Fallkonzept sollte nicht als fertiges Urteil von oben verkündet, sondern gemeinsam mit der Patientin erarbeitet und überprüft werden ('Passt das zu Ihrer Erfahrung? Was würden Sie anders sehen?'). Einfache Visualisierungen – ein Pfeildiagramm, ein Kreislaufmodell, ein Modus-Mapping – sind verständlicher als Fließtext und lassen sich gemeinsam mit der Patientin Schritt für Schritt aufbauen. Die Sprache sollte sich an der Patientin orientieren, nicht an Fachterminologie: 'Ihr inneres Alarmsystem reagiert sehr schnell' statt 'Ihre Amygdala ist hyperaktiv'.",merke:"Gemeinsam erarbeiten statt verkünden. Visualisieren statt nur erzählen. In der Sprache der Patientin formulieren."},
+     {titel:"Das Fallkonzept als lebendiges Dokument",text:"Ein Fallkonzept ist nie endgültig abgeschlossen. Jede neue bedeutsame Information – eine bislang unbekannte biografische Episode, eine unerwartete Reaktion auf eine Intervention, ein neu auftretendes Symptom – sollte aktiv zur Überprüfung und gegebenenfalls Anpassung des Konzepts genutzt werden. Eine Intervention, die nicht wie erwartet wirkt, ist dabei kein Misserfolg, sondern eine wertvolle diagnostische Information: Offenbar war ein Teil des Fallkonzepts unvollständig oder falsch und muss revidiert werden.",merke:"Eine Intervention, die nicht wirkt, ist keine gescheiterte Behandlung, sondern eine Einladung, das Fallkonzept zu überprüfen."}
+   ],
+   klinisch:"Ein kollaborativ entwickeltes und transparent kommuniziertes Fallkonzept stärkt die therapeutische Allianz und die Adhärenz messbar stärker als ein rein expertenseitig erstelltes Konzept – Patientinnen, die die Logik ihres eigenen Fallkonzepts verstehen, können Interventionen besser einordnen und mittragen.",
+   praxis:["Präsentieren Sie das Fallkonzept als gemeinsam entwickelte Landkarte, nicht als Diagnose von oben","Nutzen Sie eine einfache Skizze oder ein Schaubild statt langer Fachsprache","Fragen Sie nach jeder Präsentation aktiv nach: Passt das zu Ihrer Erfahrung? Was würden Sie anders sehen?","Aktualisieren Sie das Fallkonzept aktiv nach jeder neuen bedeutsamen Information im Therapieverlauf"],
+   fallbeispiel:"Ein Therapeut präsentiert sein Fallkonzept zu einer Patientin mit chronischer Erschöpfung zunächst als reines Pfeildiagramm: Grundannahme 'Ich darf nicht schwach sein' → ständige Selbstüberforderung → Erschöpfung → Schuldgefühle bei Pausen → noch mehr Überforderung. Die Patientin ergänzt spontan einen Punkt, der im Diagramm fehlte: Pausen lösen bei ihr zusätzlich die Befürchtung aus, als 'faul' wahrgenommen zu werden – ein Hinweis auf eine bislang unberücksichtigte soziale Bewertungsangst. Das gemeinsam weiterentwickelte Fallkonzept ist dadurch präziser als das ursprünglich vom Therapeuten allein erstellte.",
+   quiz:[
+     {f:"Was bedeutet es, Fallkonzeptions-Modelle zu kombinieren statt isoliert zu nutzen?",o:["Immer alle verfügbaren Modelle parallel und vollständig anzuwenden","Die Modelle so zu verknüpfen, dass eine einzige kohärente Geschichte über Entstehung, Auslösung und Aufrechterhaltung entsteht","Sich auf ein einziges Modell festzulegen und alle anderen zu ignorieren","Modelle nur dann zu kombinieren, wenn die Patientin danach fragt"],r:1,a:"Ziel ist eine kohärente Gesamtgeschichte, in der z.B. Biografie, Grundannahme, automatische Gedanken und aufrechterhaltendes Verhalten zusammenpassen."},
+     {f:"Wie sollte ein Fallkonzept der Patientin idealerweise präsentiert werden?",o:["Als fertiges Expertenurteil, das die Patientin akzeptieren sollte","Gemeinsam erarbeitet, visualisiert und in der Sprache der Patientin, mit aktiver Rückfrage zur Passung","Ausschließlich schriftlich, ohne mündliche Erläuterung","Nur auf expliziten Wunsch der Patientin, ansonsten gar nicht"],r:1,a:"Kollaborative, visualisierte Präsentation in patientennaher Sprache stärkt Verständnis und therapeutische Allianz."},
+     {f:"Wie sollte mit einer Intervention umgegangen werden, die nicht wie erwartet wirkt?",o:["Als Beweis, dass die Patientin nicht therapiefähig ist","Als Anlass, das Fallkonzept zu überprüfen und gegebenenfalls anzupassen","Als Grund, die Therapie sofort abzubrechen","Als Zeichen, dass mehr Sitzungen pro Woche nötig sind"],r:1,a:"Eine nicht wirksame Intervention liefert wertvolle diagnostische Information und sollte zur Überprüfung des Fallkonzepts genutzt werden – nicht als reines Scheitern gewertet werden."}
+   ]}
+];
+
+let activeFkCat = "Alle";
+let activeFk = null;
+let fkRead = new Set();
+
+function initFkView() {
+  fkUpdateProgress();
+  renderFkCatNav();
+  renderFkGrid();
+}
+
+function fkUpdateProgress() {
+  const total = FK_TOPICS.length;
+  const done = fkRead.size;
+  const el = document.getElementById("fk-progress-label");
+  const bar = document.getElementById("fk-progress-bar");
+  if(el) el.textContent = `${done} / ${total} gelesen`;
+  if(bar) bar.style.width = total ? `${(done/total)*100}%` : "0%";
+}
+
+function fkResetProgress() {
+  fkRead.clear();
+  fkUpdateProgress();
+  renderFkGrid();
+}
+
+function fkToggleRead() {
+  if(!activeFk) return;
+  if(fkRead.has(activeFk)) fkRead.delete(activeFk);
+  else fkRead.add(activeFk);
+  updateFkMarkBtn();
+  fkUpdateProgress();
+  updateFkTopicProgress();
+}
+
+function updateFkMarkBtn() {
+  const done = fkRead.has(activeFk);
+  const btn = document.getElementById("fk-mark-btn");
+  if(!btn) return;
+  btn.textContent = done ? "✓ Gelesen" : "Als gelesen markieren";
+  btn.style.background = done ? "#2c2c2a" : "#EAF3DE";
+  btn.style.color = done ? "#f1efe8" : "#3B6D11";
+  btn.style.borderColor = done ? "#2c2c2a" : "#C0DD97";
+}
+
+function renderFkCatNav() {
+  const cats = ["Alle", ...new Set(FK_TOPICS.map(t=>t.cat))];
+  document.getElementById("fk-cat-nav").innerHTML = cats.map(c =>
+    `<button class="cat-btn${activeFkCat===c?' active':''}" onclick="setFkCat('${c}')">${c}</button>`
+  ).join("");
+}
+
+function setFkCat(cat) { activeFkCat=cat; renderFkCatNav(); renderFkGrid(); }
+
+function renderFkGrid() {
+  const filtered = activeFkCat==="Alle" ? FK_TOPICS : FK_TOPICS.filter(t=>t.cat===activeFkCat);
+  const byCat = {};
+  filtered.forEach(t => { if(!byCat[t.cat]) byCat[t.cat]=[]; byCat[t.cat].push(t); });
+
+  let html = "";
+  Object.entries(byCat).forEach(([cat, topics]) => {
+    const catBg = FK_CAT_COLORS[cat] || "#f1efe8";
+    const catBorder = FK_CAT_BORDER[cat] || "#d3d1c7";
+    if(activeFkCat === "Alle") {
+      html += `<div style="font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.07em;margin:1.25rem 0 .6rem;">${cat}</div>`;
+    }
+    html += `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:${activeFkCat==='Alle'?'0':'12px'};">`;
+    topics.forEach((t) => {
+      const done = fkRead.has(t.id);
+      const diffBg = MED_DIFF_COLOR[t.schwierigkeit||"Grundlagen"];
+      const diffBorder = MED_DIFF_BORDER[t.schwierigkeit||"Grundlagen"];
+      const quizCount = t.quiz ? t.quiz.length : 0;
+      const sectionCount = t.inhalt ? t.inhalt.length : 0;
+      const globalIdx = FK_TOPICS.indexOf(t) + 1;
+      html += `
+        <div onclick="showFk('${t.id}')" style="border:1px solid ${done?'#2c2c2a':'#d3d1c7'};border-radius:12px;padding:14px;background:${done?'#f5f4ef':'#fff'};cursor:pointer;transition:all .15s;position:relative;overflow:hidden;">
+          ${done?`<div style="position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;background:#2c2c2a;display:flex;align-items:center;justify-content:center;font-size:10px;color:#f1efe8;">✓</div>`:''}
+          <div style="font-size:10px;color:#888780;margin-bottom:4px;">Kapitel ${globalIdx}</div>
+          <div style="font-size:13px;font-weight:500;margin-bottom:4px;line-height:1.4;">${t.name}</div>
+          <div style="font-size:11px;color:#5f5e5a;margin-bottom:10px;line-height:1.4;">${t.kurz}</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;">
+            <span style="font-size:10px;padding:2px 7px;border-radius:4px;background:${catBg};color:#1a1a18;border:1px solid ${catBorder};">${cat}</span>
+            <span style="font-size:10px;padding:2px 7px;border-radius:4px;background:${diffBg};border:1px solid ${diffBorder};">${t.schwierigkeit||'Grundlagen'}</span>
+            <span style="font-size:10px;padding:2px 7px;border-radius:4px;background:#f1efe8;border:1px solid #d3d1c7;">${sectionCount} Abschnitte · ${quizCount} Quiz</span>
+          </div>
+        </div>`;
+    });
+    html += `</div>`;
+  });
+  document.getElementById("fk-grid").innerHTML = html;
+}
+
+function showFk(id) {
+  activeFk=id;
+  const t=FK_TOPICS.find(x=>x.id===id);
+  if(!t) return;
+  document.getElementById("fk-course-view").style.display="none";
+  const fd=document.getElementById("fk-detail");
+  fd.classList.add("visible");
+
+  document.getElementById("fk-breadcrumb").innerHTML =
+    `<span style="cursor:pointer;color:#5f5e5a;" onclick="showFkList()">Fallkonzeptualisierung</span>
+     <span style="margin:0 4px;">›</span>
+     <span style="color:#888780;">${t.cat}</span>
+     <span style="margin:0 4px;">›</span>
+     <span style="color:#1a1a18;">${t.name}</span>`;
+
+  document.getElementById("fk-title").textContent = t.name;
+  const diffBg = MED_DIFF_COLOR[t.schwierigkeit||"Grundlagen"];
+  const diffBorder = MED_DIFF_BORDER[t.schwierigkeit||"Grundlagen"];
+  const catBg = FK_CAT_COLORS[t.cat]||"#f1efe8";
+  const catBorder = FK_CAT_BORDER[t.cat]||"#d3d1c7";
+  document.getElementById("fk-meta").innerHTML =
+    `<span class="tx-meta-badge" style="background:${catBg};border:1px solid ${catBorder};">${t.cat}</span>
+     <span class="tx-meta-badge" style="background:${diffBg};border:1px solid ${diffBorder};">${t.schwierigkeit||'Grundlagen'}</span>
+     ${t.lernziele?`<span class="tx-meta-badge" style="background:#f1efe8;border:1px solid #d3d1c7;">${t.lernziele.length} Lernziele</span>`:''}
+     ${t.quiz?`<span class="tx-meta-badge" style="background:#f1efe8;border:1px solid #d3d1c7;">${t.quiz.length} Quiz-Fragen</span>`:''}`;
+
+  updateFkMarkBtn();
+  updateFkTopicProgress();
+
+  document.getElementById("fk-content").innerHTML = renderFkFull(t);
+
+  if(t.inhalt && t.inhalt.length) {
+    document.getElementById("fk-toc").innerHTML = `
+      <div style="background:#f5f4ef;border-radius:10px;padding:12px 16px;border:1px solid #d3d1c7;">
+        <div style="font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Inhaltsverzeichnis</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:4px;">
+          ${t.inhalt.map((s,i)=>`<a href="#fk-section-${t.id}-${i}" onclick="event.preventDefault();document.getElementById('fk-section-${t.id}-${i}').scrollIntoView({behavior:'smooth',block:'start'})" style="font-size:12px;color:#0C447C;text-decoration:none;padding:2px 0;display:flex;align-items:center;gap:5px;"><span style="color:#b4b2a9;">${i+1}.</span>${s.titel}</a>`).join("")}
+          <a href="#fk-lernziele-${t.id}" onclick="event.preventDefault();document.getElementById('fk-lernziele-${t.id}').scrollIntoView({behavior:'smooth',block:'start'})" style="font-size:12px;color:#3B6D11;text-decoration:none;padding:2px 0;">📋 Lernziele</a>
+          ${t.quiz?`<a href="#fk-quiz-${t.id}" onclick="event.preventDefault();document.getElementById('fk-quiz-${t.id}').scrollIntoView({behavior:'smooth',block:'start'})" style="font-size:12px;color:#633806;text-decoration:none;padding:2px 0;">✏ Quiz (${t.quiz.length} Fragen)</a>`:''}
+        </div>
+      </div>`;
+  }
+
+  fd.scrollIntoView({behavior:"smooth",block:"start"});
+  updateFkNavBtns();
+}
+
+function updateFkTopicProgress() {
+  if(!activeFk) return;
+  const t = FK_TOPICS.find(x=>x.id===activeFk);
+  if(!t) return;
+  const total = (t.inhalt||[]).length + (t.quiz?1:0) + (t.lernziele?1:0);
+  const done = fkRead.has(activeFk) ? total : 0;
+  const el = document.getElementById("fk-topic-progress");
+  if(!el) return;
+  el.innerHTML = done===total && total>0 ?
+    `<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#3B6D11;"><span style="display:inline-block;width:16px;height:16px;border-radius:50%;background:#3B6D11;text-align:center;line-height:16px;color:#fff;font-size:9px;">✓</span> Thema abgeschlossen</div>` : "";
+}
+
+function showFkList() {
+  activeFk=null;
+  document.getElementById("fk-course-view").style.display="block";
+  document.getElementById("fk-detail").classList.remove("visible");
+  renderFkGrid();
+}
+
+function fkNavigate(dir) {
+  const idx = FK_TOPICS.findIndex(t=>t.id===activeFk);
+  const next = FK_TOPICS[idx+dir];
+  if(next) showFk(next.id);
+}
+
+function updateFkNavBtns() {
+  const idx = FK_TOPICS.findIndex(t=>t.id===activeFk);
+  const prev = document.getElementById("fk-prev-btn");
+  const next = document.getElementById("fk-next-btn");
+  if(prev) { prev.disabled=idx===0; prev.style.opacity=idx===0?".4":"1"; prev.textContent = idx>0 ? `← ${FK_TOPICS[idx-1].name}` : "← Vorheriges"; }
+  if(next) { next.disabled=idx===FK_TOPICS.length-1; next.style.opacity=idx===FK_TOPICS.length-1?".4":"1"; next.textContent = idx<FK_TOPICS.length-1 ? `${FK_TOPICS[idx+1].name} →` : "Nächstes →"; }
+}
+
+function renderFkFull(t) {
+  const catBg = FK_CAT_COLORS[t.cat]||"#f1efe8";
+  const catBorder = FK_CAT_BORDER[t.cat]||"#d3d1c7";
+
+  let html = "";
+  if(t.lernziele && t.lernziele.length) {
+    html += `<div id="fk-lernziele-${t.id}" style="margin-bottom:1.5rem;border:1px solid ${catBorder};border-radius:12px;overflow:hidden;background:${catBg};">
+      <div style="padding:10px 16px;border-bottom:1px solid ${catBorder};display:flex;align-items:center;gap:8px;">
+        <span style="font-size:15px;">📋</span>
+        <span style="font-size:13px;font-weight:500;">Lernziele – Was Sie nach diesem Kapitel können</span>
+      </div>
+      <div style="padding:12px 16px;">
+        <ol style="margin:0;padding-left:1.25rem;">
+          ${t.lernziele.map(z=>`<li style="font-size:13px;line-height:1.7;margin-bottom:3px;">${z}</li>`).join("")}
+        </ol>
+      </div>
+    </div>`;
+  }
+
+  if(t.inhalt && t.inhalt.length) {
+    t.inhalt.forEach((s, i) => {
+      html += renderFkSection(t, s, i);
+    });
+  }
+
+  if(t.klinisch) {
+    html += `<div style="margin-bottom:1.5rem;border:1px solid #C0DD97;border-radius:12px;overflow:hidden;background:#EAF3DE;">
+      <div style="padding:10px 16px;border-bottom:1px solid #C0DD97;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:15px;">🏥</span>
+        <span style="font-size:13px;font-weight:500;color:#3B6D11;">Klinische Relevanz</span>
+      </div>
+      <div style="padding:12px 16px;font-size:13px;line-height:1.75;color:#1a1a18;">${t.klinisch}</div>
+    </div>`;
+  }
+
+  if(t.praxis && t.praxis.length) {
+    html += `<div style="margin-bottom:1.5rem;border:1px solid #FAC775;border-radius:12px;overflow:hidden;background:#FAEEDA;">
+      <div style="padding:10px 16px;border-bottom:1px solid #FAC775;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:15px;">💡</span>
+        <span style="font-size:13px;font-weight:500;color:#633806;">Praktische Anwendung</span>
+      </div>
+      <div style="padding:12px 16px;">
+        <ul style="margin:0;padding-left:1.25rem;">
+          ${t.praxis.map(p=>`<li style="font-size:13px;line-height:1.7;margin-bottom:4px;">${p}</li>`).join("")}
+        </ul>
+      </div>
+    </div>`;
+  }
+
+  if(t.fallbeispiel) {
+    html += `<div style="margin-bottom:1.5rem;border:1px solid #d3d1c7;border-radius:12px;overflow:hidden;background:#fff;">
+      <div style="padding:10px 16px;background:#f1efe8;border-bottom:1px solid #d3d1c7;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:15px;">📂</span>
+        <span style="font-size:13px;font-weight:500;">Fallbeispiel</span>
+      </div>
+      <div style="padding:12px 16px;font-size:13px;line-height:1.75;font-style:italic;color:#2c2c2a;">${t.fallbeispiel}</div>
+    </div>`;
+  }
+
+  if(t.quiz && t.quiz.length) {
+    html += renderFkQuizFull(t);
+  }
+
+  return `<div class="pt1" style="padding-top:0;">${html}</div>`;
+}
+
+function renderFkSection(t, s, i) {
+  const catBg = FK_CAT_COLORS[t.cat]||"#f1efe8";
+  const catBorder = FK_CAT_BORDER[t.cat]||"#d3d1c7";
+  return `
+    <div id="fk-section-${t.id}-${i}" style="margin-bottom:1.25rem;border:1px solid #d3d1c7;border-radius:12px;overflow:hidden;background:#fff;">
+      <div style="background:#f5f4ef;padding:10px 16px;border-bottom:1px solid #d3d1c7;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:${catBg};border:1px solid ${catBorder};font-size:11px;font-weight:500;color:#1a1a18;flex-shrink:0;">${i+1}</span>
+          <span style="font-size:13px;font-weight:500;">${s.titel}</span>
+        </div>
+        ${s.merke?`<span style="font-size:10px;padding:2px 7px;border-radius:4px;background:#FAEEDA;color:#633806;border:1px solid #FAC775;white-space:nowrap;">★ Merksatz</span>`:''}
+      </div>
+      <div style="padding:14px 16px;font-size:13px;line-height:1.8;color:#1a1a18;">${s.text}</div>
+      ${s.merke?`<div style="margin:0 16px 14px;background:#FAEEDA;border-radius:8px;padding:9px 12px;border-left:3px solid #FAC775;">
+        <div style="font-size:11px;font-weight:500;color:#633806;margin-bottom:3px;">★ Merksatz</div>
+        <div style="font-size:12px;color:#633806;line-height:1.5;">${s.merke}</div>
+      </div>`:''}
+    </div>`;
+}
+
+function renderFkQuizFull(t) {
+  const qHtml = t.quiz.map((q,qi) => {
+    const opts = q.o.map((opt,oi) =>
+      `<button onclick="fkAnswer(${qi},${oi})" id="fq-${qi}-${oi}"
+        style="display:block;width:100%;text-align:left;padding:9px 14px;margin:5px 0;border-radius:8px;border:1px solid #d3d1c7;background:#f5f4ef;cursor:pointer;font-size:13px;font-family:inherit;transition:all .15s;line-height:1.5;">
+        <span style="display:inline-block;min-width:20px;font-weight:500;color:#888780;">${String.fromCharCode(65+oi)}.</span> ${opt}
+      </button>`).join("");
+    return `<div id="fq-block-${qi}" style="margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid #e8e6df;">
+      <div style="font-size:13px;font-weight:500;margin-bottom:.75rem;line-height:1.6;color:#1a1a18;">${qi+1}. ${q.f}</div>
+      <div id="fq-opts-${qi}">${opts}</div>
+      <div id="fq-feedback-${qi}" style="display:none;margin-top:.75rem;font-size:13px;border-radius:8px;padding:10px 14px;line-height:1.6;"></div>
+    </div>`;
+  }).join("");
+
+  return `<div id="fk-quiz-${t.id}" style="margin-bottom:1.5rem;border:1px solid #d3d1c7;border-radius:12px;overflow:hidden;background:#fff;">
+    <div style="background:#f1efe8;padding:10px 16px;border-bottom:1px solid #d3d1c7;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:15px;">✏</span>
+        <span style="font-size:13px;font-weight:500;">Wissenscheck – ${t.quiz.length} Fragen</span>
+      </div>
+      <span style="font-size:11px;color:#5f5e5a;">Klicken Sie eine Antwort an</span>
+    </div>
+    <div style="padding:16px;">
+      ${qHtml}
+      <div id="fq-score-${t.id}" style="display:none;text-align:center;padding:1.25rem;background:#EAF3DE;border-radius:10px;border:1px solid #C0DD97;">
+        <div style="font-size:24px;font-weight:500;color:#3B6D11;" id="fq-score-num-${t.id}"></div>
+        <div style="font-size:13px;color:#3B6D11;margin-top:4px;">Quiz abgeschlossen! 🎉</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+const fkQuizState = {};
+
+function fkAnswer(qi, oi) {
+  if(!activeFk) return;
+  const t = FK_TOPICS.find(x=>x.id===activeFk);
+  if(!t||!t.quiz||!t.quiz[qi]) return;
+  const q = t.quiz[qi];
+  const stateKey = `${activeFk}-${qi}`;
+  if(fkQuizState[stateKey]) return;
+  fkQuizState[stateKey] = true;
+  const correct = oi === q.r;
+  if(correct) fkQuizState[`${activeFk}-${qi}-correct`] = true;
+  const feedbackEl = document.getElementById(`fq-feedback-${qi}`);
+  for(let i=0;i<q.o.length;i++) {
+    const btn = document.getElementById(`fq-${qi}-${i}`);
+    if(!btn) continue;
+    if(i===q.r) { btn.style.background="#EAF3DE"; btn.style.borderColor="#C0DD97"; btn.style.color="#3B6D11"; }
+    else if(i===oi&&!correct) { btn.style.background="#FCEBEB"; btn.style.borderColor="#F7C1C1"; btn.style.color="#791F1F"; }
+    btn.style.cursor="default";
+  }
+  if(feedbackEl) {
+    feedbackEl.style.display="block";
+    feedbackEl.style.background = correct?"#EAF3DE":"#FCEBEB";
+    feedbackEl.style.color = correct?"#3B6D11":"#791F1F";
+    feedbackEl.style.border = `1px solid ${correct?"#C0DD97":"#F7C1C1"}`;
+    feedbackEl.innerHTML = `<strong>${correct?"✓ Richtig!":"✗ Leider falsch."}</strong> ${q.a}`;
+  }
+  const allDone = t.quiz.every((_,i)=>fkQuizState[`${activeFk}-${i}`]);
+  if(allDone) {
+    let correctCount = 0;
+    t.quiz.forEach((_,i)=>{ if(fkQuizState[`${activeFk}-${i}-correct`]) correctCount++; });
+    const scoreEl = document.getElementById(`fq-score-${activeFk}`);
+    const numEl = document.getElementById(`fq-score-num-${activeFk}`);
+    if(scoreEl) scoreEl.style.display="block";
+    if(numEl) numEl.textContent = `${correctCount} / ${t.quiz.length} richtig`;
+    if(correctCount === t.quiz.length) { fkRead.add(activeFk); updateFkMarkBtn(); fkUpdateProgress(); }
   }
 }
 
