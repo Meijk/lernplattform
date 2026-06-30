@@ -292,19 +292,14 @@ body{font-family:system-ui,-apple-system,sans-serif;color:#1a1a18;background:#f5
     </div>
   </div>
 
-  <!-- VIEW: Gruppentherapie -->
+  <!-- VIEW: Gruppentherapie (Kursformat) -->
   <div class="view" id="view-gt">
-    <div id="gt-list-view">
-      <div class="cat-nav" id="gt-cat-nav"></div>
-      <div class="tx-grid" id="gt-grid"></div>
+    <div style="margin-bottom:1.25rem;">
+      <div style="font-size:18px;font-weight:500;">Gruppentherapie – Selbstlernkurs</div>
+      <div style="font-size:12px;color:#5f5e5a;margin-top:2px;">Grundprinzipien · Gruppendynamik · Gruppentherapieverfahren</div>
     </div>
-    <div class="tx-detail" id="gt-detail">
-      <button class="back-btn" onclick="showGtList()">&#8592; Zur&#252;ck zur &#220;bersicht</button>
-      <div class="tx-detail-title" id="gt-title"></div>
-      <div class="tx-meta-row" id="gt-meta"></div>
-      <div class="tabs" id="gt-tabs"></div>
-      <div id="gt-panels"></div>
-    </div>
+    <div id="gt-modnav" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem;"></div>
+    <div id="gt-modpanels"></div>
   </div>
 
   <!-- VIEW: Medizinische Grundlagen – Selbstlernkurs -->
@@ -4697,13 +4692,107 @@ const GROUP_THERAPY = [
 ];
 
 // ═══════════════════════════════════════════════════════════════
-// GROUP THERAPY VIEW
+// DATA: GRUPPENTHERAPIE-KURS — Module
+// ═══════════════════════════════════════════════════════════════
+const GT_KURS_MODULES = [
+  {id:"gtk1", titel:"Einführung & Rahmenbedingungen", icon:"🎯",
+   lernziel:"Du kennst die grundlegenden Strukturmerkmale von Gruppentherapie und kannst eine Gruppe hinsichtlich Format, Zusammensetzung und Indikation einordnen.",
+   inhalt:"<h4 style='margin:0 0 .5rem;font-size:13px;color:#2c2c2a;'>Was ist Gruppentherapie?</h4><p>Gruppentherapie ist keine bloße Übertragung der Einzeltherapie auf mehrere Personen, sondern ein eigenständiges Format mit eigenen Wirkmechanismen: Die Gruppe selbst – ihre Interaktionen, Rückmeldungen und ihre Dynamik – wird zum therapeutischen Wirkfaktor. Yalom fasst das pointiert: <strong>'Die Gruppe ist nicht nur der Ort der Behandlung, sondern das Mittel der Behandlung.'</strong> Gruppentherapie kann eigenständiges Verfahren sein (z. B. interaktionelle Gruppenpsychotherapie) oder Ergänzung zur Einzeltherapie (z. B. Skills-Gruppe in der DBT, Psychoedukationsgruppe).</p><h4 style='margin:1rem 0 .5rem;font-size:13px;color:#2c2c2a;'>Strukturmerkmale einer Gruppe</h4><table style='width:100%;border-collapse:collapse;font-size:12px;'><tr style='background:#e8e6df;'><td style='padding:6px 8px;font-weight:500;'>Merkmal</td><td style='padding:6px 8px;font-weight:500;'>Ausprägungen</td><td style='padding:6px 8px;font-weight:500;'>Klinische Bedeutung</td></tr><tr style='border-bottom:1px solid #e8e6df;'><td style='padding:6px 8px;font-weight:500;'>Offenheit</td><td style='padding:6px 8px;'>Offen (laufender Ein-/Ausstieg) vs. geschlossen (fester Beginn/Ende)</td><td style='padding:6px 8px;'>Offen: stationär üblich, weniger Kohäsion. Geschlossen: mehr Vertrauen/Tiefe, aber Drop-out destabilisiert</td></tr><tr style='background:#fafaf8;border-bottom:1px solid #e8e6df;'><td style='padding:6px 8px;font-weight:500;'>Zusammensetzung</td><td style='padding:6px 8px;'>Homogen (gleiche Störung/Thema) vs. heterogen (gemischt)</td><td style='padding:6px 8px;'>Homogen: rascher Zusammenhalt, geteiltes Erleben. Heterogen: breitere Perspektiven, mehr interpersonales Lernen</td></tr><tr style='border-bottom:1px solid #e8e6df;'><td style='padding:6px 8px;font-weight:500;'>Größe</td><td style='padding:6px 8px;'>Typisch 6–10 Teilnehmende</td><td style='padding:6px 8px;'>Unter 5: zu wenig Interaktionsvielfalt. Über 10: Einzelne kommen zu wenig zu Wort</td></tr><tr style='background:#fafaf8;border-bottom:1px solid #e8e6df;'><td style='padding:6px 8px;font-weight:500;'>Frequenz/Dauer</td><td style='padding:6px 8px;'>Meist 1–2×/Woche, 60–100 Min</td><td style='padding:6px 8px;'>Stationär oft täglich (Psychoedukation), ambulant wöchentlich (Prozessgruppe)</td></tr><tr><td style='padding:6px 8px;font-weight:500;'>Leitung</td><td style='padding:6px 8px;'>Einzelleitung vs. Ko-Therapie</td><td style='padding:6px 8px;'>Ko-Therapie: Entlastung, Modell für Interaktion, aber Risiko von Spaltung</td></tr></table><h4 style='margin:1rem 0 .5rem;font-size:13px;color:#2c2c2a;'>Indikationsstellung & Vorbereitung</h4><div style='display:grid;gap:8px;margin-bottom:1rem;'><div style='background:#f1efe8;border-radius:8px;padding:.75rem 1rem;border-left:3px solid #2c2c2a;font-size:13px;'><strong>Eignungskriterien:</strong> Ausreichende Mentalisierungsfähigkeit, Gruppenfähigkeit (keine akute Psychose/Suizidalität, kein unkontrolliertes aggressives Verhalten), Bereitschaft sich zu zeigen</div><div style='background:#f1efe8;border-radius:8px;padding:.75rem 1rem;border-left:3px solid #2c2c2a;font-size:13px;'><strong>Vorgespräch:</strong> Ziele klären, Befürchtungen ansprechen ('Was macht Ihnen an einer Gruppe am meisten Sorge?'), Regeln transparent machen – reduziert Drop-out in den ersten Sitzungen erheblich</div><div style='background:#f1efe8;border-radius:8px;padding:.75rem 1rem;border-left:3px solid #2c2c2a;font-size:13px;'><strong>Passung zur Gruppe:</strong> Extreme Außenseiterposition (einziges Mitglied mit stark abweichendem Funktionsniveau) erhöht Drop-out-Risiko deutlich</div></div><div style='background:#EAF3DE;border-radius:8px;padding:.75rem 1rem;border-left:3px solid #5A9C4A;'><strong>Einzel- vs. Gruppentherapie – Evidenz:</strong> Meta-Analysen zeigen für viele Störungsbilder vergleichbare Wirksamkeit von Einzel- und Gruppentherapie; bei manchen Persönlichkeitsstörungen und chronischer Depression sogar Vorteile der Gruppe durch das interpersonale Lernfeld. Kombinationsbehandlungen (Einzel + Gruppe) sind oft überlegen.</div>"
+  },
+  {id:"gtk2", titel:"Methodenübergreifende Grundprinzipien für Gruppeninterventionen", icon:"🧩",
+   lernziel:"Du kennst Yaloms therapeutische Faktoren, die vier Leitungsfunktionen sowie zentrale Grundregeln, die unabhängig vom jeweiligen Therapieverfahren für jede Gruppenintervention gelten.",
+   inhalt:"<h4 style='margin:0 0 .5rem;font-size:13px;color:#2c2c2a;'>Die therapeutischen Wirkfaktoren nach Yalom</h4><p>Unabhängig davon, ob eine Gruppe verhaltenstherapeutisch, psychodynamisch oder schematherapeutisch ausgerichtet ist, wirken nach Irvin Yalom (1970, mehrfach revidiert) gemeinsame, <strong>methodenübergreifende Wirkfaktoren</strong>. Sie bilden das Fundament jeder Gruppenintervention.</p><div style='display:grid;gap:6px;margin-bottom:1rem;'><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>1. Hoffnung wecken</strong> – Andere mit ähnlichen Problemen erleben Fortschritt; reduziert Hoffnungslosigkeit</div><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>2. Universalität des Leidens</strong> – 'Ich bin nicht allein damit' – zentraler Entlastungsfaktor, besonders zu Beginn</div><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>3. Information vermitteln</strong> – Psychoedukation durch Therapeutin und Mitglieder</div><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>4. Altruismus</strong> – Anderen helfen zu können stärkt das eigene Selbstwertgefühl ('ich bin nicht nur Empfänger')</div><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>5. Korrigierende Rekapitulation der Primärfamilie</strong> – die Gruppe reaktiviert familiäre Muster, die diesmal anders bearbeitet werden können</div><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>6. Entwicklung sozialer Fertigkeiten</strong> – Feedback und Übungsfeld für neues interpersonales Verhalten</div><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>7. Imitatives Verhalten</strong> – Lernen am Modell anderer Mitglieder und der Therapeutin</div><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>8. Interpersonales Lernen</strong> – die Gruppe als 'soziales Mikrokosmos': eigene Beziehungsmuster zeigen sich live und können dort bearbeitet werden</div><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>9. Gruppenkohäsion</strong> – das Gruppenäquivalent therapeutischer Allianz; stärkster Prädiktor für Therapieerfolg</div><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>10. Katharsis</strong> – emotionaler Ausdruck in sicherem Rahmen, wirkt nur in Verbindung mit kognitiver Verarbeitung</div><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>11. Existenzielle Faktoren</strong> – Konfrontation mit Verantwortung, Endlichkeit, Isoliertheit des Daseins</div></div><h4 style='margin:1rem 0 .5rem;font-size:13px;color:#2c2c2a;'>Die vier Leitungsfunktionen (Lieberman, Yalom & Miles)</h4><p style='font-size:13px;margin-bottom:.5rem;'>Unabhängig von der theoretischen Schule muss jede Gruppenleitung vier Funktionen im Gleichgewicht halten:</p><div style='display:grid;gap:8px;margin-bottom:1rem;'><div style='background:#f1efe8;border-radius:8px;padding:.75rem 1rem;border-left:3px solid #4A90D9;'><strong>Emotionale Stimulierung</strong> – Affekte, Konfrontation, persönliches Engagement der Leitung aktivieren</div><div style='background:#f1efe8;border-radius:8px;padding:.75rem 1rem;border-left:3px solid #5A9C4A;'><strong>Fürsorge (Caring)</strong> – Wärme, Akzeptanz, Schutz, Unterstützung anbieten</div><div style='background:#f1efe8;border-radius:8px;padding:.75rem 1rem;border-left:3px solid #E8A838;'><strong>Bedeutungszuschreibung</strong> – Erleben in Worte fassen, Zusammenhänge erklären, kognitiven Rahmen geben</div><div style='background:#f1efe8;border-radius:8px;padding:.75rem 1rem;border-left:3px solid #7C73E6;'><strong>Steuerung (Executive Function)</strong> – Grenzen setzen, Regeln, Tempo und Struktur der Sitzung steuern</div></div><div style='background:#FEF3CD;border-radius:8px;padding:.75rem 1rem;border-left:3px solid #E8A838;margin-bottom:1rem;font-size:13px;'><strong>Cave Über-/Unterdosierung:</strong> Zu viel emotionale Stimulierung ohne Steuerung kann überfluten und Drop-out erzeugen; zu viel Steuerung ohne Fürsorge wirkt distanziert-autoritär. Erfahrene Leitungen balancieren alle vier Funktionen situativ.</div><h4 style='margin:1rem 0 .5rem;font-size:13px;color:#2c2c2a;'>Grundregeln, die für jede Gruppenform gelten</h4><div style='display:grid;gap:6px;'><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>Vertraulichkeit (Schweigepflicht der Gruppe):</strong> Was in der Gruppe besprochen wird, bleibt in der Gruppe – Grundvoraussetzung für Offenheit</div><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>Verbindlichkeit & Pünktlichkeit:</strong> regelmäßige Teilnahme schützt Gruppenkohäsion; Fehlzeiten vorab ankündigen</div><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>Keine Kontakte außerhalb / kein Subgrouping:</strong> private Bündnisse außerhalb der Sitzung untergraben die Transparenz der Gruppe und müssen, falls sie entstehen, in der Gruppe offengelegt werden</div><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>Verzicht auf Gewalt und Gewaltandrohung:</strong> nonverhandelbare Sicherheitsregel</div><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>Ich-Botschaften & konkretes Feedback:</strong> Rückmeldungen werden als eigene Wahrnehmung formuliert ('Ich erlebe...'), nicht als pauschales Urteil ('Du bist...')</div><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>Hier-und-Jetzt-Fokus:</strong> Geschehen in der Gruppe selbst hat Vorrang vor reinem Berichten über Ereignisse außerhalb – ermöglicht interpersonales Lernen in Echtzeit</div></div><h4 style='margin:1rem 0 .5rem;font-size:13px;color:#2c2c2a;'>Umgang mit typischen Gruppenphänomenen</h4><div style='display:grid;gap:8px;'><div style='background:#f1efe8;border-radius:8px;padding:.75rem 1rem;border-left:3px solid #2c2c2a;font-size:13px;'><strong>Monopolisierung:</strong> Ein Mitglied dominiert das Gespräch. Leitung unterbricht aktiv, aber wertschätzend ('Danke – ich möchte gerne hören, wie es den anderen damit geht') und schützt so den Raum für alle</div><div style='background:#f1efe8;border-radius:8px;padding:.75rem 1rem;border-left:3px solid #2c2c2a;font-size:13px;'><strong>Sündenbock-Dynamik:</strong> Ein Mitglied wird zur Projektionsfläche negativer Gruppenaffekte. Leitung benennt die Dynamik aktiv ('Mir fällt auf, dass...'), schützt das Mitglied, macht den zugrundeliegenden Gruppenaffekt explizit bearbeitbar</div><div style='background:#f1efe8;border-radius:8px;padding:.75rem 1rem;border-left:3px solid #2c2c2a;font-size:13px;'><strong>Schweigen in der Gruppe:</strong> Nicht vorschnell auflösen – Schweigen kann Bedeutung tragen (Scham, Widerstand, Verarbeitung). Leitung hält aus, exploriert ggf. behutsam: 'Was passiert gerade im Schweigen?'</div><div style='background:#f1efe8;border-radius:8px;padding:.75rem 1rem;border-left:3px solid #2c2c2a;font-size:13px;'><strong>Ko-Therapeuten-Spaltung:</strong> Gruppe spielt zwei Leitende gegeneinander aus (Idealisierung der einen, Abwertung der anderen). Regelmäßige Vor-/Nachbesprechung der Ko-Leitung als Prävention essenziell</div></div>"
+  },
+  {id:"gtk3", titel:"Gruppendynamik & Phasenmodelle", icon:"🔄",
+   lernziel:"Du kannst typische Entwicklungsphasen einer Gruppe sowie häufige Gruppenrollen erkennen und in der Leitung berücksichtigen.",
+   inhalt:"<h4 style='margin:0 0 .5rem;font-size:13px;color:#2c2c2a;'>Warum Phasenmodelle?</h4><p>Gruppen durchlaufen über die Zeit vorhersagbare Entwicklungsschritte. Das Wissen um diese Phasen hilft der Leitung, normative Krisen (z. B. eine 'Sturm'-Phase mit Konflikten) von individueller Pathologie zu unterscheiden und angemessen zu intervenieren.</p><h4 style='margin:1rem 0 .5rem;font-size:13px;color:#2c2c2a;'>Das Phasenmodell nach Tuckman (1965)</h4><div style='display:grid;gap:8px;margin-bottom:1rem;'><div style='background:#f1efe8;border-radius:8px;padding:.75rem 1rem;border-left:3px solid #4A90D9;'><strong>Forming (Orientierung):</strong> Höflichkeit, Unsicherheit, Abtasten der Regeln und der Leitung. Leitungsaufgabe: Struktur und Sicherheit geben, Regeln transparent machen</div><div style='background:#f1efe8;border-radius:8px;padding:.75rem 1rem;border-left:3px solid #C0392B;'><strong>Storming (Konflikt):</strong> Auseinandersetzung um Macht, Status, Vertrauen; erste offene Konflikte und Auflehnung gegen die Leitung. Leitungsaufgabe: Konflikte nicht vermeiden, sondern als Lernfeld nutzen und moderieren – normativ einordnen ('das gehört dazu')</div><div style='background:#f1efe8;border-radius:8px;padding:.75rem 1rem;border-left:3px solid #E8A838;'><strong>Norming (Normierung):</strong> Gruppe entwickelt eigene implizite Normen, Zusammenhalt wächst, Rollen stabilisieren sich. Leitungsaufgabe: hilfreiche Normen verstärken, dysfunktionale ansprechen</div><div style='background:#f1efe8;border-radius:8px;padding:.75rem 1rem;border-left:3px solid #5A9C4A;'><strong>Performing (Arbeitsphase):</strong> Hohe Kohäsion, produktive Arbeit am eigentlichen therapeutischen Material, tiefes interpersonales Lernen möglich. Leitungsaufgabe: zurücktreten, Eigenaktivität der Gruppe fördern</div><div style='background:#f1efe8;border-radius:8px;padding:.75rem 1rem;border-left:3px solid #7C73E6;'><strong>Adjourning (Abschied):</strong> Auflösung bzw. Beendigung – Trennungsthemen, Bilanzierung, Abschiedsaffekte. Leitungsaufgabe: Raum für Abschied und Rückblick aktiv schaffen, nicht 'verschweigen'</div></div><h4 style='margin:1rem 0 .5rem;font-size:13px;color:#2c2c2a;'>Klinisches Phasenmodell nach MacKenzie</h4><p style='font-size:13px;line-height:1.6;'>Für therapeutische Gruppen ergänzend hilfreich: MacKenzie beschreibt die Entwicklung über <strong>Engagement</strong> (Aufbau von Vertrauen und Zugehörigkeit) → <strong>Differenzierung</strong> (Individualität und Meinungsverschiedenheiten werden toleriert) → <strong>Intimität & gegenseitige Verantwortung</strong> (echte Nähe und wechselseitige Konfrontation werden möglich) → <strong>Termination</strong> (bewusste Beendigung). Die Phasen sind nicht streng linear – Gruppen können in frühere Phasen zurückfallen, etwa nach einem Mitgliederwechsel.</p><h4 style='margin:1rem 0 .5rem;font-size:13px;color:#2c2c2a;'>Typische Rollen in Gruppen</h4><div style='display:grid;gap:6px;'><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>Sündenbock</strong> – trägt stellvertretend negative Gruppenaffekte</div><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>Monopolisierer</strong> – füllt Stille, dominiert aus eigener Angst vor Leere/Ablehnung</div><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>Schweiger/Rückzügler</strong> – beobachtet, vermeidet Exponiertheit; nicht automatisch desinteressiert</div><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>Helfer/Co-Therapeut</strong> – übernimmt fürsorgliche Funktionen, vermeidet eigene Themen</div><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>Gruppenclown</strong> – entschärft Spannung über Humor, kann auch Vermeidung sein</div><div style='background:#fafaf8;border-radius:6px;padding:.6rem .875rem;border:1px solid #e8e6df;font-size:12px;'><strong>Herausforderer der Leitung</strong> – testet Grenzen und Authentizität der Leitung, oft in der Storming-Phase</div></div><div style='background:#EAF3DE;border-radius:8px;padding:.75rem 1rem;border-left:3px solid #5A9C4A;margin-top:1rem;font-size:13px;'><strong>Gruppenkohäsion als zentraler Wirkfaktor:</strong> Rollen sind nicht statisch, sondern reagieren auf die Gruppendynamik. Je höher die Kohäsion, desto eher können Mitglieder ihre Rolle flexibel verlassen und neues Verhalten ausprobieren – das gemeinsame Ziel jeder Phase ist letztlich der Aufbau und Erhalt dieser Kohäsion.</div>"
+  },
+  {id:"gtk4", titel:"Gruppentherapieverfahren", icon:"📋", special:"verfahren",
+   lernziel:"Du kennst die wichtigsten Gruppentherapieverfahren im Überblick und kannst sie hinsichtlich Indikation, Wirkfaktoren und Sitzungsverlauf einordnen."
+  }
+];
+
+// ═══════════════════════════════════════════════════════════════
+// GROUP THERAPY VIEW — Kursformat
 // ═══════════════════════════════════════════════════════════════
 let activeGtCat = "Alle";
 let activeGt = null;
+let gtActiveModule = 0;
+let gtModuleProgress = [false,false,false,false];
 
 function initGtView() {
-  renderGtCatNav(); renderGtGrid();
+  renderGtModNav();
+  renderGtModPanel();
+}
+
+function renderGtModNav() {
+  document.getElementById("gt-modnav").innerHTML = GT_KURS_MODULES.map((mod,i) => `
+    <button onclick="gtSetModule(${i})"
+      style="padding:6px 12px;border-radius:20px;border:1px solid ${gtActiveModule===i?'#2c2c2a':'#d3d1c7'};
+      background:${gtActiveModule===i?'#2c2c2a':'transparent'};color:${gtActiveModule===i?'#f1efe8':'#5f5e5a'};
+      font-size:12px;font-weight:${gtActiveModule===i?'500':'400'};cursor:pointer;font-family:inherit;
+      position:relative;">${mod.icon} ${mod.titel}${gtModuleProgress[i]?'<span style="position:absolute;top:-3px;right:-3px;background:#5A9C4A;color:white;border-radius:50%;width:14px;height:14px;font-size:9px;display:flex;align-items:center;justify-content:center;">✓</span>':''}</button>
+  `).join("");
+}
+
+function gtSetModule(i) {
+  gtActiveModule = i;
+  renderGtModNav();
+  renderGtModPanel();
+  document.getElementById("view-gt").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function gtKursNav(dir) {
+  const next = gtActiveModule + dir;
+  if(next>=0 && next<GT_KURS_MODULES.length) { gtSetModule(next); }
+}
+
+function gtKursMarkRead(i) {
+  gtModuleProgress[i] = true;
+  renderGtModNav();
+}
+
+function renderGtModPanel() {
+  const mod = GT_KURS_MODULES[gtActiveModule];
+  const panel = document.getElementById("gt-modpanels");
+  if(mod.special==="verfahren") {
+    panel.innerHTML = `<div>
+      <div style="font-size:11px;color:#888780;margin-bottom:.25rem;">${gtActiveModule+1} / ${GT_KURS_MODULES.length}</div>
+      <div style="font-size:16px;font-weight:500;margin-bottom:.25rem;">${mod.icon} ${mod.titel}</div>
+      <div style="font-size:12px;color:#5f5e5a;margin-bottom:1rem;">🎯 Lernziel: ${mod.lernziel}</div>
+      <div id="gt-list-view">
+        <div class="cat-nav" id="gt-cat-nav"></div>
+        <div class="tx-grid" id="gt-grid"></div>
+      </div>
+      <div class="tx-detail" id="gt-detail">
+        <button class="back-btn" onclick="showGtList()">&#8592; Zur&#252;ck zur &#220;bersicht</button>
+        <div class="tx-detail-title" id="gt-title"></div>
+        <div class="tx-meta-row" id="gt-meta"></div>
+        <div class="tabs" id="gt-tabs"></div>
+        <div id="gt-panels"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #e8e6df;">
+        <button onclick="gtKursNav(-1)" style="padding:7px 16px;border-radius:8px;border:1px solid #d3d1c7;background:transparent;color:#5f5e5a;font-size:13px;cursor:pointer;font-family:inherit;${gtActiveModule===0?'visibility:hidden;':''}">← Zurück</button>
+        <button onclick="gtKursMarkRead(${gtActiveModule})" style="padding:7px 14px;border-radius:8px;border:1px solid #C0DD97;background:#EAF3DE;color:#3B6D11;font-size:12px;cursor:pointer;font-family:inherit;">${gtModuleProgress[gtActiveModule]?'✓ Gelesen':'Als gelesen markieren'}</button>
+        <button onclick="gtKursNav(1)" style="padding:7px 16px;border-radius:8px;border:1px solid #2c2c2a;background:#2c2c2a;color:#f1efe8;font-size:13px;cursor:pointer;font-family:inherit;${gtActiveModule===GT_KURS_MODULES.length-1?'visibility:hidden;':''}">Weiter →</button>
+      </div>
+    </div>`;
+    activeGt = null;
+    renderGtCatNav();
+    renderGtGrid();
+  } else {
+    panel.innerHTML = `<div>
+      <div style="font-size:11px;color:#888780;margin-bottom:.25rem;">${gtActiveModule+1} / ${GT_KURS_MODULES.length}</div>
+      <div style="font-size:16px;font-weight:500;margin-bottom:.25rem;">${mod.icon} ${mod.titel}</div>
+      <div style="font-size:12px;color:#5f5e5a;margin-bottom:1rem;">🎯 Lernziel: ${mod.lernziel}</div>
+      <div style="font-size:13px;line-height:1.7;color:#1a1a18;">${mod.inhalt}</div>
+      <div style="display:flex;justify-content:space-between;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #e8e6df;">
+        <button onclick="gtKursNav(-1)" style="padding:7px 16px;border-radius:8px;border:1px solid #d3d1c7;background:transparent;color:#5f5e5a;font-size:13px;cursor:pointer;font-family:inherit;${gtActiveModule===0?'visibility:hidden;':''}">← Zurück</button>
+        <button onclick="gtKursMarkRead(${gtActiveModule})" style="padding:7px 14px;border-radius:8px;border:1px solid #C0DD97;background:#EAF3DE;color:#3B6D11;font-size:12px;cursor:pointer;font-family:inherit;">${gtModuleProgress[gtActiveModule]?'✓ Gelesen':'Als gelesen markieren'}</button>
+        <button onclick="gtKursNav(1)" style="padding:7px 16px;border-radius:8px;border:1px solid #2c2c2a;background:#2c2c2a;color:#f1efe8;font-size:13px;cursor:pointer;font-family:inherit;${gtActiveModule===GT_KURS_MODULES.length-1?'visibility:hidden;':''}">Weiter →</button>
+      </div>
+    </div>`;
+  }
 }
 
 function renderGtCatNav() {
