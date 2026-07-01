@@ -1566,6 +1566,12 @@ const METHODS = [
    ],
    evidenz:"CBASP ist das am besten untersuchte Verfahren bei chronischer Depression. McCullough (2000): RCT kombiniert CBASP + Nefazodon vs. jeweils Monotherapie – Kombination überlegen. Keller et al. (2000, NEJM): CBASP vs. Nefazodon vs. Kombination, n=681, Kombination 85% Response. Brakemeier & Schramm (D): Implementierung in stationären und tagesklinischen Settings. S3-Leitlinie unipolare Depression: CBASP als Therapie der ersten Wahl bei chronischer Depression empfohlen (Evidenzgrad A). Einziges Verfahren mit spezifischer Wirksamkeit gegenüber allgemeinen KVT-Methoden bei dieser Patientengruppe."}
 
+,
+  {id:"gl_konzepte",name:"Konzepte für die Gruppenleitung",short:"Psychologische Grundkonzepte",cat:"Gruppenleitung",catStyle:"tx-pill-gt",
+   personen:["Irvin D. Yalom (Gruppentherapie, sozialer Mikrokosmos)","Gregory Bateson (Doppelbindung, Zirkuläre Kausalität)","Leslie Greenberg (Primäre/sekundäre Emotionen)","Paul Ekman (Basisemotionen)"],
+   beschreibung:"Kernkonzepte aus Gruppenpsychologie, Emotionspsychologie, Kommunikationstheorie und Systemtheorie, die eine Gruppenleitung parat haben sollte, um der Leitungsaufgabe der Bedeutungszuschreibung, Fürsorge, emotionalen Stimulierung und Steuerung gerecht zu werden. Alle Konzepte sind methodenübergreifend einsetzbar.",
+   indikation:["Gruppenleitung (alle Verfahren)","Bedeutungszuschreibung (Yalom-Leitungsfunktion)","Prozesskommentare in der Gruppe","Supervision und Selbstreflexion als Leitung"]}
+
 ];
 
 // ═══════════════════════════════════════════════════════════════
@@ -3267,6 +3273,93 @@ const TECHNIKEN_DB = {
       reflexion:["Was haben Sie in der anderen Rolle bemerkt, was Ihnen aus der eigenen nicht aufgefallen wäre?","Wie verändert Perspektivübernahme Ihren Umgang mit Konflikten?"]
     }
   ]
+,
+  gl_konzepte:[
+    {name:"Sozialer Mikrokosmos",kat:"Gruppenleitung",
+     beschreibung:"Die Gruppe ist ein verkleinertes Abbild der sozialen Welt eines Mitglieds: Beziehungsmuster, Abwehr, Bindungsstile und interpersonale Probleme zeigen sich live in der Gruppeninteraktion – oft früher und deutlicher als im Einzelgespräch (Yalom).",
+     ziele:"Beziehungsmuster erkennen und bearbeitbar machen; interpersonales Lernen in Echtzeit ermöglichen",
+     beispiel:"Ein Mitglied übernimmt sofort die Führung, andere schweigen – dieselbe Konstellation schildert er aus seinem Arbeitsteam. Leitungskommentar: 'Was hier gerade passiert, kennen Sie vielleicht.'",
+     tipps:"Erst beobachten, dann benennen. Nicht deuten, sondern neugierig fragen: 'Was passiert gerade zwischen euch?' Transferfrage explizit stellen: 'Wie ist das außerhalb der Gruppe?'",
+     reflexion:["Welche Beziehungsmuster zeigen sich in der Gruppe gerade live?","Wen erinnert ein Mitglied in seinem Verhalten – wen aus der Biografie?","Was zeigt mir die Gruppe als System über die Individuen?"]},
+    {name:"Übertragung & Projektion in der Gruppe",kat:"Gruppenleitung",
+     beschreibung:"Übertragung: Erwartungen, Gefühle und Beziehungsmuster aus früheren Erfahrungen (oft Primärfamilie) werden auf Therapeutin oder Mitglieder übertragen. Projektion: Eigene, nicht tolerierte Anteile werden auf andere Mitglieder attribuiert (→ Sündenbock-Dynamik).",
+     ziele:"Unbewusste Muster erkennbar machen; korrigierende Erfahrungen ermöglichen; Sündenbock-Dynamiken auflösen",
+     beispiel:"Ein Mitglied reagiert ärgerlich auf die Therapeutin, obwohl diese nichts Kränkendes getan hat. Oder: Die gesamte Gruppe richtet Unmut auf das Omega-Mitglied, das Dinge ausspricht, die die anderen nicht mögen.",
+     tipps:"Vorsichtig und nur bei hinreichender Gruppenreife benennen. Nicht als Deutung, sondern als Beobachtung formulieren: 'Ich bemerke, dass die Reaktion auf mich heute sehr intensiv ist – was könnte das noch bedeuten?'",
+     reflexion:["Was könnte die intensive Reaktion auf mich oder ein Mitglied noch bedeuten?","Wessen Projektion trägt das Omega-Mitglied gerade?","Welche frühere Beziehung könnte hier nachwirken?"]},
+    {name:"Korrigierende Rekapitulation der Primärfamilie",kat:"Gruppenleitung",
+     beschreibung:"Eine der elf therapeutischen Wirkfaktoren nach Yalom. Die Gruppe reaktiviert unbewusst Familiendynamiken (Geschwisterrivalität, Vater-/Mutterübertragung, Außenseiterrolle). Unter therapeutischen Bedingungen kann die Person diesmal anders mit diesen Mustern umgehen – das erzeugt korrigierende emotionale Erfahrungen.",
+     ziele:"Frühe Beziehungsmuster bearbeitbar machen; neue Beziehungserfahrungen in der Gruppe ermöglichen",
+     beispiel:"Jemand, der in der Familie immer unsichtbar war, erfährt in der Gruppe, dass seine Beiträge gehört und gewürdigt werden. Die Leitung macht dies explizit: 'Das war früher anders – und hier passiert gerade etwas Neues.'",
+     tipps:"Den Bezug zur Ursprungsfamilie erst dann herstellen, wenn die Person selbst signalisiert. Frage: 'Erinnert Sie das, was heute hier passiert ist, an etwas?'",
+     reflexion:["Welche Familienrolle nimmt jemand in der Gruppe ein?","Wo bietet die Gruppe eine Chance für eine korrigierende Erfahrung?","Was müsste jetzt passieren, damit die Erfahrung wirklich 'anders' ist?"]},
+    {name:"Sekundäre Emotionen",kat:"Gruppenleitung",
+     beschreibung:"Primäre Emotionen sind direkte, adaptive Reaktionen auf eine Situation (z. B. Trauer nach Verlust, Angst vor Gefahr). Sekundäre oder Deckemotionen überlagern die primäre Reaktion, oft weil diese nicht tolerierbar scheint: Wut als Deckemotion über Trauer oder Kränkung; Gleichgültigkeit über Angst; Scham über Wut. Klinisch relevanter Kompass für die Leitungsintervention.",
+     ziele:"Emotionale Tiefe in der Gruppe erreichen; hinter Abwehr-Emotionen die zugrundeliegende Verletzbarkeit sichtbar machen",
+     beispiel:"Ein Mitglied reagiert ärgerlich, wenn ein anderes Erfolge berichtet. Die primäre Emotion könnte Schmerz oder Scham über eigene Stagnation sein. Leitungsintervention: 'Unter dem Ärger – was ist da noch?'",
+     tipps:"Sekundäre Emotion zunächst würdigen, nicht übergehen. Dann behutsam fragen: 'Was steckt darunter?' Nicht vorschnell deuten, sondern explorieren.",
+     reflexion:["Welche Emotion zeigt das Mitglied – und welche könnte darunter liegen?","Was wäre zu schwierig, um es direkt zu zeigen?","Wie reagiert die Gruppe auf die Deckemotion vs. die primäre Emotion?"]},
+    {name:"Signalfunktion von Basisemotionen",kat:"Gruppenleitung",
+     beschreibung:"Basisemotionen (Ekman: Freude, Trauer, Wut, Angst, Ekel, Überraschung) sind universale, evolutionär entstandene Reaktionen mit spezifischer Signalfunktion und Handlungsimpuls. Sie zu benennen und einzuordnen ist eine zentrale Kompetenz für die Bedeutungszuschreibung in der Gruppe.",
+     ziele:"Emotion als Information nutzbar machen statt als Störung; Emotionserleben normalisieren; Handlungsimpulse bewusst machen",
+     beispiel:"Wut signalisiert: eine Grenze wurde verletzt, ein Recht missachtet. Trauer signalisiert: ein Verlust hat stattgefunden, etwas Wichtiges ist nicht mehr da. Angst signalisiert: eine Bedrohung wird wahrgenommen, Schutzmaßnahmen werden aktiviert.",
+     tipps:"Im Gruppenkontext: Nicht nur fragen 'Was fühlen Sie?', sondern 'Was sagt Ihnen dieses Gefühl? Was will es Ihnen mitteilen?' Die Signalbedeutung explizit einführen, wenn die Gruppe Emotionen als 'irrational' abtut.",
+     reflexion:["Welches Signal trägt diese Emotion?","Was würde dieses Gefühl tun wollen, wenn es könnte?","Wie reagiert die Gruppe auf diese Emotion – ist die Reaktion selbst aufschlussreich?"]},
+    {name:"Zirkuläre Kausalität",kat:"Gruppenleitung",
+     beschreibung:"Systemisches Grundkonzept: Verhalten in Beziehungen ist nicht linear (A verursacht B), sondern zirkulär (A und B bedingen sich gegenseitig und halten sich in einem Muster). Die Frage 'Wer hat angefangen?' ist systemblindes Denken – hilfreicher ist: 'Wie hält dieses Muster sich gegenseitig aufrecht?'",
+     ziele:"Schuldzuschreibungen auflösen; Beziehungsmuster als gemeinsam erzeugte Phänomene beschreiben; Handlungsspielräume erweitern",
+     beispiel:"In einer Partnerschaft: Je mehr A kritisiert, desto mehr zieht sich B zurück – je mehr B sich zurückzieht, desto mehr kritisiert A. Beide 'verursachen' das Muster. Leitungskommentar: 'Ich sehe, wie ihr euch hier gerade gegenseitig aufschaukelt – keiner fängt an, beide machen mit.'",
+     tipps:"Neutrales Beschreiben des Musters statt Parteiergreifen: 'Was ich beobachte ist...' Frage: 'Wie würde das aus seiner Sicht aussehen?' Eigene Anteile im Muster durch Rollentausch erfahrbar machen.",
+     reflexion:["Welches zirkuläre Muster zeigt sich gerade in der Gruppe?","Was würde passieren, wenn eine Person aus dem Muster aussteigt?","Wer müsste was anders tun, damit das Muster sich verändert?"]},
+    {name:"Doppelbindung",kat:"Gruppenleitung",
+     beschreibung:"Kommunikationsmuster (Bateson), in dem zwei widersprüchliche Botschaften auf verschiedenen Ebenen gleichzeitig gesendet werden, ohne dass das Gegenüber sich entziehen oder den Widerspruch benennen kann. Erzeugt Lähmung, Verwirrung oder psychotisch-ähnliche Reaktionen. Relevant als Erklärungsrahmen für Herkunftsfamilienthemen und für Dynamiken in der Gruppe selbst.",
+     ziele:"Widersprüchliche Kommunikationsmuster erkennen und benennen; Erklärungsrahmen für scheinbar irrationale Reaktionen geben",
+     beispiel:"Elterliche Botschaft: verbal 'Ich liebe dich' + nonverbal/behavioral Ablehnung. Das Kind kann weder glauben noch zweifeln. In der Gruppe: 'Sag ruhig, was du denkst' (explizit) + sofortige Ablehnung bei Kritik (implizit).",
+     tipps:"Im Gruppenkontext: Doppelbindungen benennen, wenn sie in der Gruppeninteraktion selbst auftreten. Kein Vorwurf, sondern Beobachtung: 'Ich bemerke, dass hier zwei Botschaften gleichzeitig ankommen – welche sollen wir glauben?'",
+     reflexion:["Welche widersprüchlichen Botschaften werden hier gleichzeitig gesendet?","Auf welcher Ebene liegt der eigentliche Widerspruch?","Wie reagiert das Mitglied auf diese Situation – und ist das verständlich?"]},
+    {name:"Normalisieren",kat:"Gruppenleitung",
+     beschreibung:"Das Erleben oder Verhalten eines Mitglieds als verständliche, nachvollziehbare Reaktion auf verstehbare Umstände rahmen. Normalisieren ist nicht Verharmlosen: Es nimmt dem Erleben das Stigma und die Isolation, ohne das Problem wegzureden. Eine der kraftvollsten und schnellsten Bedeutungszuschreibungen in der Gruppentherapie.",
+     ziele:"Scham und Isolation reduzieren; Selbstakzeptanz fördern; Boden für weitere Arbeit bereiten",
+     beispiel:"'Das klingt wie eine sehr verständliche Reaktion auf das, was Sie erlebt haben. Wer hätte das nicht gespürt?' – oder: an die Gruppe: 'Wer kennt das auch?'",
+     tipps:"Nicht zu früh und zu oft normalisieren – dann verliert es Wirkung. Am stärksten, wenn es spezifisch auf die konkrete Situation bezogen ist, nicht als generische Formel. Universalisierung (andere teilen dieses Erleben) verstärkt den Effekt.",
+     reflexion:["Was lässt sich an diesem Erleben als verständlich und nachvollziehbar rahmen?","Wie nimmt die Gruppe dieses Erleben auf – zeigt sich Resonanz oder Fremdheit?","Normalisiere ich hier, oder verharmlose ich?"]},
+    {name:"Reframing",kat:"Gruppenleitung",
+     beschreibung:"Dasselbe Verhalten, Erleben oder dieselbe Situation in einen anderen Bedeutungsrahmen setzen, der neue Handlungsoptionen eröffnet. Das Verhalten bleibt gleich – die Bedeutung ändert sich. Nicht als manipulative Technik gemeint, sondern als ehrliche Erweiterung des Blickwinkels.",
+     ziele:"Erstarrte Bedeutungszuschreibungen lösen; neue Handlungsspielräume eröffnen; Ressourcen sichtbar machen",
+     beispiel:"'Was Sie als Sturheit beschreiben, klingt für mich auch wie eine Fähigkeit, sich nicht sofort verbiegen zu lassen.' – oder: 'Diese Erschöpfung macht Sinn nach so langer Anstrengung – das ist kein Versagen, sondern eine Quittung.'",
+     tipps:"Reframes müssen plausibel sein – sie wirken nicht, wenn sie sich für die Person falsch anfühlen. Immer anbieten, nicht setzen: 'Ich sehe es auch so... was meinen Sie?' In der Gruppe: Mitglieder ermutigen, eigene Reframes füreinander zu formulieren.",
+     reflexion:["Welcher neue Rahmen könnte hier neue Möglichkeiten eröffnen?","Fühlt sich der Reframe für die Person wahr an – oder nur für mich?","Was sieht die Gruppe in diesem Verhalten, das die Person selbst nicht sieht?"]},
+    {name:"Externalisieren",kat:"Gruppenleitung",
+     beschreibung:"Das Problem wird sprachlich vom Menschen getrennt: Nicht 'ich bin depressiv', sondern 'die Depression hat mich im Griff'. Aus der Narrativen Therapie (White & Epston), aber breiter einsetzbar. Schafft Handlungsraum und reduziert Scham, da das Problem nicht mehr Kerneigenschaft der Person ist.",
+     ziele:"Identitätsfusion mit dem Problem lösen; Handlungsfähigkeit stärken; Selbstmitgefühl fördern",
+     beispiel:"'Die Angst hat Sie heute wieder zu überzeugen versucht, dass das zu gefährlich ist. Wie war das?' – oder in der Gruppe: 'Wie heißt die Stimme, die euch das einredet?'",
+     tipps:"Im Gruppenkontext besonders wirkungsvoll: Die Gruppe kann das externalisierte Problem gemeinsam 'befragen' oder 'verhandeln'. Nicht bei allen Patienten passend – manche erleben es als künstlich. Erst ausprobieren, dann reagieren.",
+     reflexion:["Wie würde das Problem heißen, wenn es einen Namen hätte?","Was sagt das Problem? Was sagt die Person ohne das Problem?","Wie verändert sich die Dynamik in der Gruppe, wenn das Problem externalisiert wird?"]},
+    {name:"Prozess- vs. Inhaltsebene",kat:"Gruppenleitung",
+     beschreibung:"Inhaltsebene: Worüber wird gesprochen? Was ist der Inhalt des Berichts, der Klage, der Frage? Prozessebene: Was passiert gerade zwischen den Beteiligten, während sie sprechen? Wie ist der Beziehungsaspekt der Kommunikation? Die Prozessebene ist in der Gruppentherapie der wirksamere Interventionsort.",
+     ziele:"Unsichtbare Beziehungsdynamiken sichtbar und bearbeitbar machen; interpersonales Lernen in Echtzeit ermöglichen",
+     beispiel:"Inhalt: Mitglied berichtet, dass niemand es je versteht. Prozess: Das Mitglied schaut niemanden an, spricht in die Mitte des Raums, andere wenden sich ab. Prozesskommentar: 'Mir fällt auf, was gerade in der Gruppe passiert, während du das sagst...'",
+     tipps:"Prozesskommentare sparsam und gezielt einsetzen – zu viele unterbrechen den Fluss. Erst dann zur Prozessebene wechseln, wenn dort etwas Therapeutisch Bedeutsames passiert. Formulierung: 'Ich bemerke...' statt 'Du tust...'",
+     reflexion:["Was passiert gerade zwischen den Mitgliedern – unabhängig vom Inhalt?","Ist die Reaktion der Gruppe auf den Bericht selbst aufschlussreich?","Wann ist ein Wechsel auf die Prozessebene hilfreich – und wann stört er?"]},
+    {name:"Hier-und-Jetzt-Fokus",kat:"Gruppenleitung",
+     beschreibung:"Das aktuelle Geschehen in der Gruppe – Gefühle, Reaktionen, Beziehungsmomente – wird als therapeutisches Material genutzt, statt nur über vergangene oder außerhalb stattgefundene Ereignisse zu berichten. Yalom beschreibt den Hier-und-Jetzt-Fokus als das mächtigste Werkzeug der Gruppentherapie.",
+     ziele:"Interpersonales Lernen in Echtzeit ermöglichen; Beziehungsmuster direkt erfahrbar und bearbeitbar machen",
+     beispiel:"Statt: 'Erzählen Sie, wie das mit Ihrem Chef war' → 'Was erleben Sie gerade hier in der Gruppe, wenn Sie das erzählen? Was nehmen Sie wahr, wenn Sie in die Runde schauen?'",
+     tipps:"Hier-und-Jetzt-Fokus erfordert Übung – viele Mitglieder weichen reflexartig ins 'Dort und Damals' aus. Aktiv einladen: 'Bleiben wir kurz hier. Was ist gerade, in diesem Moment?' Abschlussrunde kann immer Hier-und-Jetzt sein: 'Was nehmen Sie aus dieser Stunde mit?'",
+     reflexion:["Was passiert gerade jetzt in diesem Moment in der Gruppe?","Welches aktuelle Erleben könnte therapeutisch genutzt werden?","Wie würde die Frage klingen, wenn ich sie ins Hier und Jetzt übersetze?"]},
+    {name:"Funktionale Analyse im Gruppenkontext",kat:"Gruppenleitung",
+     beschreibung:"Verhaltensanalytische Frage: Welche Funktion erfüllt ein Verhalten für die Person – und für die Gruppe als System? Auch 'dysfunktionales' Verhalten hat immer eine Funktion (kurzfristige Entlastung, Beziehungsregulation, Identitätsstabilisierung). Die Funktion zu verstehen ist Voraussetzung für Veränderung.",
+     ziele:"Verhalten verstehen ohne zu verurteilen; Motivationsbasis für Veränderung aufdecken; Gruppe aus 'Ratschlag-Falle' herausführen",
+     beispiel:"Omega verhält sich querulantisch – Funktion: hält die Gruppe auf Distanz, schützt vor Nähe und Verletzbarkeit. Gamma schweigt – Funktion: vermeidet Beurteilung, bewahrt Kontrolle über das eigene Bild.",
+     tipps:"Nie öffentlich 'analysieren', sondern fragen: 'Was gibt Ihnen dieses Verhalten?' oder 'Was wäre ohne das?' In der Gruppe: die Frage nach der Funktion für die Gruppe stellen, nicht nur für die Person.",
+     reflexion:["Welche kurzfristige Funktion erfüllt dieses Verhalten?","Was müsste sich verändern, damit diese Funktion nicht mehr gebraucht wird?","Welche Funktion hat dieses Verhalten für die Gruppe als Ganzes?"]},
+    {name:"Co-Regulation",kat:"Gruppenleitung",
+     beschreibung:"Das Aktivierungsniveau der Leitung überträgt sich auf die Gruppe: Ruhige, präsente, geerdete Leitung reguliert das Erregungsniveau der Gruppe nach unten (bei Eskalation); aktive, engagierte Leitung aktiviert eine erstarrte Gruppe. Neurobiologisch: emotionale Ansteckung über Spiegelneuronen; klinisch: die Therapeutin ist das stärkste Regulationsinstrument im Raum.",
+     ziele:"Affektive Eskalationen abfangen; erstarrte Gruppen aktivieren; Sicherheit im Raum herstellen",
+     beispiel:"Gruppe wird laut und durcheinander. Leitung verlangsamt bewusst Sprechtempo, senkt Stimme, macht Pause: 'Ich möchte kurz Halt machen.' Die Gruppe folgt dem Rhythmus.",
+     tipps:"Co-Regulation setzt voraus, dass die Leitung selbst reguliert ist. Eigene Anspannung vor und in der Sitzung wahrnehmen. Körperhaltung, Atemrhythmus und Sprechgeschwindigkeit sind aktive Interventionen.",
+     reflexion:["Wie ist mein eigenes Aktivierungsniveau gerade – und was überträgt es auf die Gruppe?","Was müsste ich in meiner Körperhaltung ändern, um die Gruppe zu regulieren?","Wann habe ich zuletzt gespürt, dass die Gruppe meiner Energie gefolgt ist?"]}
+  ]
 };
 // ═══════════════════════════════════════════════════════════════
 // THERAPY METHODS VIEW
@@ -3450,7 +3543,7 @@ const FAV_KAT_COLORS = {
   "Erlebnisaktivierend":"#FAEEDA","Achtsamkeit":"#EEEDFE","Metakognition":"#F0E8FB",
   "Diagnostisch":"#f1efe8","Therapeutische Beziehung":"#FFF3E0","Affektarbeit":"#FCE4EC",
   "Interpersonell":"#E8F5F0","Stabilisierung":"#E6F1FB","Struktur":"#f5f4ef",
-  "Gruppe":"#EAF3DE","Kernintervention":"#FAEEDA","Akzeptanz":"#EEEDFE",
+  "Gruppe":"#EAF3DE","Gruppenleitung":"#EDF5FF","Kernintervention":"#FAEEDA","Akzeptanz":"#EEEDFE",
   "Basisfertigkeiten":"#E6F1FB","Stresstoleranz":"#FCEBEB","Emotionsregulation":"#EAF3DE",
   "Werte & Commitment":"#EEEDFE","Integrativ":"#f1efe8","Selbst":"#FFF3E0",
   "Psychoedukation":"#E6F1FB","Achtsamkeit/Mitgefühl":"#EEEDFE","Schreiben":"#FAEEDA",
@@ -4805,6 +4898,81 @@ function gtToggleAnliegen(id) {
   renderGtAnliegenList();
 }
 
+function renderGtKompetenzuebersicht() {
+  return `<div style="margin-top:2rem;padding-top:1.5rem;border-top:2px solid #e8e6df;">
+    <div style="font-size:15px;font-weight:500;margin-bottom:.25rem;">Kompetenzübersicht: Psychologische Konzepte für die Gruppenleitung</div>
+    <div style="font-size:12px;color:#5f5e5a;margin-bottom:1rem;">Strukturiert nach den vier Leitungsfunktionen (Lieberman, Yalom & Miles). Konzepte öffnen per Klick direkt in der Techniken-Sektion (★ als Favorit speicherbar).</div>
+    <div style="display:grid;gap:1rem;">
+
+      <div style="border:1px solid #BAD4F5;border-radius:10px;overflow:hidden;">
+        <div style="background:#EDF5FF;padding:.6rem 1rem;font-size:12px;font-weight:600;color:#1A4F8A;display:flex;align-items:center;gap:.5rem;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#4A90D9;"></span>Emotionale Stimulierung</div>
+        <div style="padding:.75rem 1rem;display:grid;gap:6px;">
+          <div style="font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px;">Emotionspsychologie</div>
+          <button onclick="gtGoToKonzept('gl_konzepte',3)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#fafaf8;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Signalfunktion von Basisemotionen</button>
+          <button onclick="gtGoToKonzept('gl_konzepte',4)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#fafaf8;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Sekundäre Emotionen</button>
+          <div style="font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.04em;margin-top:4px;margin-bottom:2px;">Gruppenspezifisch</div>
+          <button onclick="gtGoToKonzept('gl_konzepte',13)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#fafaf8;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Co-Regulation</button>
+          <button onclick="gtGoToKonzept('gl_konzepte',0)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#fafaf8;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Sozialer Mikrokosmos</button>
+          <div style="font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.04em;margin-top:4px;margin-bottom:2px;">Bereits auf der Plattform</div>
+          <button onclick="gtGoToKonzept('dbt',5)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #C0DD97;background:#EAF3DE;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Emotionsregulation (DBT) ↗</button>
+        </div>
+      </div>
+
+      <div style="border:1px solid #C0DD97;border-radius:10px;overflow:hidden;">
+        <div style="background:#EAF3DE;padding:.6rem 1rem;font-size:12px;font-weight:600;color:#2E6E14;display:flex;align-items:center;gap:.5rem;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#5A9C4A;"></span>Fürsorge (Caring)</div>
+        <div style="padding:.75rem 1rem;display:grid;gap:6px;">
+          <div style="font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px;">Metakommunikative Techniken</div>
+          <button onclick="gtGoToKonzept('gl_konzepte',7)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#fafaf8;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Normalisieren</button>
+          <button onclick="gtGoToKonzept('gl_konzepte',13)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#fafaf8;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Co-Regulation</button>
+          <div style="font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.04em;margin-top:4px;margin-bottom:2px;">Gruppenspezifisch</div>
+          <button onclick="gtGoToKonzept('gl_konzepte',2)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#fafaf8;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Korrigierende Rekapitulation der Primärfamilie</button>
+          <div style="font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.04em;margin-top:4px;margin-bottom:2px;">Bereits auf der Plattform</div>
+          <button onclick="gtGoToKonzept('ipt',18)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #C0DD97;background:#EAF3DE;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Bindungsstile (IPT) ↗</button>
+          <button onclick="gtGoToKonzept('schema',88)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #C0DD97;background:#EAF3DE;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Grundüberzeugungen / Schemata ↗</button>
+        </div>
+      </div>
+
+      <div style="border:1px solid #F7D98A;border-radius:10px;overflow:hidden;">
+        <div style="background:#FEF3CD;padding:.6rem 1rem;font-size:12px;font-weight:600;color:#7A5800;display:flex;align-items:center;gap:.5rem;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#E8A838;"></span>Bedeutungszuschreibung</div>
+        <div style="padding:.75rem 1rem;display:grid;gap:6px;">
+          <div style="font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px;">Interpersonal & gruppenspezifisch</div>
+          <button onclick="gtGoToKonzept('gl_konzepte',0)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#fafaf8;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Sozialer Mikrokosmos</button>
+          <button onclick="gtGoToKonzept('gl_konzepte',1)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#fafaf8;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Übertragung & Projektion in der Gruppe</button>
+          <button onclick="gtGoToKonzept('gl_konzepte',2)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#fafaf8;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Korrigierende Rekapitulation der Primärfamilie</button>
+          <button onclick="gtGoToKonzept('gl_konzepte',12)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#fafaf8;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Funktionale Analyse im Gruppenkontext</button>
+          <div style="font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.04em;margin-top:4px;margin-bottom:2px;">Systemisch & kommunikationstheoretisch</div>
+          <button onclick="gtGoToKonzept('gl_konzepte',5)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#fafaf8;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Zirkuläre Kausalität</button>
+          <button onclick="gtGoToKonzept('gl_konzepte',6)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#fafaf8;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Doppelbindung</button>
+          <div style="font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.04em;margin-top:4px;margin-bottom:2px;">Metakommunikative Techniken</div>
+          <button onclick="gtGoToKonzept('gl_konzepte',7)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#fafaf8;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Normalisieren</button>
+          <button onclick="gtGoToKonzept('gl_konzepte',8)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#fafaf8;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Reframing</button>
+          <button onclick="gtGoToKonzept('gl_konzepte',9)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#fafaf8;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Externalisieren</button>
+          <div style="font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.04em;margin-top:4px;margin-bottom:2px;">Bereits auf der Plattform</div>
+          <button onclick="gtGoToKonzept('kvt',10)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #C0DD97;background:#EAF3DE;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">SORKC / Verhaltensanalyse (KVT) ↗</button>
+          <button onclick="gtGoToKonzept('kvt',9)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #C0DD97;background:#EAF3DE;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Kognitive Verzerrungen (KVT) ↗</button>
+          <button onclick="gtGoToKonzept('schema',88)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #C0DD97;background:#EAF3DE;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Grundüberzeugungen / Schemata ↗</button>
+        </div>
+      </div>
+
+      <div style="border:1px solid #C5BFEF;border-radius:10px;overflow:hidden;">
+        <div style="background:#EEEDFE;padding:.6rem 1rem;font-size:12px;font-weight:600;color:#3C3489;display:flex;align-items:center;gap:.5rem;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7C73E6;"></span>Steuerung (Executive Function)</div>
+        <div style="padding:.75rem 1rem;display:grid;gap:6px;">
+          <div style="font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px;">Leitungstechniken</div>
+          <button onclick="gtGoToKonzept('gl_konzepte',10)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#fafaf8;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Prozess- vs. Inhaltsebene</button>
+          <button onclick="gtGoToKonzept('gl_konzepte',11)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#fafaf8;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Hier-und-Jetzt-Fokus</button>
+          <button onclick="gtGoToKonzept('gl_konzepte',12)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #d3d1c7;background:#fafaf8;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Funktionale Analyse im Gruppenkontext</button>
+          <div style="font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.04em;margin-top:4px;margin-bottom:2px;">Bereits auf der Plattform</div>
+          <button onclick="gtGoToKonzept('dbt',107)" style="text-align:left;padding:5px 10px;border-radius:6px;border:1px solid #C0DD97;background:#EAF3DE;font-size:12px;cursor:pointer;font-family:inherit;color:#1a1a18;">Window of Tolerance (DBT) ↗</button>
+        </div>
+      </div>
+
+    </div>
+    <div style="margin-top:1rem;padding:.6rem .875rem;background:#fafaf8;border-radius:6px;border:1px solid #e8e6df;font-size:11px;color:#888780;">
+      Grün hinterlegte Links ↗ öffnen bereits vorhandene Karten in anderen Methoden-Abschnitten. Alle Konzepte sind über ★ als Favorit speicherbar.
+    </div>
+  </div>`;
+}
+
 function renderGtAnliegenList() {
   const el = document.getElementById("gt-anliegen-list");
   if(!el) return;
@@ -4833,6 +5001,15 @@ let activeGtCat = "Alle";
 let activeGt = null;
 let gtActiveModule = 0;
 let gtModuleProgress = [false,false,false,false,false,false,false];
+
+function gtGoToKonzept(methodId, cardIdx) {
+  showView('tx');
+  showTx(methodId);
+  setTimeout(() => {
+    const el = document.getElementById('techkarte-' + methodId + '-' + cardIdx);
+    if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
+  }, 150);
+}
 
 function gtLFToggle(btn) {
   var p = btn.nextElementSibling;
@@ -4887,6 +5064,7 @@ function renderGtModPanel() {
         <button onclick="gtKursMarkRead(${gtActiveModule})" style="padding:7px 14px;border-radius:8px;border:1px solid #C0DD97;background:#EAF3DE;color:#3B6D11;font-size:12px;cursor:pointer;font-family:inherit;">${gtModuleProgress[gtActiveModule]?'✓ Gelesen':'Als gelesen markieren'}</button>
         <button onclick="gtKursNav(1)" style="padding:7px 16px;border-radius:8px;border:1px solid #2c2c2a;background:#2c2c2a;color:#f1efe8;font-size:13px;cursor:pointer;font-family:inherit;${gtActiveModule===GT_KURS_MODULES.length-1?'visibility:hidden;':''}">Weiter →</button>
       </div>
+      ${renderGtKompetenzuebersicht()}
     </div>`;
     renderGtAnliegenList();
   } else if(mod.special==="verfahren") {
