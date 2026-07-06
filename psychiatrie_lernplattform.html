@@ -956,6 +956,7 @@ const DISORDERS = [
    hinweis:"ICD-10: 5/9 Kriterien. ICD-11: Schweregrad + Borderline-Qualifier. Epidemiologie: 1–2% Allgemeinbev., bis 20% stationäre Psychiatrie.",schwere:"ICD-11: leicht / mittelgradig / schwer",
    ddx:[{n:"Bipolare Störung II",h:"Stimmungsschwankungen: Tage/Wochen (bipolar) vs. Stunden (BPS)"},{n:"PTBS / Komplexe PTBS",h:"Sehr häufig komorbid; Traumageschichte bei BPS fast immer vorhanden"},{n:"ADHS",h:"Impulsivität überlappend; BPS hat mehr interpersonellen Fokus"},{n:"Narzisstische PS",h:"Entwertung und Grandiosität, aber ohne Verlassenheitsangst und SVV"},{n:"Dissoziative Identitätsstörung",h:"Identitätsverwirrung – DIS bei frühem schwerem Trauma ausschließen"}],
    diagnostik_inst:["BSL-23 (Borderline-Symptom-Liste, Kurzform): 23 Items; Selbstbeurteilung; sensitiv für Veränderungen","BSL-95: vollständige Version; 95 Items; umfassende BPS-Symptomatik","ZAN-BPD (Zanarini Rating Scale for BPS): Fremdbeurteilung; 9 Items; klinischer Standard","BEST (Borderline Evaluation of Severity over Time): Selbstbeurteilung","McLean Screening Instrument for BPD (MSI-BPD): 10-Item-Screening","SKID-II (Strukturiertes Klinisches Interview für DSM Persönlichkeitsstörungen): vollständige PS-Diagnostik","IPDE (International Personality Disorder Examination): ICD-10 und DSM kompatibel","CTQ: Traumaanamnese (Kindheitstraumatisierung als ätiologischer Faktor)","Suizidalitätserfassung: C-SSRS, SBQ-R"],
+   screeningfragen:["Hypervigilanz: Erleben Sie Phasen von Hochanspannung?","Alienation: Denken Sie, Sie sind ganz anders als die anderen Menschen?","Selbstbild: Was sehen Sie, wenn Sie in den Spiegel blicken?"],
    diagnostik_som:["Allgemeine internistische Untersuchung: bei SVV körperliche Folgeschäden erfassen","BB: bei Blutverlust durch SVV","Wundversorgung und Wundbeurteilung: bei SVV Infektionszeichen, Tiefe der Verletzung","Toxikologie (Urin, Blut): bei Suizidversuchen oder Substanzmissbrauch","Leberwerte: Alkohol- und Substanzkomorbidität","Prolaktin unter Antipsychotika","EKG: unter QTc-relevanten Medikamenten"],
    modelle:{neuro:[{"name":"Amygdala-Hyperreaktivität und langsame Erholung","beschreibung":"Bildgebung: stärkere und länger anhaltende Amygdala-Aktivierung auf emotionale Reize. PFC-Amygdala-Konnektivität reduziert → verminderte Top-down-Regulation. Erklärt emotionale Überflutung und verzögerte Erholung.","klinisch":"Skills in DBT: 'Unteres Gehirn' regulieren. Physiologische Aktivierung als Ausgangspunkt für Intervention."},{"name":"Serotonin-System und Impulsivität","beschreibung":"5-HT2A-Rezeptor-Veränderungen und serotonerge Hypoaktivität bei BPS → erhöhte Impulsivität und Suizidalität. Genetische Polymorphismen (MAOA, 5-HTTLPR) als Vulnerabilitätsfaktoren.","klinisch":"Erklärt SSRI-Teilwirksamkeit bei Impulsivität. Nicht primäre Behandlung – aber sinnvoll adjuvant."}],vt:[{"name":"Biosoziales Modell (Linehan 1993)","beschreibung":"BPS entsteht aus der Transaktion: biologisch hochsensitives Temperament × invalidierende Umgebung (Gefühle werden nicht anerkannt, bestraft oder verleugnet). Beide Faktoren interagieren bidirektional. Konsequenz: keine Emotionsregulationsstrategien gelernt.","klinisch":"Kernmodell der DBT. Validierung als direkte Gegenkraft zur Invalidierung. 'Es ergibt Sinn, dass Sie so reagieren.'"},{"name":"Schema-Modus-Modell (Young 1990)","beschreibung":"Frühe maladaptive Schemata (z.B. Verlassenheit, Defektivität) aktivieren Modi: verlassenes Kind, strafender Elternteil, emotionsloser Beschützer, gesunder Erwachsener. Modi erklären schnelle Stimmungswechsel und Beziehungsinstabilität.","klinisch":"Schematherapie für BPS: Modi benennen, stuhldialogisch bearbeiten, gesunden Erwachsenen stärken."},{"name":"Mentalisierungsbasiertes Modell (Bateman & Fonagy 2004)","beschreibung":"BPS als Mentalisierungsdefizit: unter emotionaler Belastung kollabiert die Fähigkeit, eigene und fremde mentale Zustände zu verstehen. Frühes Bindungstrauma → unsichere Bindung → prämentalisierendes Denken (Teleologisch, Äquivalenz, Als-ob).","klinisch":"MBT: In stressreichen Momenten Mentalisierung anhalten und wieder herstellen. 'Was könnte in ihm/ihr vorgegangen sein?'"}]},
    vt_einzel:["DBT (Linehan): Einzeltherapie + Skills-Training + Telefoncoaching + Supervision","Schematherapie (Young): Modi-Arbeit (verlassenes Kind, strafender Elternteil)","MBT (Bateman & Fonagy): Mentalisierungsfähigkeit stärken","STEPPS / STAIRWAYS: strukturiertes ambulantes Programm"],
@@ -2031,6 +2032,33 @@ function renderDDX(d) {
       </div>
     </div>` : "";
 
+  // Screening questions as table
+  const screeningBlock = d.screeningfragen && d.screeningfragen.length ? `
+    <div class="section">
+      <div class="section-title">Screeningfragen</div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr style="background:#EEEDFE;border-bottom:1px solid #C9C5F5;">
+              <th style="padding:7px 12px;text-align:left;font-weight:500;color:#3C3489;width:25%;">Dimension</th>
+              <th style="padding:7px 12px;text-align:left;font-weight:500;color:#3C3489;">Frage</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${d.screeningfragen.map((v,i)=>{
+              const parts = v.split(':');
+              const name = parts[0].trim();
+              const desc = parts.slice(1).join(':').trim();
+              return `<tr style="border-bottom:1px solid #e8e6df;background:${i%2===0?'#fff':'#fafaf8'};">
+                <td style="padding:7px 12px;font-weight:500;vertical-align:top;white-space:nowrap;">${name}</td>
+                <td style="padding:7px 12px;line-height:1.5;">${desc||'–'}</td>
+              </tr>`;
+            }).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>` : "";
+
   // Somatic diagnostics as table
   const somBlock = d.diagnostik_som && d.diagnostik_som.length ? `
     <div class="section">
@@ -2058,7 +2086,7 @@ function renderDDX(d) {
       </div>
     </div>` : "";
 
-  return `<div class="pt1">${ddxBlock}${instBlock}${somBlock}</div>`;
+  return `<div class="pt1">${ddxBlock}${instBlock}${screeningBlock}${somBlock}</div>`;
 }
 
 function renderModelleKonzept(d) {
