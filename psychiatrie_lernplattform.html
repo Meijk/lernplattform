@@ -693,6 +693,30 @@ const DISORDERS = [
   {id:"schizo",name:"Schizophrenie",cat:"Psychotisch",icd10:"F20",icd11:"6A20",
    icd10_detail:"F20.0 paranoide Schizophrenie · F20.1 hebephrene Schizophrenie · F20.2 katatone Schizophrenie · F20.3 undifferenzierte Schizophrenie · F20.4 postschizophrene Depression · F20.5 schizophrenes Residuum · F20.6 Schizophrenia simplex · F20.8 sonstige · F21 Schizotypie · F22 anhaltende wahnhafte Störung · F23 akute vorübergehende psychotische Störungen · F24 induzierte wahnhafte Störung",
    icd11_detail:"6A20 Schizophrenie (Schweregrad-Spezifikatoren für Positivsymptome, Negativsymptome, depressive Sympt., manische Sympt., Psychomotorik, kognitive Beeintr.) · 6A21 Schizoaffektive Störung · 6A22 Schizotypische Störung · 6A23 Akute vorübergehende psychotische Störung · 6A24 Wahnhafte Störung · 6A25 Symptomatische Psychose bei anderen Erkrankungen",
+   icd_sub_details:{
+     icd10:[
+       {code:"F20.0",label:"Paranoide Schizophrenie",text:"Häufigste Subform. Im Vordergrund stehen relativ stabile, oft paranoide Wahnvorstellungen (Verfolgungs-, Beziehungs-, Größenwahn), meist begleitet von akustischen Halluzinationen und Wahrnehmungsstörungen. Affekt, Wille, Sprache und katatone Symptome treten demgegenüber in den Hintergrund. Beginn meist etwas später als bei hebephrener/katatoner Form; im Vergleich günstigere Prognose."},
+       {code:"F20.1",label:"Hebephrene Schizophrenie",text:"Beginn meist im Jugend- oder frühen Erwachsenenalter (15–25 Jahre). Affektive Veränderungen dominieren: flacher oder inadäquater Affekt, läppisch-enthemmtes Verhalten, zerfahrenes Denken, Manierismen. Wahn und Halluzinationen sind eher flüchtig und fragmentarisch. Ungünstigere Prognose durch rasche Entwicklung ausgeprägter Negativsymptome."},
+       {code:"F20.2",label:"Katatone Schizophrenie",text:"Im Vordergrund stehen psychomotorische Störungen, die zwischen Extremen wie Erregung und Stupor, Befehlsautomatismus und Negativismus wechseln können. Haltungsstereotypien, Wachsflexibilität (Flexibilitas cerea), Mutismus. Cave: perniziöse Katatonie ist ein internistisch-psychiatrischer Notfall (Autonomiestörung, Hyperthermie, Rhabdomyolyse-Risiko)."},
+       {code:"F20.3",label:"Undifferenzierte Schizophrenie",text:"Erfüllt die allgemeinen Kriterien der Schizophrenie, lässt sich aber keinem der spezifischen Subtypen (paranoid, hebephren, katatoon) eindeutig zuordnen, oder es zeigen sich Merkmale mehrerer Subtypen gleichzeitig, ohne dass einer eindeutig überwiegt. Wird als Ausschlussdiagnose verwendet."},
+       {code:"F20.4",label:"Postschizophrene Depression",text:"Depressive Episode, die sich im Anschluss an eine schizophrene Erkrankung entwickelt, während noch einige schizophrene Symptome (meist Negativsymptome) fortbestehen, das klinische Bild aber nicht mehr dominieren. Diese Phase ist mit einem deutlich erhöhten Suizidrisiko verbunden und erfordert besondere Aufmerksamkeit."},
+       {code:"F20.5",label:"Schizophrenes Residuum",text:"Chronisches Stadium mit deutlichem Vorherrschen von Negativsymptomen (Antriebsminderung, Affektverflachung, sozialer Rückzug, Verarmung der Sprache) im Anschluss an mindestens eine eindeutig abgrenzbare psychotische Episode. Floride Positivsymptome sind abgeklungen oder nur noch abgeschwächt vorhanden."},
+       {code:"F20.6",label:"Schizophrenia simplex",text:"Schleichende Entwicklung von Negativsymptomen (sozialer Rückzug, Verarmung von Antrieb und Sprache, Verwahrlosungstendenz) ohne eine vorausgegangene floride psychotische Episode mit Wahn oder Halluzinationen. Diagnostisch schwer abzugrenzen, selten kodiert, Validität des Konstrukts in der Literatur umstritten."},
+       {code:"F20.8",label:"Sonstige Schizophrenie",text:"Restkategorie für Formen, die den übrigen Subtypen nicht klar entsprechen, z. B. zönästhetische Schizophrenie (im Vordergrund stehende bizarre Körpermissempfindungen) oder andere atypische Verlaufsformen."},
+       {code:"F21",label:"Schizotype Störung",text:"Exzentrisches Verhalten sowie Anomalien des Denkens und der Affektivität, die schizophrenieähnlich wirken, ohne dass zu irgendeinem Zeitpunkt eindeutige, für Schizophrenie charakteristische Symptome auftreten. Kein Beginn und Verlauf wie bei Schizophrenie; wird dem Schizophrenie-Spektrum im Sinne einer genetischen Verwandtschaft zugeordnet."},
+       {code:"F22",label:"Anhaltende wahnhafte Störung",text:"Entwicklung eines einzelnen Wahns oder eines Systems verwandter Wahnideen, die meist lange, oft lebenslang andauern. Inhalte variabel (Verfolgungs-, Größen-, hypochondrischer, eifersüchtiger Wahn). Andere Symptome wie Halluzinationen oder Affektverflachung fehlen weitgehend; das Alltagsfunktionsniveau bleibt außerhalb des Wahnthemas oft erstaunlich gut erhalten."},
+       {code:"F23",label:"Akute vorübergehende psychotische Störung",text:"Akuter Beginn (innerhalb von zwei Wochen) psychotischer Symptome (Wahn, Halluzinationen, Wahrnehmungsstörungen), häufig mit rascher Symptomveränderung ('polymorphes Bild'). Vollständige Remission meist innerhalb weniger Wochen bis Monate. Kann mit oder ohne Symptome einer Schizophrenie auftreten."},
+       {code:"F24",label:"Induzierte wahnhafte Störung (Folie à deux)",text:"Ein Wahn wird von zwei Personen mit enger emotionaler Bindung geteilt; nur eine Person leidet an einer eigenständigen psychotischen Störung, während die andere – meist abhängigere – Person den Wahninhalt übernimmt. Eine Trennung der beiden Personen führt häufig zum Abklingen des Wahns bei der induzierten Person."}
+     ],
+     icd11:[
+       {code:"6A20",label:"Schizophrenie",text:"Grundkriterien ähnlich ICD-10, jedoch ohne die klassischen kategorialen Subtypen (paranoid, hebephren, katatoon entfallen). Stattdessen dimensionale Schweregrad-Spezifikatoren für sechs Symptombereiche: Positivsymptome, Negativsymptome, depressive Symptome, manische Symptome, psychomotorische Symptome und kognitive Beeinträchtigung. Zusätzlich Verlaufsspezifikatoren (erste Episode, mehrere Episoden, kontinuierlicher Verlauf, unspezifiziert) sowie Angaben zum aktuellen Remissionsstatus (teilweise/vollständige Remission)."},
+       {code:"6A21",label:"Schizoaffektive Störung",text:"Episode, in der die Kriterien einer Schizophrenie gleichzeitig mit einer ausgeprägten manischen, depressiven oder gemischten affektiven Episode erfüllt sind. Die Abgrenzung zur Schizophrenie mit sekundärer affektiver Symptomatik und zur affektiven Störung mit psychotischen Merkmalen erfolgt über Gleichzeitigkeit und relative Dominanz der beiden Symptomcluster."},
+       {code:"6A22",label:"Schizotypische Störung",text:"Entspricht in etwa F21: anhaltendes Muster von Unbehagen in engen Beziehungen, kognitiv-perzeptiven Verzerrungen (magisches Denken, ungewöhnliche Wahrnehmungserlebnisse) und exzentrischem Verhalten, ohne dass die Vollkriterien einer Schizophrenie oder einer anderen psychotischen Störung erfüllt sind."},
+       {code:"6A23",label:"Akute vorübergehende psychotische Störung",text:"Entspricht in etwa F23: akuter Beginn psychotischer Symptome ohne längere Prodromalphase, mit deutlicher Fluktuation der Symptomatik innerhalb kurzer Zeit. Vollständige Remission meist innerhalb von drei Monaten."},
+       {code:"6A24",label:"Wahnhafte Störung",text:"Entspricht in etwa F22: Entwicklung eines Wahns oder eines Systems verwandter Wahnideen über mindestens drei Monate, ohne die übrigen Kriterien einer Schizophrenie zu erfüllen. Das Funktionsniveau außerhalb des Wahnthemas ist häufig gut erhalten."},
+       {code:"6A25",label:"Symptomatische Psychose bei anderen andernorts klassifizierten Erkrankungen",text:"Sekundäre psychotische Störung: Psychotische Symptome als direkte pathophysiologische Folge einer nicht primär psychiatrischen Erkrankung (z. B. Autoimmunenzephalitis, Epilepsie, Hirntumor, endokrinologische Erkrankung), die ohne die Grunderkrankung nicht bestehen würden. Macht eine sorgfältige somatische Abklärung obligat."}
+     ]
+   },
    haupt:["Gedankenlautwerden, -eingebung, -entzug, -ausbreitung","Kontrollüberzeugungen, Beeinflussungserlebnisse, Wahnwahrnehmung","Kommentierende oder dialogisierende Stimmen","Anhaltende kulturell unangemessene Wahnideen"],
    neben:["Halluzinationen jeder Sinnesmodalität mit Wahnerklärung","Formale Denkstörungen: Denkzerfahrenheit, Neologismen, Gedankenabreißen","Katatone Symptome: Stupor, Erregung, Haltungsstereotypien","Negativsymptome: Affektverflachung, Alogie, Abulie, Anhedonie, Asozialität","Deutliche, konsistente Verhaltens- und Wesensveränderungen"],
    hinweis:"Dauer ≥1 Monat. Mindestens 1 Erstrangsymptom nach Schneider oder 2+ Zweitrangsymptome. ICD-11: dimensionaler Ansatz.",schwere:"Akutphase / Remission / Residuum. Positiv- vs. Negativsymptomatik unterscheiden.",
@@ -1742,6 +1766,38 @@ function showList() {
   renderGrid();
 }
 
+function renderIcdSubGroup(items, dotColor, borderColor, bgColor) {
+  return items.map(it => `
+    <div style="border:1px solid ${borderColor};border-radius:8px;overflow:hidden;margin-bottom:6px;">
+      <button onclick="gtLFToggle(this)" style="width:100%;text-align:left;padding:.65rem .9rem;background:${bgColor};color:#1a1a18;border:none;font-size:12.5px;font-weight:500;cursor:pointer;font-family:inherit;display:flex;justify-content:space-between;align-items:center;gap:8px;">
+        <span style="display:flex;align-items:center;gap:.6rem;">
+          <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${dotColor};flex-shrink:0;"></span>
+          <span style="font-family:'Courier New',monospace;font-weight:600;white-space:nowrap;">${it.code}</span>
+          <span>${it.label}</span>
+        </span>
+        <span class="arr">▼</span>
+      </button>
+      <div style="display:none;padding:.8rem .9rem;background:#fff;font-size:12.5px;line-height:1.65;border-top:1px solid ${borderColor};">${it.text}</div>
+    </div>`).join("");
+}
+
+function renderIcdSubDetails(sd) {
+  const icd10Part = (sd.icd10 && sd.icd10.length) ? `
+    <div style="margin-bottom:8px;">
+      <span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-family:'Courier New',monospace;font-weight:500;background:#E6F1FB;color:#0C447C;border:1px solid #B5D4F4;margin-bottom:6px;">ICD-10</span>
+      <div style="margin-top:6px;">${renderIcdSubGroup(sd.icd10,"#4A90D9","#BAD4F5","#EDF5FF")}</div>
+    </div>` : "";
+  const icd11Part = (sd.icd11 && sd.icd11.length) ? `
+    <div>
+      <span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-family:'Courier New',monospace;font-weight:500;background:#EAF3DE;color:#3B6D11;border:1px solid #C0DD97;margin-bottom:6px;">ICD-11</span>
+      <div style="margin-top:6px;">${renderIcdSubGroup(sd.icd11,"#5A9C4A","#C0DD97","#EAF3DE")}</div>
+    </div>` : "";
+  return `<div style="margin-top:.5rem;">
+    <div style="font-size:12px;color:#5f5e5a;margin-bottom:8px;">Detaillierte Beschreibungen der Subkodes – zum Aufklappen anklicken:</div>
+    ${icd10Part}${icd11Part}
+  </div>`;
+}
+
 function renderKrit(d) {
   const mn=d.mnemonic?`<div class="section"><div class="section-title">Merkhilfe</div>
     <div class="mnemonic-box"><div style="font-size:13px;font-weight:500;margin-bottom:6px;">${d.mnemonic.titel}</div>
@@ -1770,6 +1826,7 @@ function renderKrit(d) {
           </tbody>
         </table>
       </div>
+      ${d.icd_sub_details?renderIcdSubDetails(d.icd_sub_details):""}
     </div>` : "";
   return `<div class="pt1"><div class="section">
     <div class="criteria-block">
