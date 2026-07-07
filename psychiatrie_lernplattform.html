@@ -330,7 +330,6 @@ body{font-family:system-ui,-apple-system,sans-serif;color:#1a1a18;background:#f5
       <!-- Top bar -->
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:1.25rem;">
         <button class="back-btn" style="padding:0;" onclick="showMedList()">&#8592; Kursübersicht</button>
-        <button id="med-mark-btn" onclick="medToggleRead()" style="padding:6px 14px;border-radius:8px;border:1px solid #C0DD97;background:#EAF3DE;color:#3B6D11;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;">✓ Als gelesen markieren</button>
       </div>
       <!-- Breadcrumb -->
       <div id="med-breadcrumb" style="font-size:11px;color:#888780;margin-bottom:.5rem;"></div>
@@ -395,7 +394,6 @@ body{font-family:system-ui,-apple-system,sans-serif;color:#1a1a18;background:#f5
       <!-- Top bar -->
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:1.25rem;">
         <button class="back-btn" style="padding:0;" onclick="showFkList()">&#8592; Kursübersicht</button>
-        <button id="fk-mark-btn" onclick="fkToggleRead()" style="padding:6px 14px;border-radius:8px;border:1px solid #C0DD97;background:#EAF3DE;color:#3B6D11;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;">✓ Als gelesen markieren</button>
       </div>
       <!-- Breadcrumb -->
       <div id="fk-breadcrumb" style="font-size:11px;color:#888780;margin-bottom:.5rem;"></div>
@@ -3527,7 +3525,6 @@ function showTx(id) {
 
 function renderTxKurs(m, td) {
   let activeModule = 0;
-  let moduleProgress = m.kursModule.map(() => false);
 
   function renderModuleNav() {
     return `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem;">
@@ -3535,8 +3532,7 @@ function renderTxKurs(m, td) {
         <button onclick="txKursSetModule(${i})"
           style="padding:6px 12px;border-radius:20px;border:1px solid ${activeModule===i?'#2c2c2a':'#d3d1c7'};
           background:${activeModule===i?'#2c2c2a':'transparent'};color:${activeModule===i?'#f1efe8':'#5f5e5a'};
-          font-size:12px;font-weight:${activeModule===i?'500':'400'};cursor:pointer;font-family:inherit;
-          position:relative;">${mod.icon} ${mod.titel}${moduleProgress[i]?'<span style="position:absolute;top:-3px;right:-3px;background:#5A9C4A;color:white;border-radius:50%;width:14px;height:14px;font-size:9px;display:flex;align-items:center;justify-content:center;">✓</span>':''}</button>
+          font-size:12px;font-weight:${activeModule===i?'500':'400'};cursor:pointer;font-family:inherit;">${mod.icon} ${mod.titel}</button>
       `).join('')}
     </div>`;
   }
@@ -3550,7 +3546,6 @@ function renderTxKurs(m, td) {
       <div style="font-size:13px;line-height:1.7;color:#1a1a18;">${mod.inhalt}</div>
       <div style="display:flex;justify-content:space-between;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #e8e6df;">
         <button onclick="txKursNav(-1)" style="padding:7px 16px;border-radius:8px;border:1px solid #d3d1c7;background:transparent;color:#5f5e5a;font-size:13px;cursor:pointer;font-family:inherit;${mIdx===0?'visibility:hidden;':''}">← Zurück</button>
-        <button onclick="txKursMarkRead(${mIdx})" style="padding:7px 14px;border-radius:8px;border:1px solid #C0DD97;background:#EAF3DE;color:#3B6D11;font-size:12px;cursor:pointer;font-family:inherit;">${moduleProgress[mIdx]?'✓ Gelesen':'Als gelesen markieren'}</button>
         <button onclick="txKursNav(1)" style="padding:7px 16px;border-radius:8px;border:1px solid #2c2c2a;background:#2c2c2a;color:#f1efe8;font-size:13px;cursor:pointer;font-family:inherit;${mIdx===m.kursModule.length-1?'visibility:hidden;':''}">Weiter →</button>
       </div>
     </div>`;
@@ -3569,10 +3564,6 @@ function renderTxKurs(m, td) {
   window.txKursNav = function(dir) {
     const next = activeModule + dir;
     if(next >= 0 && next < m.kursModule.length) { activeModule = next; rerender(); td.scrollIntoView({behavior:"smooth",block:"start"}); }
-  };
-  window.txKursMarkRead = function(i) {
-    moduleProgress[i] = true;
-    rerender();
   };
 
   document.getElementById("tx-meta").innerHTML +=
@@ -5166,7 +5157,6 @@ function renderGtAnliegenList() {
 let activeGtCat = "Alle";
 let activeGt = null;
 let gtActiveModule = 0;
-let gtModuleProgress = [false,false,false,false,false,false,false];
 
 function gtGoToKonzept(methodId, cardIdx) {
   showView('tx');
@@ -5194,7 +5184,7 @@ function renderGtModNav() {
       style="padding:6px 12px;border-radius:20px;border:1px solid ${gtActiveModule===i?'#2c2c2a':'#d3d1c7'};
       background:${gtActiveModule===i?'#2c2c2a':'transparent'};color:${gtActiveModule===i?'#f1efe8':'#5f5e5a'};
       font-size:12px;font-weight:${gtActiveModule===i?'500':'400'};cursor:pointer;font-family:inherit;
-      position:relative;">${mod.icon} ${mod.kurz||mod.titel}${gtModuleProgress[i]?'<span style="position:absolute;top:-3px;right:-3px;background:#5A9C4A;color:white;border-radius:50%;width:14px;height:14px;font-size:9px;display:flex;align-items:center;justify-content:center;">✓</span>':''}</button>
+      position:relative;">${mod.icon} ${mod.kurz||mod.titel}</button>
   `).join("");
 }
 
@@ -5210,11 +5200,6 @@ function gtKursNav(dir) {
   if(next>=0 && next<GT_KURS_MODULES.length) { gtSetModule(next); }
 }
 
-function gtKursMarkRead(i) {
-  gtModuleProgress[i] = true;
-  renderGtModNav();
-}
-
 function renderGtModPanel() {
   const mod = GT_KURS_MODULES[gtActiveModule];
   const panel = document.getElementById("gt-modpanels");
@@ -5227,7 +5212,6 @@ function renderGtModPanel() {
       <div id="gt-anliegen-list"></div>
       <div style="display:flex;justify-content:space-between;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #e8e6df;">
         <button onclick="gtKursNav(-1)" style="padding:7px 16px;border-radius:8px;border:1px solid #d3d1c7;background:transparent;color:#5f5e5a;font-size:13px;cursor:pointer;font-family:inherit;${gtActiveModule===0?'visibility:hidden;':''}">← Zurück</button>
-        <button onclick="gtKursMarkRead(${gtActiveModule})" style="padding:7px 14px;border-radius:8px;border:1px solid #C0DD97;background:#EAF3DE;color:#3B6D11;font-size:12px;cursor:pointer;font-family:inherit;">${gtModuleProgress[gtActiveModule]?'✓ Gelesen':'Als gelesen markieren'}</button>
         <button onclick="gtKursNav(1)" style="padding:7px 16px;border-radius:8px;border:1px solid #2c2c2a;background:#2c2c2a;color:#f1efe8;font-size:13px;cursor:pointer;font-family:inherit;${gtActiveModule===GT_KURS_MODULES.length-1?'visibility:hidden;':''}">Weiter →</button>
       </div>
       ${renderGtKompetenzuebersicht()}
@@ -5249,9 +5233,8 @@ function renderGtModPanel() {
         <div class="tabs" id="gt-tabs"></div>
         <div id="gt-panels"></div>
       </div>
-      <div style="display:flex;justify-content:space-between;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #e8e6df;">
+      <div id="gt-outer-nav" style="display:flex;justify-content:space-between;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #e8e6df;">
         <button onclick="gtKursNav(-1)" style="padding:7px 16px;border-radius:8px;border:1px solid #d3d1c7;background:transparent;color:#5f5e5a;font-size:13px;cursor:pointer;font-family:inherit;${gtActiveModule===0?'visibility:hidden;':''}">← Zurück</button>
-        <button onclick="gtKursMarkRead(${gtActiveModule})" style="padding:7px 14px;border-radius:8px;border:1px solid #C0DD97;background:#EAF3DE;color:#3B6D11;font-size:12px;cursor:pointer;font-family:inherit;">${gtModuleProgress[gtActiveModule]?'✓ Gelesen':'Als gelesen markieren'}</button>
         <button onclick="gtKursNav(1)" style="padding:7px 16px;border-radius:8px;border:1px solid #2c2c2a;background:#2c2c2a;color:#f1efe8;font-size:13px;cursor:pointer;font-family:inherit;${gtActiveModule===GT_KURS_MODULES.length-1?'visibility:hidden;':''}">Weiter →</button>
       </div>
     </div>`;
@@ -5266,7 +5249,6 @@ function renderGtModPanel() {
       <div style="font-size:13px;line-height:1.7;color:#1a1a18;">${mod.inhalt}</div>
       <div style="display:flex;justify-content:space-between;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #e8e6df;">
         <button onclick="gtKursNav(-1)" style="padding:7px 16px;border-radius:8px;border:1px solid #d3d1c7;background:transparent;color:#5f5e5a;font-size:13px;cursor:pointer;font-family:inherit;${gtActiveModule===0?'visibility:hidden;':''}">← Zurück</button>
-        <button onclick="gtKursMarkRead(${gtActiveModule})" style="padding:7px 14px;border-radius:8px;border:1px solid #C0DD97;background:#EAF3DE;color:#3B6D11;font-size:12px;cursor:pointer;font-family:inherit;">${gtModuleProgress[gtActiveModule]?'✓ Gelesen':'Als gelesen markieren'}</button>
         <button onclick="gtKursNav(1)" style="padding:7px 16px;border-radius:8px;border:1px solid #2c2c2a;background:#2c2c2a;color:#f1efe8;font-size:13px;cursor:pointer;font-family:inherit;${gtActiveModule===GT_KURS_MODULES.length-1?'visibility:hidden;':''}">Weiter →</button>
       </div>
     </div>`;
@@ -5303,9 +5285,12 @@ function showGt(id) {
   document.getElementById("gt-meta").innerHTML=
     `<span class="tx-meta-badge" style="background:#f1efe8;border:1px solid #d3d1c7;">${g.cat}</span>
      <span class="tx-meta-badge" style="background:#f1efe8;border:1px solid #d3d1c7;font-weight:400;">${g.short}</span>`;
+  const outerNav = document.getElementById("gt-outer-nav");
   if(g.kurs && g.kursModule) {
+    if(outerNav) outerNav.style.display = "none";
     renderGtKurs(g, gd);
   } else {
+    if(outerNav) outerNav.style.display = "flex";
     const tabNames=["Überblick","Wirkfaktoren & Methoden","Technik-Karten","Sitzungsverlauf","Indikationen & Besonderheiten"];
     document.getElementById("gt-tabs").innerHTML=tabNames.map((t,i)=>
       `<button class="tab-btn${i===0?' active':''}" onclick="setGtTab(${i},this)">${t}</button>`
@@ -5322,7 +5307,6 @@ function showGt(id) {
 
 function renderGtKurs(g, gd) {
   let activeModule = 0;
-  let moduleProgress = g.kursModule.map(() => false);
 
   function renderModuleNav() {
     return `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem;">
@@ -5330,8 +5314,7 @@ function renderGtKurs(g, gd) {
         <button onclick="gtVerfKursSetModule(${i})"
           style="padding:6px 12px;border-radius:20px;border:1px solid ${activeModule===i?'#2c2c2a':'#d3d1c7'};
           background:${activeModule===i?'#2c2c2a':'transparent'};color:${activeModule===i?'#f1efe8':'#5f5e5a'};
-          font-size:12px;font-weight:${activeModule===i?'500':'400'};cursor:pointer;font-family:inherit;
-          position:relative;">${mod.icon} ${mod.titel}${moduleProgress[i]?'<span style="position:absolute;top:-3px;right:-3px;background:#5A9C4A;color:white;border-radius:50%;width:14px;height:14px;font-size:9px;display:flex;align-items:center;justify-content:center;">✓</span>':''}</button>
+          font-size:12px;font-weight:${activeModule===i?'500':'400'};cursor:pointer;font-family:inherit;">${mod.icon} ${mod.titel}</button>
       `).join('')}
     </div>`;
   }
@@ -5345,7 +5328,6 @@ function renderGtKurs(g, gd) {
       <div style="font-size:13px;line-height:1.7;color:#1a1a18;">${mod.inhalt}</div>
       <div style="display:flex;justify-content:space-between;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #e8e6df;">
         <button onclick="gtVerfKursNav(-1)" style="padding:7px 16px;border-radius:8px;border:1px solid #d3d1c7;background:transparent;color:#5f5e5a;font-size:13px;cursor:pointer;font-family:inherit;${mIdx===0?'visibility:hidden;':''}">← Zurück</button>
-        <button onclick="gtVerfKursMarkRead(${mIdx})" style="padding:7px 14px;border-radius:8px;border:1px solid #C0DD97;background:#EAF3DE;color:#3B6D11;font-size:12px;cursor:pointer;font-family:inherit;">${moduleProgress[mIdx]?'✓ Gelesen':'Als gelesen markieren'}</button>
         <button onclick="gtVerfKursNav(1)" style="padding:7px 16px;border-radius:8px;border:1px solid #2c2c2a;background:#2c2c2a;color:#f1efe8;font-size:13px;cursor:pointer;font-family:inherit;${mIdx===g.kursModule.length-1?'visibility:hidden;':''}">Weiter →</button>
       </div>
     </div>`;
@@ -5366,11 +5348,6 @@ function renderGtKurs(g, gd) {
       gd.scrollIntoView({behavior:"smooth",block:"start"});
     }
   };
-  window.gtVerfKursMarkRead = function(i) {
-    moduleProgress[i] = true;
-    document.getElementById("gt-tabs").innerHTML = renderModuleNav();
-    document.getElementById("gt-panels").innerHTML = `<div class="tab-panel active">${renderModule(activeModule)}</div>`;
-  };
 
   document.getElementById("gt-meta").innerHTML +=
     '<span class="tx-meta-badge" style="background:#EEEDFE;border:1px solid #AFA9EC;color:#3C3489;font-weight:500;">📚 Vertiefungskurs · ' + g.kursModule.length + ' Module</span>';
@@ -5389,6 +5366,8 @@ function showGtList() {
   activeGt=null;
   document.getElementById("gt-list-view").style.display="block";
   document.getElementById("gt-detail").classList.remove("visible");
+  const outerNav = document.getElementById("gt-outer-nav");
+  if(outerNav) outerNav.style.display = "flex";
   renderGtGrid();
 }
 
