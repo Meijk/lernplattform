@@ -208,6 +208,29 @@ body{font-family:system-ui,-apple-system,sans-serif;color:#1a1a18;background:#f5
 .storage-btn.primary{background:#2c2c2a;color:#f1efe8;border-color:#2c2c2a}
 .storage-btn.primary:hover{background:#444441}
 
+/* Med. Grundlagen – Kursformat */
+.mk{font-size:13px;line-height:1.7;color:#1a1a18}
+.mk h4{margin:1.4rem 0 .45rem;font-size:14px;font-weight:600;color:#2c2c2a}
+.mk h4:first-child{margin-top:0}
+.mk p{margin:.4rem 0 .65rem}
+.mk ul,.mk ol{margin:.3rem 0 .8rem;padding-left:1.3rem}
+.mk li{margin-bottom:4px}
+.mk .tw{overflow-x:auto;margin:.6rem 0 .9rem;border:1px solid #d3d1c7;border-radius:10px;background:#fff}
+.mk table{width:100%;border-collapse:collapse;font-size:12px;min-width:520px}
+.mk th{background:#f1efe8;text-align:left;padding:7px 10px;font-weight:500;border-bottom:2px solid #d3d1c7;vertical-align:bottom}
+.mk td{padding:7px 10px;border-bottom:1px solid #e8e6df;vertical-align:top;line-height:1.5}
+.mk tbody tr:last-child td{border-bottom:none}
+.mk tbody tr:nth-child(even){background:#fafaf8}
+.mk .bx{border-radius:8px;padding:.7rem .95rem;margin:.9rem 0;border-left:3px solid #d3d1c7;font-size:12.5px;line-height:1.65}
+.mk .bx.merke{background:#FAEEDA;border-left-color:#FAC775;color:#633806}
+.mk .bx.cave{background:#FCEBEB;border-left-color:#E08A8A;color:#791F1F}
+.mk .bx.praxis{background:#EAF3DE;border-left-color:#97C459;color:#27500A}
+.mk .bx.erg{background:#f5f4ef;border-left-color:#b4b2a9;color:#5f5e5a;font-size:12px}
+.mk .src{font-size:11px;color:#888780;margin-top:-.4rem}
+.mk details{border:1px solid #d3d1c7;border-radius:10px;margin:.55rem 0;background:#fff}
+.mk details[open]{border-color:#b4b2a9}
+.mk summary{cursor:pointer;padding:10px 14px;font-weight:500;font-size:13px;line-height:1.5}
+.mk details>div{padding:0 14px 12px}
 </style>
 </head>
 <body>
@@ -343,8 +366,12 @@ body{font-family:system-ui,-apple-system,sans-serif;color:#1a1a18;background:#f5
       <div id="med-toc" style="margin-bottom:1.25rem;"></div>
       <!-- Content rendered directly (no tabs) -->
       <div id="med-content"></div>
+      <!-- Als gelesen markieren -->
+      <div style="text-align:center;margin-top:1.5rem;">
+        <button id="med-mark-btn" onclick="medToggleRead()" style="padding:8px 18px;border-radius:8px;border:1px solid #C0DD97;background:#EAF3DE;color:#3B6D11;font-size:13px;cursor:pointer;font-family:inherit;">Als gelesen markieren</button>
+      </div>
       <!-- Prev/Next -->
-      <div style="display:flex;justify-content:space-between;margin-top:2rem;padding-top:1rem;border-top:1px solid #d3d1c7;">
+      <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:1rem;padding-top:1rem;border-top:1px solid #d3d1c7;">
         <button id="med-prev-btn" onclick="medNavigate(-1)" style="padding:8px 16px;border-radius:8px;border:1px solid #d3d1c7;background:#fff;color:#5f5e5a;font-size:13px;cursor:pointer;font-family:inherit;">← Vorheriges</button>
         <button id="med-next-btn" onclick="medNavigate(1)" style="padding:8px 16px;border-radius:8px;border:1px solid #2c2c2a;background:#2c2c2a;color:#f1efe8;font-size:13px;cursor:pointer;font-family:inherit;">Nächstes →</button>
       </div>
@@ -4344,12 +4371,12 @@ function buildCards(disorders) {
       a:`<ul>${d.fallkonzept.map(f=>`<li>${f}</li>`).join("")}</ul>`});
 
     // VT-Interventionen
-    cards.push({cat:d.name,qtype:"VT-Interventionen",
+    if(d.vt_einzel && d.vt_einzel.length) cards.push({cat:d.name,qtype:"VT-Interventionen",
       q:`Welche VT-Methoden und Interventionen setzen Sie bei ${d.name} in der Einzeltherapie ein?`,
       a:`<ul>${d.vt_einzel.slice(0,5).map(v=>`<li>${v}</li>`).join("")}</ul>`});
 
     // Gruppentherapie
-    cards.push({cat:d.name,qtype:"Gruppentherapie",
+    if(Array.isArray(d.vt_gruppe)) cards.push({cat:d.name,qtype:"Gruppentherapie",
       q:`Wie sieht die VT-Gruppentherapie bei ${d.name} aus? Besonderheiten?`,
       a:`<ul>${d.vt_gruppe.map(v=>`<li>${v}</li>`).join("")}</ul>`});
 
@@ -6420,7 +6447,7 @@ const MED_TOPICS = [
    klinisch:"Das Verständnis des PFC-Amygdala-Gleichgewichts ist das neurobiologische Fundament aller Psychotherapien: Emotionsregulation = Stärkung des PFC gegenüber der Amygdala. Expositionstherapie baut neue PFC-Amygdala-Verbindungen auf. Achtsamkeit stärkt den ACC.",
    praxis:["Psychoedukation: 'Ihr Gehirn hat einen Alarmknopf (Amygdala) und eine Bremse (PFC) – Therapie stärkt die Bremse'","Bei Sucht: Nucleus accumbens als biologische Grundlage von Craving erklären – normalisiert Schuldgefühle","Bei ADHS: PFC-Reifungsverzögerung als Erklärung – 'Ihre Bremse ist biologisch schwächer, nicht Ihr Charakter'"],
   fallbeispiel:"Eine 28-jährige Patientin mit BPS berichtet von unkontrollierten Wutausbrüchen. Die Neuroanatomie-Erklärung: 'Ihre Amygdala reagiert sehr schnell und intensiv auf Bedrohungsreize – und Ihr präfrontaler Kortex, der normalerweise die Bremse zieht, kommt nicht schnell genug hinterher.' Dies normalisiert das Symptom und erklärt die Rationale für DBT-Skills: 'Skills bauen neue PFC-Verbindungen auf, die die Bremse stärken.'",
-   quiz:[{f:"Welches Hirnareal ist die Hauptquelle serotonerger Projektionen?",o:["Locus coeruleus","Raphe-Kerne","Nucleus accumbens","Substantia nigra"],r:1,a:"Raphe-Kerne = Serotonin-Hauptquelle. Locus coeruleus = Noradrenalin."},{f:"Welche Aussage zur PFC-Reifung ist korrekt?",o:["PFC ist bei Geburt vollständig entwickelt","PFC reift bis ca. 25 Jahre","PFC reift bis ca. 15 Jahre","PFC reift nicht weiter nach der Kindheit"],r:1,a:"PFC-Reifung ist erst um das 25. Lebensjahr abgeschlossen – erklärt Risikobereitschaft in der Adoleszenz."},{f:"Bei welcher Störung ist die kortiko-striato-thalamo-kortikale (CSTC) Schleife pathologisch überaktiv?",o:["Depression","Schizophrenie","Zwangsstörung (OCD)","ADHS"],r:2,a:"OCD: Hyperaktive CSTC-Schleife (orbitofrontaler Kortex → Caudat → Thalamus) erzeugt das persistierende Fehlersignal."},{f:"Die Blut-Hirn-Schranke ist NICHT vorhanden in:",o:["Hippocampus","Area postrema (Brechzentrum)","Präfrontaler Kortex","Amygdala"],r:1,a:"Area postrema und einige andere circumventrikuläre Organe haben keine vollständige BBB – daher wirken Antiemetika dort direkt."}]},
+  },
   {id:"blut_hirn",name:"Blut-Hirn-Schranke & Neurotoxizität",cat:"Neuroanatomie",catStyle:"tx-pill-vt",
    kurz:"BBB-Struktur, Permeabilität, Neuroinflammation, klinische Relevanz für Pharmakotherapie",schwierigkeit:"Grundlagen",
    lernziele:["Struktur und Funktion der Blut-Hirn-Schranke erklären","Faktoren nennen, die die BBB-Permeabilität beeinflussen","Zusammenhang zwischen BBB-Dysfunktion und psychischen Störungen erläutern","Pharmakologische Implikationen der BBB verstehen"],
@@ -6428,7 +6455,7 @@ const MED_TOPICS = [
    klinisch:"Die BBB erklärt warum L-DOPA statt Dopamin bei Parkinson eingesetzt wird, warum Lithium-Spiegel im Blut den ZNS-Spiegel reflektieren, und warum Entzündungserkrankungen kognitive Symptome erzeugen können.",
    praxis:["Autoimmunenzephalitis als Psychose-Mimikry: bei Erstpsychose Anti-NMDAR-Antikörper im Liquor bestimmen","Alkohol und Neuroinflammation: Patienten erklären, warum Alkohol das Gehirn direkt schädigt","Bei Non-Response auf Pharmaka: P-gp-Polymorphismus als möglicher Faktor"],
   fallbeispiel:"Ein 22-jähriger Mann wird mit akuter Psychose aufgenommen. Kein Ansprechen auf Antipsychotika. Liquorpunktion: Anti-NMDAR-Antikörper positiv → Autoimmunenzephalitis. Die BBB war durch die Entzündung kompromittiert, die Antikörper konnten ins ZNS eintreten. Therapie: Immunsuppression (Steroide, IVIG), nicht Antipsychotika.",
-   quiz:[{f:"Warum wird bei Parkinson L-DOPA statt Dopamin verabreicht?",o:["Dopamin hat stärkere Nebenwirkungen","Dopamin passiert die Blut-Hirn-Schranke nicht, L-DOPA wird aktiv transportiert","L-DOPA hat eine längere Halbwertszeit","Dopamin ist synthetisch nicht herstellbar"],r:1,a:"Dopamin ist hydrophil und passiert die BBB nicht. L-DOPA wird über Aminosäuretransporter aktiv ins ZNS aufgenommen und dort zu Dopamin decarboxyliert."},{f:"Welche Substanz schädigt die BBB chronisch und fördert Neuroinflammation?",o:["Koffein","Lithium","Ethanol (Alkohol)","Paracetamol"],r:2,a:"Chronischer Alkoholkonsum schädigt die BBB-Integrität, fördert Neuroinflammation und trägt zu alkoholischer Neurodegeneration bei."},{f:"Was ist P-Glykoprotein in der BBB?",o:["Ein Neurotransmitter-Transporter","Eine Effluxpumpe, die Substanzen aus dem ZNS pumpt","Ein Ionenkanal für Lithium","Ein Enzym zum Abbau von Pharmaka"],r:1,a:"P-Glykoprotein (P-gp, ABCB1) ist eine ATP-abhängige Effluxpumpe, die Substanzen aktiv aus dem ZNS transportiert – erklärt Resistenz mancher Pharmaka."}]},
+  },
   {id:"neurotransmitter",name:"Neurotransmitter & Rezeptoren",cat:"Neurobiologie",catStyle:"tx-pill-vt",
    kurz:"Serotonin, Dopamin, Noradrenalin, GABA, Glutamat, Acetylcholin",schwierigkeit:"Grundlagen",
    lernziele:["Die sechs wichtigsten Neurotransmitter und ihre Funktionen benennen","Synapsenphysiologie und Wiederaufnahme erklären","Pharmakologische Angriffspunkte bei psychischen Störungen zuordnen","Das Serotoninsyndrom erkennen und erklären","Ionotrope vs. metabotrope Rezeptoren unterscheiden"],
@@ -6436,7 +6463,7 @@ const MED_TOPICS = [
    klinisch:"Kein Medikament ist monoaminerg. SSRI beeinflussen GABA, Glutamat und Neuroplastizität. Das Serotoninsyndrom ist ein klinischer Notfall: Kombination von MAO-Hemmern mit serotonergen Substanzen (Tramadol, Triptane, MDMA) ist lebensgefährlich.",
    praxis:["Serotoninsyndrom: Trias – Klonus/Tremor, Hyperthermie, Agitiertheit. Sofort alle serotonergen Substanzen absetzen!","Anticholinerg vs. Antidopaminerg unterscheiden: NMS = Dopaminmangel (Rigidität, Hyperthermie unter AP); Serotoninsyndrom = Serotoninüberschuss (Klonus)","Glutamat/NMDA erklären: Ketamin (NMDA-Antagonist) als Antidepressivum bei therapieresistenter Depression"],
   fallbeispiel:"Eine Patientin unter Phenelzin (MAO-Hemmer) erhält in der Notaufnahme Tramadol gegen Rückenschmerzen. Stunden später: Agitation, Zittern, Schwitzen, Hyperthermie, Klonus → Serotoninsyndrom. Phenelzin hemmt MAO-A (Serotonin-Abbau) + Tramadol hemmt SERT → dramatischer Serotonin-Überschuss. Sofortmaßnahme: alle serotonergen Substanzen absetzen, Cyproheptadin (5-HT-Antagonist), intensivmedizinische Überwachung.",
-   quiz:[{f:"Welche Aussage zum Serotoninsyndrom ist RICHTIG?",o:["Es entsteht durch Serotonin-Mangel","Es wird primär mit SSRI behandelt","Es ist eine lebensbedrohliche Überaktivierung des Serotonin-Systems, oft durch Kombination serotonerger Substanzen","Es ist identisch mit dem Malignen Neuroleptischen Syndrom (NMS)"],r:2,a:"Serotoninsyndrom = Serotonin-ÜBERSCHUSS (Kombination serotonerger Substanzen). NMS = Dopaminmangel (durch Antipsychotika)."},{f:"D2-Blockade im tuberoinfundibulären Dopaminsystem bewirkt:",o:["Antipsychotische Wirkung","Extrapyramidale Symptome (EPS)","Prolaktinanstieg (Galaktorrhö, Amenorrhö)","Verbesserung der Kognition"],r:2,a:"Tuberoinfundibuläres System: Dopamin hemmt normal Prolaktin-Ausschüttung. D2-Blockade → Prolaktin ↑ → Galaktorrhö, Amenorrhö, Libidoverlust."},{f:"Benzodiazepine wirken über welchen Mechanismus?",o:["Blockade von NMDA-Glutamatrezeptoren","Direkte Aktivierung von GABA-A-Kanälen","Allosterische Verstärkung der GABA-A-Wirkung (erhöhte Cl⁻-Kanalöffnungsfrequenz)","Hemmung des GABA-Transporters"],r:2,a:"BZD sind allosterische Modulatoren: sie erhöhen die Frequenz der Cl⁻-Kanalöffnung ohne selbst den Kanal zu öffnen."},{f:"Warum ist Alkohol-Entzug lebensgefährlich?",o:["Alkohol ist hepatotoxisch – Leberversagen im Entzug","Alkohol potenziert GABA; im Entzug fällt die GABA-Hemmung plötzlich weg → zerebrale Übererregung → Krampfanfälle","Alkohol hemmt Glutamat; im Entzug steigt Glutamat übermäßig an","Beide b und c sind richtig"],r:3,a:"Alkohol erhöht GABA-A-Aktivität UND hemmt NMDA-Glutamatrezeptoren. Im Entzug: GABA ↓ + Glutamat ↑ = maximale zerebrale Übererregung → Alkohol-Entzugsdelir, Krampfanfälle."}]},
+  },
   {id:"hpa_achse",name:"HPA-Achse & Stressphysiologie",cat:"Neurobiologie",catStyle:"tx-pill-vt",
    kurz:"CRH, ACTH, Kortisol, chronischer Stress, Depression, PTBS",schwierigkeit:"Grundlagen",
    lernziele:["Die HPA-Achse als Stressachse vollständig beschreiben","Akute vs. chronische Stressreaktion unterscheiden und klinisch einordnen","Kortisol-Muster bei Depression vs. PTBS erklären","Den Dexamethason-Suppressionstest interpretieren","Allostatic Load und seine klinischen Folgen benennen"],
@@ -6444,7 +6471,7 @@ const MED_TOPICS = [
    klinisch:"'Chronischer Stress hinterlässt biologische Spuren im Gehirn' – dies erklärt Patienten die Neurobiologie ihrer Symptome und macht Stressreduktion und Schlaf zu medizinischen Interventionen, nicht nur Ratschlägen.",
    praxis:["Kortisol-Psychoedukation: Warum Schlaf, Sport und Entspannung neurobiologisch wirksam sind","PTBS: Hypokortisolismus erklären – warum Patienten 'leer' und erschöpft fühlen, obwohl sie hyperarousal zeigen","Burnout-Differenzierung: flache Kortisol-Tagesrhythmik als biologisches Korrelat","Therapieerfolg biologisch: 'Ihre Therapie verändert messbar Ihre Stresshormone'"],
   fallbeispiel:"Frau M., 45J, stationäre Aufnahme wegen schwerer Depression. Morgenkortisol 28 µg/dl (Norm <15), Dex-Test: Non-Suppression. MRT: Hippocampus-Volumen reduziert. Im Gespräch: 15 Jahre chronischer Arbeitsstress. Die Biologisierung der Symptome ('Ihr Stresssystem war 15 Jahre im Ausnahmezustand') normalisiert Schuld und eröffnet Behandlungsrationale: Antidepressiva + Sport + Stressreduktion als multi-modale Kortisolnormalisierung.",
-   quiz:[{f:"Welches Kortisol-Muster findet sich typischerweise bei PTBS?",o:["Hyperkortisolismus (erhöhtes Basiskortisol)","Hypokortisolismus (erniedrigtes Basiskortisol) mit überschießender Reaktivität","Normales Kortisol-Profil","Fehlendes Tagesrhythmik-Muster"],r:1,a:"PTBS = paradoxer Hypokortisolismus: Die HPA-Achse ist durch übermäßige negative Rückkopplung 'supprimiert'. Basiskortisol niedrig, aber Reaktivität auf Trigger überschießend."},{f:"Chronischer Stress schädigt welches Hirnareal besonders?",o:["Basalganglien","Kleinhirn","Hippocampus (via Kortisol-Toxizität)","Präfrontaler Kortex"],r:2,a:"Hippocampus hat hohe Dichte an Glukokortikoid-Rezeptoren und ist besonders kortisol-sensibel. Chronischer Hyperkortisolismus → Hippocampus-Atrophie (~10-15%), Gedächtnisdefizite."},{f:"Was bedeutet 'Non-Suppression' im Dexamethason-Suppressionstest?",o:["Kortisol wird durch Dexamethason supprimiert – normales Ergebnis","Kortisol fällt trotz Dexamethason nicht ab – gestörte HPA-Feedback-Schleife","ACTH wird nicht supprimiert – Hypophysentumor","Kortisol ist dauerhaft niedrig"],r:1,a:"Non-Suppression: trotz Dexamethason kein Kortisol-Abfall → HPA-Feedback gestört → Zeichen chronischer Hyperaktivierung, assoziiert mit schwerer Depression."}]},
+  },
   {id:"gedaechtnis",name:"Gedächtnis, Lernen & Neuroplastizität",cat:"Neurobiologie",catStyle:"tx-pill-vt",
    kurz:"Gedächtnissysteme, LTP, Konditionierung, Extinktion, BDNF",schwierigkeit:"Aufbauend",
    lernziele:["Deklaratives und nicht-deklaratives Gedächtnis unterscheiden","Long-term Potentiation (LTP) als zelluläres Lernmodell erklären","Klassische und operante Konditionierung auf psychische Störungen anwenden","Extinktion und Inhibitionslernen unterscheiden","BDNF und Neuroplastizität im Kontext der Depressionstherapie erläutern"],
@@ -6452,7 +6479,7 @@ const MED_TOPICS = [
    klinisch:"Das Inhibitionslern-Modell von Craske (2014) ist das aktuellste Expositionsmodell: nicht Angstreduktion ist das Ziel, sondern maximale Erwartungsverletzung. 'Haben Sie das erlebt, was Sie befürchtet haben?' ist die entscheidende Frage nach jeder Exposition.",
    praxis:["Exposition nach Inhibitionslern-Modell: 'Was haben Sie befürchtet? Was ist eingetreten? Was haben Sie gelernt?'","BDNF-Psychoedukation: 'Sport verändert Ihr Gehirn biologisch – 30 Min. zügiges Gehen 3×/Woche erhöht BDNF so stark wie Antidepressiva'","Spontane Erholung nach Exposition vorhersagen: 'Angst kann nach einer guten Exposition wieder auftauchen – das ist normal, kein Rückfall. Einfach erneut exponieren.'","Nicht-deklaratives Gedächtnis bei Trauma: Körper-orientierte Ansätze erklären"],
   fallbeispiel:"Herr K., 35J, PTBS nach Arbeitsunfall. Trigger: Lärm. Direkte Konfrontation mit Lärmquelle löst Panikreaktion aus, obwohl er 'rational weiß' dass er sicher ist. Erklärung: Die Angstreaktion ist in der Amygdala (nicht-deklarativ) gespeichert – das rationale Wissen (deklarativ, Hippocampus) kann die Amygdala-Reaktion nicht direkt stoppen. Therapie: Exposition aufbaut neue inhibitorische Verbindungen vmPFC → Amygdala. Ziel ist nicht 'keine Reaktion', sondern 'trotz Reaktion weiterhin handlungsfähig bleiben'.",
-   quiz:[{f:"Was erklärt die spontane Wiederkehr von Angst nach einer erfolgreichen Expositionstherapie?",o:["Die Konditionierung wurde vollständig gelöscht, aber neu gebildet","Die Extinktion bildet ein neues Inhibitionsgedächtnis, löscht aber die alte Angstassoziation nicht – diese kann unter bestimmten Bedingungen reaktiviert werden","Die Exposition war nicht wirksam","BDNF-Mangel verhindert dauerhafte Löschung"],r:1,a:"Extinktion = neues Inhibitionsgedächtnis, KEINE Löschung. Die ursprüngliche Angst-CS-Assoziation bleibt im Gehirn – kann spontan, durch Kontext oder Stress reaktiviert werden."},{f:"Was ist laut dem Inhibitionslern-Modell (Craske) das primäre Ziel der Expositionstherapie?",o:["Vollständige Habituation (Angstreduktion auf 0)","Maximale Erwartungsverletzung: das Befürchtete tritt nicht ein","Muskelentspannung während der Exposition","Kognitive Umstrukturierung der Gedanken über die Situation"],r:1,a:"Inhibitionslernen: Entscheidend ist, dass die befürchteten Konsequenzen NICHT eintreten. Auch wenn Angst hoch bleibt, entsteht neues Lernen wenn die Erwartung verletzt wird."},{f:"Warum haben Antidepressiva einen Wirkungsverzug von 2–4 Wochen?",o:["Weil die Serotoninrezeptoren Zeit brauchen um zu desensitivieren","Weil BDNF-Hochregulation und Hippocampus-Neurogenese Zeit brauchen","Weil die Einnahme mehrere Wochen bis zur therapeutischen Serumkonzentration dauert","Weil die HPA-Achse Zeit braucht um sich zu normalisieren"],r:1,a:"Neuroplastizitätshypothese: SSRI erhöhen langfristig BDNF → Hippocampus-Neurogenese → strukturelle Veränderungen brauchen 2–4 Wochen. Die schnelle Serotonin-Erhöhung erklärt den Wirkungsverzug NICHT."}]},
+  },
   {id:"entzuendung",name:"Neuroinflammation & psychische Gesundheit",cat:"Neurobiologie",catStyle:"tx-pill-vt",
    kurz:"Zytokine, Inflammationstheorie der Depression, Lifestyle-Interventionen",schwierigkeit:"Aufbauend",
    lernziele:["Grundbegriffe der Immunologie (Zytokine, Mikroglia, Neuroinflammation) erklären","Inflammationstheorie der Depression beschreiben","Lifestyle-Faktoren und ihren Einfluss auf Neuroinflammation benennen","Sickness behavior als Depression-Modell einordnen","Klinische Konsequenzen der Inflammationstheorie ableiten"],
@@ -6460,7 +6487,7 @@ const MED_TOPICS = [
    klinisch:"'Warum soll Sport helfen?' Antwort aus der Immunologie: Sport reduziert systemische Entzündung, erhöht BDNF, normalisiert Kortisol und HPA-Achse. Das sind drei simultane neurobiologische Wirkmechanismen – gleichwertig zu einem Antidepressivum.",
    praxis:["CRP bei therapieresistenter Depression bestimmen – Inflammationssubtyp hat andere Therapieprognose","Omega-3 (EPA/DHA 1–2g/Tag): als Augmentation bei Depression mit erhöhtem CRP","Ernährungs-Psychoedukation: Mediterrane Diät als neurobiologische Intervention","Schlafentzug als Akuttherapie bei Depression: paradox wirksam, aber Entzündungsmarker beachten"],
   fallbeispiel:"Herr T., 55J, adipöser Patient mit therapieresistenter Depression (3 SSRI-Versuche erfolglos). CRP: 8 mg/L (erhöht). IL-6 erhöht. Klinisch: Fatigue, Schlafstörung, sozialer Rückzug, Anhedonie – Bild eines 'metabolischen Depressivums'. Behandlungsansatz: Wechsel zu Nortriptylin (anti-inflammatorisch), Omega-3-Supplementierung (2g EPA/Tag), strukturiertes Bewegungsprogramm, Ernährungsberatung (mediterrane Kost). 12 Wochen: CRP normalisiert, depressive Symptome deutlich gebessert.",
-   quiz:[{f:"Was erklärt die Wirksamkeit von Interferon-α-Therapie als Kausalitätsbeweis für Zytokine und Depression?",o:["Interferon-α hemmt direkt Serotonin-Transporter","30–50% der Patienten unter Interferon-α (Hepatitis-C-Therapie) entwickeln Depression – Zytokine als Ursache beweisend","Interferon-α erhöht CRP was dann Depression verursacht","Interferon-α schädigt den Hippocampus direkt"],r:1,a:"IFN-α ist ein proinflammatorisches Zytokin. Die hohe Depressionsrate unter IFN-α-Therapie (ohne andere psychosoziale Faktoren) beweist die kausale Rolle von Zytokinen bei Depression."},{f:"Welcher Mechanismus erklärt den Zusammenhang zwischen Entzündung und Serotonin-Mangel?",o:["Zytokine hemmen direkt die Serotonin-Synthese","IDO-Aktivierung leitet Tryptophan in den Kynurenin-Weg um, sodass weniger Tryptophan für Serotonin-Synthese verfügbar ist","Entzündung erhöht MAO-A-Aktivität und beschleunigt Serotonin-Abbau","Mikroglia zerstören Serotonin-produzierende Raphe-Kerne"],r:1,a:"IDO-Aktivierung: Proinflammatorische Zytokine aktivieren die Indolamin-2,3-Dioxygenase → Tryptophan wird zu Kynurenin (statt 5-HTP → Serotonin) verstoffwechselt."},{f:"Warum ist körperliche Aktivität anti-inflammatorisch, obwohl Sport akut IL-6 erhöht?",o:["Sport-IL-6 kommt aus Muskeln und hat anti-inflammatorische Wirkung (fördert IL-10/IL-1ra), ganz anders als Fettgewebe-IL-6","Sport-IL-6 ist weniger gefährlich als Fettgewebe-IL-6","IL-6 ist bei Sport nur kurz erhöht und deshalb harmlos","Sport erhöht IL-6 nicht wirklich – das ist ein Mythos"],r:0,a:"Muskel-IL-6 (Myokin) hat eine völlig andere Wirkung als Fettgewebe-IL-6: es stimuliert die Produktion von IL-10 (anti-inflammatorisch) und IL-1ra (IL-1-Antagonist). Daher ist Sport langfristig anti-inflammatorisch."}]},
+  },
   {id:"autonomes_ns",name:"Autonomes NS & Polyvagaltheorie",cat:"Autonomes NS",catStyle:"tx-pill-3w",
    kurz:"Sympathikus, Parasympathikus, Vagus, HRV, Polyvagaltheorie",schwierigkeit:"Grundlagen",
    lernziele:["Sympathikus und Parasympathikus anatomisch und funktionell beschreiben","Die drei Ebenen der Polyvagaltheorie erklären","Herzratenvariabilität (HRV) als Maß vagaler Regulation verstehen","Therapeutische Implikationen der Polyvagaltheorie ableiten","Vegetative Symptome bei Angst und Trauma neurobiologisch einordnen"],
@@ -6468,7 +6495,7 @@ const MED_TOPICS = [
    klinisch:"'Sicherheit ist die Therapie' (Porges). Der therapeutische Rahmen – Kontinuität, ruhige Stimme, vorhersehbarer Rhythmus – wirkt als neurobiologische Intervention bevor eine Technik eingesetzt wird.",
    praxis:["Vagale Aktivierung im Notfall: 5-4-3-2-1-Erdung + langer Ausatem","HRV-Biofeedback-Apps (z.B. Elite HRV, iThlete): als Hausaufgabe für Angst und PTBS","Tauchreflex: kaltes Wasser ins Gesicht → vagale Aktivierung; bei Panikattacken sofort wirksam","Polyvagal-Psychoedukation: 'Ihr Nervensystem hat 3 Sicherheitsstufen – wir üben zu erkennen auf welcher Stufe Sie gerade sind'"],
   fallbeispiel:"Herr P., 42J, PTBS nach Kriegseinsatz. In der Therapie: plötzliche Erstarrung, Abwesenheit, kein Augenkontakt. Klassisch: Wechsel in dorsalvagalen Freeze-Zustand (Neuroception: Bedrohung). Therapeutin: ruhige, rhythmische Stimme ('Ich bin hier. Sie sind sicher. Können Sie meine Stimme hören?'), sanfte Bewegungsaufforderung ('Drücken Sie Ihre Füße auf den Boden'). Ziel: Rückkehr in ventralvagalen Zustand (sozialer Kontakt) BEVOR weitere Arbeit. Dann: kurze Erfolgssicherung, Sitzungsende.",
-   quiz:[{f:"Was ist der dorsale Vagus in der Polyvagaltheorie?",o:["Der Vagusanteil der Verdauungsregulation – immer aktiv","Das evolutionär älteste autonome System: Erstarrung/Freeze als letzte Überlebensreaktion","Das System für soziales Engagement und Sicherheit","Der Sympathikus-Gegenspieler für Entspannung"],r:1,a:"Dorsaler Vagus: evolutionär ältestes System, aktiviert bei extremer Bedrohung wenn Kampf/Flucht nicht möglich – Erstarrung, Dissoziation, Totstellreflex."},{f:"Was bedeutet hohe HRV klinisch?",o:["Herzerkrankung oder Arrhythmie","Gute vagale Regulation, hohe Stresstoleranz und Anpassungsfähigkeit","Sympathische Überaktivierung","Parasympathische Erschöpfung"],r:1,a:"Hohe HRV = gut funktionierende Parasympathikus-Aktivität. Ist ein Marker für Resilienz und autonome Flexibilität. Niedrige HRV findet sich bei Angststörungen, PTBS, Depression."},{f:"Welche Atemtechnik aktiviert am stärksten den Parasympathikus?",o:["Schnelles, kurzes Einatmen","Sehr langer Ausatem (doppelt so lang wie Einatmen)","Gleich lange Ein- und Ausatmung","Anhalten des Atems"],r:1,a:"Langer Ausatem aktiviert über den Vagus den Parasympathikus. 4-7-8-Methode: 4 sec ein, 7 halten, 8 aus. Bei Panikattacken: langer langsamer Ausatem ist die effektivste Sofortintervention."}]},
+  },
   {id:"psychopharm_grundlagen",name:"Pharmakodynamik & Pharmakokinetik",cat:"Psychopharmakologie",catStyle:"tx-pill-schema",
    kurz:"ADME, CYP-System, Rezeptorpharmakoligie, TDM, Interaktionen",schwierigkeit:"Aufbauend",
    lernziele:["Pharmakokinetik (ADME) erklären und klinisch anwenden","Das CYP-Enzymsystem und seine klinische Bedeutung verstehen","Pharmakodynamische Konzepte (Affinität, Agonismus, Antagonismus) erklären","Therapeutisches Drug Monitoring indikationsspezifisch einsetzen","Wichtige Pharmako-Interaktionen bei Psychopharmaka benennen"],
@@ -6476,15 +6503,1043 @@ const MED_TOPICS = [
    klinisch:"Das CYP2D6-System ist der häufigste Grund für unerwartete Wirkstärken und Nebenwirkungen. Paroxetin hemmt CYP2D6 so stark, dass es sich selbst (!) in der Metabolisierung blockiert ('suicide inhibitor'). Fluoxetin: 5 Wochen Wash-out vor MAO-Hemmer – nie vergessen!",
    praxis:["Vor Kombination SSRI + Tramadol: immer Serotoninsyndrom-Risiko prüfen","Bei Rauchern unter Clozapin oder Olanzapin: Rauchstopp ankündigen → CYP1A2-Induktion entfällt → Spiegel steigen","NSAR-Aufklärung bei Lithium-Patienten: 'Kein Ibuprofen ohne Lithium-Spiegelkontrolle'","Genetisches CYP2D6-Testing: bei Non-Response oder extremen Nebenwirkungen unter normaler Dosis"],
   fallbeispiel:"Frau L., 68J, unter Paroxetin (CYP2D6-Inhibitor) und Codein (Analgesie nach OP). Postoperativ: zunehmende Sedierung, Atemdepression. Ursache: Paroxetin hemmt CYP2D6 → Codein wird nicht zu Morphin aktiviert (→ Wirklosigkeit) ABER der Metabolismus von Morphin ist auch gehemmt → bei normaler Dosis akkumuliert Morphin → Toxizität. Lösung: Codein nicht mit Paroxetin. Alternative: Tramadol (aber Serotoninsyndrom-Risiko!), Non-Opioid-Analgesie.",
-   quiz:[{f:"Carbamazepin ist ein starker CYP3A4-Induktor. Welche klinische Konsequenz hat das?",o:["Carbamazepin selbst akkumuliert (höhere Spiegel)","Spiegel der co-administrierten CYP3A4-Substrate (Antipsychotika, Kontrazeptiva, Antiretrovirale) sinken deutlich","Carbamazepin verstärkt die Wirkung von Benzodiazepinen","Die Lithium-Ausscheidung ist erhöht"],r:1,a:"Induktoren beschleunigen den Abbau von Substraten. CYP3A4-Substrate unter Carbamazepin: deutlich niedrigere Spiegel, oft klinisch unwirksam. Besonders kritisch: hormonelle Kontrazeptiva (Versagen!), Antiretrovirale, Quetiapin."},{f:"Welche Wartezeit gilt nach Absetzen von Fluoxetin vor Beginn eines MAO-Hemmers?",o:["2 Tage","2 Wochen","5 Wochen (5 Halbwertszeiten des aktiven Metaboliten Norfluoxetin)","Keine Wartezeit nötig – Fluoxetin ist kein serotonerges Medikament"],r:2,a:"Fluoxetin hat die längste HWZ aller SSRI (~50h) und der aktive Metabolit Norfluoxetin hat ~1–2 Wochen HWZ. Steady-state-Abbau: ~5 Wochen nötig. MAO-Hemmer danach: Serotoninsyndrom-Risiko."},{f:"Was beschreibt der Begriff 'therapeutisches Fenster'?",o:["Der optimale Zeitpunkt für eine Einnahme","Der Bereich zwischen minimaler wirksamer und maximaler verträglicher Konzentration","Die Zeit bis zum Wirkungseintritt","Die Zeit in der ein Medikament für ein Patient verfügbar ist"],r:1,a:"Therapeutisches Fenster: Bereich zwischen der minimalen effektiven Konzentration (MEC) und der minimalen toxischen Konzentration (MTC). Enge Fenster (Lithium, Digoxin) erfordern TDM."}]},
-  {id:"antidepressiva_kurs",name:"Antidepressiva – Wirkklassen im Detail",cat:"Psychopharmakologie",catStyle:"tx-pill-schema",
-   kurz:"SSRI, SNRI, TZA, MAOI, atypische AD – Mechanismen, NW, Indikationen",schwierigkeit:"Aufbauend",
-   lernziele:["Die fünf AD-Klassen mit Wirkprinzip und Hauptvertretern benennen","Klinisch relevante Unterschiede zwischen SSRI erklären","Das Serotonin-Syndrom und das Absetzsyndrom erkennen und managen","Besonderheiten von TZA (Toxizität, Monitoring) erklären","Ketamin/Esketamin als neues Wirkprinzip einordnen"],
-   inhalt:[{titel:"SSRI – selektive Serotonin-Wiederaufnahme-Hemmer",text:"Wirkung: Hemmung des SERT (Serotonin-Transporter) → ↑ synaptisches Serotonin. Vertreter: Fluoxetin (längste HWZ, ~50h; kein Absetzsyndrom; CYP2D6-Inhibitor), Paroxetin (kurze HWZ; stärkstes Absetzsyndrom; CYP2D6-Inhibitor, anticholinerg), Sertralin (beste Verträglichkeit, wenig Interaktionen, sicher in Schwangerschaft), Escitalopram (reinster SSRI, S-Enantiomer; QTc beachten bei >20mg), Citalopram (racemisches Gemisch, QTc!), Fluvoxamin (CYP1A2-Inhibitor, stark; 1. Wahl bei OCD). SSRI-Klassen-NW: Übelkeit (initial, abklingend), sexuelle Dysfunktion (60%!), Schlafstörungen, Hyponatriämie (SIADH; ältere Pat.!), Serotoninsyndrom bei Kombination.",merke:"Sertralin = beste Verträglichkeit, sicher in SS. Paroxetin = stärkster Abbruch-Syndrom. Escitalopram = reinster SSRI. Fluoxetin = kein Absetzsyndrom (lange HWZ)."},{titel:"SNRI – Serotonin-Noradrenalin-Wiederaufnahme-Hemmer",text:"Venlafaxin: SSRI bei niedriger Dosis (<150mg); erst bei höherer Dosis noradrenerg. RR-Anstieg dosisabhängig (engmaschiges Monitoring). Stärkstes Absetzsyndrom aller AD ('Electric brain shocks'). Duloxetin: gleichgewichtig serotonerg + noradrenerg ab Standarddosis; zugelassen für Schmerz (Fibromyalgie, diabetische Neuropathie), Harninkontinenz. Levomilnacipran: hohe noradrenerge Affinität; bei ADHS-Komorbidität diskutiert. Milnacipran: v.a. Schmerzindikation. SNRI-Vorteile gegenüber SSRI: zusätzliche noradrenerge Komponente kann Antrieb und Konzentration besser verbessern.",merke:"Venlafaxin: dosis-abhängig SSRI→SNRI. RR beachten. Stärkster Absetzsyndrom. Duloxetin: Schmerz + Depression."},{titel:"TZA – Trizyklische Antidepressiva",text:"Unselektive Hemmung von SERT und NET. Zusätzlich antihistaminerg (H1: Sedierung, Gewichtszunahme), anticholinerg (M1-4: Mundtrockenheit, Obstipation, Harnverhalt, kognitive Störungen), alpha1-blockierend (orthostatische Hypotonie). Toxizität: QTc-Verlängerung, Na-Kanal-Blockade → Herzrhythmusstörungen bei Überdosierung; TZA sind die häufigste Ursache pharmakologischer Todesfälle. Therapeutischer Spiegel: 100–300 ng/ml. Vertreter: Amitriptylin (sedierend, Schmerz, Schlaf; sorgfältige Indikationsstellung!), Nortriptylin (aktiver Metabolit von Amitriptylin, weniger NW), Clomipramin (stärkster SERT-Hemmer unter TZA; OCD-Indikation), Imipramin.",merke:"TZA = H.A.M.S: H1 (Sedierung), Alpha1 (Hypotonie), Muskarinisch (anticholinerg), SERT+NET (antidepressiv). Toxisch bei Überdosierung → EKG vor Verschreibung."},{titel:"MAO-Hemmer und atypische Antidepressiva",text:"<strong>MAO-Hemmer (MAOI)</strong>: irreversible, nicht-selektiv: Phenelzin, Tranylcypromin → Abbau von Serotonin, NA, DA gehemmt. Cave: Tyramin-reiche Nahrung → hypertensive Krise. Serotoninsyndrom-Risiko mit allen serotonergen Substanzen. Moclobemid: reversibler selektiver MAO-A-Hemmer (RIMA) → kein Tyramin-Problem, kein Serotoninsyndrom-Risiko (wenn Sertralin/Paroxetin vermieden). <strong>Mirtazapin</strong>: alpha2-Antagonist (→ erhöhte NA+5-HT-Freisetzung) + H1-Antagonist (Sedierung, Appetit↑). Gut bei Schlafstörungen und Appetitmangel. <strong>Agomelatin</strong>: MT1/MT2-Agonist + 5-HT2C-Antagonist; normalisiert zirkadianen Rhythmus; Leberwerte überwachen.",merke:"Moclobemid (RIMA) = sicherer als klassische MAOI. Mirtazapin = Schlaf + Appetit + Angst. Agomelatin = Rhythmus. Leberwerte unter Agomelatin!"},{titel:"Ketamin/Esketamin – die neue Dimension",text:"<strong>Ketamin</strong>: NMDA-Antagonist → RapidBDNF-Anstieg (Stunden!) → schnelle antidepressive Wirkung innerhalb Stunden (nicht Wochen). Wirksam bei therapieresistenter Depression und akuter Suizidalität. <strong>Esketamin</strong> (S-Ketamin, Spravato): nasal, FDA/EMA-zugelassen für therapieresistente Depression. Wirkmechanismus: NMDA-Blockade → Glutamat-Burst → AMPA-Aktivierung → BDNF → Synaptogenese (synaptische Plastizitätstheorie der Depression). NW: Dissoziation, Schwindel, Blutdruck↑ während Anwendung; Missbrauchspotenzial. Nur unter Überwachung. Kein Ersatz für klassische AD, aber revolutionäre Option bei Hochrisikopatienten.",merke:"Ketamin/Esketamin: Wirkung in Stunden (nicht Wochen). Akut suizidaler Patient: Ketamin kann überbrücken. NMDA→BDNF→Synaptogenese ist der Mechanismus."}],
-   klinisch:"Das Absetzsyndrom bei Antidepressiva wird oft als Entzug fehlgedeutet. Es ist keine Abhängigkeit, sondern eine physiologische Anpassungsreaktion. Unterschied zur Rezidivdepression: Absetzsyndrom beginnt innerhalb von Tagen (nicht Wochen), ist flüchtig und durch Wieder-Einnahme reversibel.",
-   praxis:["Absetzsyndrom-Mnemonik: FINISH (Flu-like, Insomnia, Nausea, Imbalance, Sensory disturbances, Hyperarousal) = Absetzsyndrom vs. Rezidiv","Patienten über sexuelle NW aufklären (60%!): proaktiv ansprechen, nicht warten bis Patient fragt","QTc-Monitoring: EKG vor Beginn von Escitalopram oder TZA – besonders bei Kombination","Suizidalität in den ersten 2 Wochen unter SSRI: engmaschiges Monitoring (Antrieb↑ vor Stimmung↑)"],
-  fallbeispiel:"Herr G., 52J, seit 6 Wochen auf Venlafaxin 150mg. Gute Response. Beschließt selbst, Medikament wegen 'Abhängigkeitsangst' abrupt zu setzen. 3 Tage später: elektrisierende Empfindungen im Kopf ('brain zaps'), Schwindel, Schlafstörung, Übelkeit. Kommt mit Verdacht 'Entzug'. Erklärung: Absetzsyndrom (physiologisch, keine Abhängigkeit). Lösung: Wieder ansetzen, dann über 4–6 Wochen ausschleichen. Aufklärung: SSRI/SNRI machen keine Abhängigkeit, aber physiologische Anpassung.",
-   quiz:[{f:"Welcher SSRI hat die längste Halbwertszeit und das geringste Absetzsyndrom-Risiko?",o:["Paroxetin (kurze HWZ ~20h)","Sertralin (HWZ ~26h)","Fluoxetin (HWZ ~50h, aktiver Metabolit Norfluoxetin ~1-2 Wochen)","Escitalopram (HWZ ~27h)"],r:2,a:"Fluoxetin: längste HWZ aller SSRI (~50h) + aktiver Metabolit Norfluoxetin (HWZ 1–2 Wochen). Die lange effektive HWZ fungiert als 'natürliches Ausschleichen' – daher kein klinisch relevantes Absetzsyndrom."},{f:"Mirtazapin wirkt über welchen primären Mechanismus?",o:["Hemmung des Serotonin-Transporters (SERT)","Alpha2-Antagonismus (erhöht NA+5-HT-Freisetzung) + H1-Antagonismus (Sedierung)","Hemmung der MAO-A","NMDA-Antagonismus"],r:1,a:"Mirtazapin ist kein Wiederaufnahme-Hemmer. Alpha2-Blockade erhöht die Freisetzung von NA und 5-HT. H1-Blockade erklärt die sedierende und appetitsteigernde Wirkung."},{f:"Was ist der mutmaßliche Wirkmechanismus von Ketamin/Esketamin bei Depression?",o:["Hemmung des Serotonin-Transporters","NMDA-Blockade → Glutamat-Burst → AMPA-Aktivierung → BDNF-Anstieg → synaptische Plastizität innerhalb von Stunden","MAO-Hemmung mit rascher Monoamin-Akkumulation","Dopaminerge Stimulation des Belohnungssystems"],r:1,a:"Ketamin blockiert NMDA-Rezeptoren → disinhibierter Glutamat-Burst → AMPA-Aktivierung → BDNF-Freisetzung → Synaptogenese innerhalb von Stunden. Erklärt raschen Wirkungseintritt (Stunden statt Wochen)."}]},
+  },
+  {id:"antidepressiva_kurs",name:"Antidepressiva – Vertiefungskurs",cat:"Psychopharmakologie",catStyle:"tx-pill-schema",
+   kurz:"Grundlagen, Wirkklassen, Interaktionen, Behandlungspraxis, Therapieresistenz, Stimmungsstabilisierer, Kasuistiken",schwierigkeit:"Aufbauend",
+   lernziele:["Pharmakologische Grundbegriffe, UAW-Klassifikation und Zulassungsphasen sicher wiedergeben","Antidepressiva nach klinischer Wirkung und nach Angriffspunkt einteilen und die Hauptvertreter mit Dosis, Indikation und Nebenwirkungen benennen","Gefährliche Interaktionen (Serotoninsyndrom, CYP-Hemmung, Johanniskraut) erkennen","Grundsätze der Behandlung – Auswahl, Wirklatenz, Erhaltungstherapie, Rezidivprophylaxe, Absetzen – auf Fälle anwenden","Das Vorgehen bei Therapieresistenz mit den Empfehlungsgraden der Leitlinie wiedergeben","Lithium und andere Stimmungsstabilisierer an der Schnittstelle zur Depressionsbehandlung einordnen"],
+   quelle:"Siepmann M: Psychopharmaka I (Vorlesung 10.10.2026), Präparate-Addendum (mod. nach Benkert et al. 2012), Kasuistiken-Handout",
+   kurs:true,
+   kursModule:[
+
+   {id:"ad1",titel:"Depression & Therapieoptionen",icon:"🧭",
+    lernziel:"Sie ordnen ein, wann Antidepressiva indiziert sind und wie sie sich zu Psychotherapie und somatischen Verfahren verhalten.",
+    inhalt:`
+<h4>Epidemiologie</h4>
+<div class="tw"><table><thead><tr><th>Altersgruppe</th><th>Frauen</th><th>Männer</th></tr></thead><tbody>
+<tr><td><strong>Gesamt</strong></td><td><strong>14 %</strong></td><td><strong>8 %</strong></td></tr>
+<tr><td>18–29 Jahre</td><td>12 %</td><td>8 %</td></tr>
+<tr><td>30–39 Jahre</td><td>12 %</td><td>7 %</td></tr>
+<tr><td>40–49 Jahre</td><td>17 %</td><td>8 %</td></tr>
+<tr><td>50–65 Jahre</td><td>16 %</td><td>7 %</td></tr>
+</tbody></table></div>
+<p class="src">Prävalenz depressiver Störungen, modifiziert nach Wittchen et al. 2010</p>
+<p>Frauen sind etwa doppelt so häufig betroffen wie Männer. Die <strong>Chronizität wird oft unterschätzt</strong> – Depression ist häufig eine rezidivierende oder chronische Erkrankung, was die Bedeutung von Erhaltungstherapie und Rezidivprophylaxe begründet.</p>
+
+<h4>Psychotische Symptome bei schwerer Depression</h4>
+<ul>
+<li><strong>Wahn</strong> – synthym: Verarmungswahn, Versündigungswahn, hypochondrischer Wahn, nihilistischer Wahn</li>
+<li><strong>Halluzinationen</strong> – typischerweise Geruchshalluzinationen</li>
+<li><strong>Stupor</strong></li>
+</ul>
+<div class="bx merke"><strong>Merke:</strong> Wahnhafte Depression = Antidepressivum <em>plus</em> Antipsychotikum; bei Nichtansprechen früh an EKT denken (siehe Kasuistik 12).</div>
+
+<h4>Pathogenese</h4>
+<ul>
+<li>Genetik</li>
+<li>Neuroendokrine Störungen</li>
+<li>Hirnstrukturelle Veränderungen / Hypometabolismus („Stoffwechselstörung des Gehirns“)</li>
+<li>Neurotransmitterstörungen: Serotonin, Noradrenalin, Dopamin, GABA, Glutamat, Acetylcholin</li>
+<li>Belastende Lebensereignisse</li>
+</ul>
+<p>Die klassischen Antidepressiva greifen an der <strong>aminergen Neurotransmission</strong> an (Serotonin, Noradrenalin, Dopamin): Wiederaufnahmehemmung, Abbauhemmung (MAO) oder Blockade präsynaptischer Autorezeptoren.</p>
+
+<h4>Therapieoptionen</h4>
+<ul>
+<li><strong>Psychotherapie</strong></li>
+<li><strong>Pharmakotherapie</strong></li>
+<li><strong>Nichtmedikamentöse somatische Verfahren:</strong> Hirnstimulationsverfahren, Schlafentzugstherapie (Wachtherapie), Lichttherapie, körperliches Training</li>
+</ul>
+
+<h4>Pharmakotherapie vs. Psychotherapie</h4>
+<div class="tw"><table><thead><tr><th>Schweregrad</th><th>Befund</th><th>Konsequenz</th></tr></thead><tbody>
+<tr><td>Leichte Depression</td><td>Starker Plazeboeffekt (Elkin et al. 1989) – Antidepressiva sind Plazebo kaum überlegen</td><td>Antidepressiva nicht generell zur Erstbehandlung; Psychotherapie bzw. niedrigschwellige Interventionen</td></tr>
+<tr><td>Mittelgradige Depression</td><td>Psychotherapie und Pharmakotherapie gleichwertig</td><td>Eines von beiden anbieten – Patientenpräferenz</td></tr>
+<tr><td>Schwere Depression</td><td>Kombination überlegen (Thase et al. 1997)</td><td>Psychotherapie <em>und</em> Antidepressivum</td></tr>
+</tbody></table></div>
+<div class="bx erg"><strong>Ergänzung:</strong> Die Folie „S3-Leitlinie: Akut-Behandlung“ liegt nur als Grafik vor. Die mittlere und rechte Spalte der Tabelle geben die Kernaussage der Nationalen VersorgungsLeitlinie Unipolare Depression wieder.</div>
+
+<h4>Die drei Behandlungsphasen</h4>
+<ol>
+<li><strong>Akuttherapie</strong> – bis zur Remission</li>
+<li><strong>Erhaltungstherapie</strong> – gleiche Substanz, gleiche Dosis, <strong>4 bis 9 Monate</strong> nach Remission; schützt vor dem Rückfall in dieselbe Episode</li>
+<li><strong>Rezidivprophylaxe</strong> – langfristig bei rezidivierendem Verlauf; mit Antidepressivum oder Lithium</li>
+</ol>
+
+<h4>Indikationen der Antidepressiva</h4>
+<p>Antidepressiva sind keine reinen „Depressionsmittel“: affektive Störungen, <strong>Angststörungen</strong>, <strong>Zwangsstörung</strong>, <strong>Insomnie</strong> (sedierende Substanzen), <strong>chronische Schmerzen</strong>.</p>
+
+<h4>Einordnung: Psychopharmaka-Gruppen und Meilensteine</h4>
+<p>Gruppen: Antidepressiva · Stimmungsstabilisierer · Antipsychotika · Tranquilizer/Anxiolytika · Hypnotika · Antidementiva · Entzugs- und Entwöhnungsmittel · Psychostimulanzien.</p>
+<div class="tw"><table><thead><tr><th>Jahr</th><th>Substanz</th><th>Bedeutung</th></tr></thead><tbody>
+<tr><td>Vorgeschichte</td><td>Opium, Haschisch, Koka, Peyotl, Alkohol</td><td></td></tr>
+<tr><td>Mittelalter</td><td>Stechapfel, Belladonna, Rauwolfia</td><td></td></tr>
+<tr><td>1803</td><td>Morphin</td><td>aus Opium isoliert</td></tr>
+<tr><td>1826 / 1869 / 1903</td><td>Kaliumbromid / Chloralhydrat / Barbital</td><td>frühe Sedativa</td></tr>
+<tr><td>1949</td><td>Lithium</td><td>erster Stimmungsstabilisierer</td></tr>
+<tr><td>1952</td><td>Iproniazid · Chlorpromazin</td><td>erster MAO-Hemmer · erstes Antipsychotikum</td></tr>
+<tr><td>1957</td><td>Imipramin</td><td>erstes trizyklisches Antidepressivum</td></tr>
+<tr><td>1958 / 1960</td><td>Haloperidol / Chlordiazepoxid</td><td>erstes Benzodiazepin (1960)</td></tr>
+<tr><td>1972</td><td>Clozapin</td><td>erstes atypisches Antipsychotikum</td></tr>
+<tr><td>1984</td><td>Fluvoxamin</td><td>erster SSRI</td></tr>
+<tr><td>1994 / 1997</td><td>Risperidon / Acetylcholinesterasehemmer</td><td></td></tr>
+</tbody></table></div>
+<p class="src">nach Laux 2012</p>`,
+    karten:[
+     {q:"Wie verhalten sich Antidepressiva und Psychotherapie je nach Schweregrad der Depression zueinander?",a:"<strong>Leicht:</strong> starker Plazeboeffekt (Elkin 1989) – Antidepressiva nicht generell zur Erstbehandlung.<br><strong>Mittelgradig:</strong> Psychotherapie oder Antidepressivum gleichwertig.<br><strong>Schwer:</strong> Kombination überlegen (Thase 1997)."},
+     {q:"Nennen Sie die drei Behandlungsphasen der Depression und die Dauer der Erhaltungstherapie.",a:"Akuttherapie (bis Remission) → Erhaltungstherapie (<strong>4–9 Monate</strong> nach Remission, gleiche Substanz und Dosis) → Rezidivprophylaxe (Antidepressivum oder Lithium)."},
+     {q:"Welche psychotischen Symptome sind typisch für die schwere depressive Episode?",a:"Synthymer Wahn (Verarmung, Versündigung, hypochondrisch, nihilistisch), Halluzinationen (v. a. Geruch), Stupor."},
+     {q:"Für welche Indikationen außer Depression werden Antidepressiva eingesetzt?",a:"Angststörungen, Zwangsstörung, Insomnie, chronische Schmerzen."}
+    ]},
+
+   {id:"ad2",titel:"Pharmakologische Grundlagen",icon:"⚗️",
+    lernziel:"Sie definieren Pharmakokinetik und Pharmakodynamik, erklären Metabolisierung und First-Pass-Effekt und kennen die Anforderungen an die Aufklärung.",
+    inhalt:`
+<h4>Grundbegriffe</h4>
+<div class="tw"><table><thead><tr><th>Begriff</th><th>Definition</th></tr></thead><tbody>
+<tr><td><strong>Pharmakon</strong></td><td>Stoff mit Wirkung auf den Körper</td></tr>
+<tr><td><strong>Freiname</strong> (generic name)</td><td>chemisch definierter Wirkstoff</td></tr>
+<tr><td><strong>Fertigarzneimittel</strong></td><td>Arzneimittel aus industrieller Produktion</td></tr>
+<tr><td><strong>Markenname</strong></td><td>gesetzlich geschütztes Fertigarzneimittel</td></tr>
+</tbody></table></div>
+
+<h4>Pharmakokinetik – was der Körper mit dem Arzneistoff macht</h4>
+<p><strong>Schicksal von Arzneistoffen im Organismus:</strong></p>
+<ol>
+<li>Freisetzung aus der Darreichungsform</li>
+<li>Resorption (Absorption)</li>
+<li>Verteilung (Distribution)</li>
+<li>Metabolismus</li>
+<li>Ausscheidung (Exkretion)</li>
+</ol>
+<p><strong>Metabolisierung</strong></p>
+<ul>
+<li><strong>Phase I:</strong> Oxidation durch Cytochrom P450 (CYP-Familien)</li>
+<li><strong>Phase II:</strong> Konjugation mit Glucuronsäure oder Glutathion, Acetylierung, Methylierung</li>
+</ul>
+<p><strong>First-Pass-Effekt:</strong> Nach oraler Gabe gelangt der Wirkstoff über die Pfortader zuerst in die Leber und wird dort teilweise abgebaut, bevor er den Körperkreislauf erreicht. Folge: geringere Bioverfügbarkeit als nach parenteraler Gabe.</p>
+
+<h4>Pharmakodynamik – was der Arzneistoff mit dem Körper macht</h4>
+<p><strong>Einflüsse eines Pharmakons auf den Organismus:</strong></p>
+<ul>
+<li>Interaktion mit <strong>Rezeptoren</strong> (z. B. Opioide)</li>
+<li>Beeinflussung von <strong>Ionenkanälen</strong> (z. B. Lokalanästhetika)</li>
+<li>Beeinflussung von <strong>Enzymen</strong> (z. B. entzündungshemmende Medikamente)</li>
+<li><strong>mRNA, DNA</strong> (z. B. Impfstoffe)</li>
+</ul>
+<div class="tw"><table><thead><tr><th>Zielstruktur</th><th>Pharmakon</th><th>Effekt</th><th>Typische Nebenwirkung</th></tr></thead><tbody>
+<tr><td>Enzym: Monoaminooxidase</td><td>Tranylcypromin</td><td>antidepressiv</td><td>Schlafstörung</td></tr>
+<tr><td>Transporter: Serotonintransporter</td><td>Fluoxetin</td><td>antidepressiv</td><td>Impotenz, Übelkeit</td></tr>
+<tr><td>Rezeptor: Dopaminrezeptoren</td><td>Haloperidol</td><td>antipsychotisch</td><td>Bewegungsstörungen</td></tr>
+<tr><td>Rezeptor: GABA<sub>A</sub>-Rezeptoren</td><td>Diazepam</td><td>angstlösend</td><td>Dysarthrie</td></tr>
+</tbody></table></div>
+<p class="src">modifiziert nach Benkert et al.</p>
+<div class="bx merke"><strong>Merke:</strong> Pharmako<strong>k</strong>inetik = <strong>K</strong>örper wirkt auf Substanz. Pharmako<strong>d</strong>ynamik = <strong>D</strong>roge wirkt auf Körper. Arzneimittelwechselwirkungen gibt es auf beiden Ebenen: pharmakokinetisch (z. B. CYP-Hemmung) und pharmakodynamisch (z. B. zwei serotonerge Substanzen).</div>
+
+<h4>Therapeutisches Drug Monitoring (TDM)</h4>
+<p>Bestimmung der Plasmakonzentration als <strong>Talspiegel</strong> (unmittelbar vor der nächsten Einnahme, im Steady State).</p>
+<div class="tw"><table><thead><tr><th>Allgemeine Indikationen</th><th>Speziell bei Antidepressiva</th></tr></thead><tbody>
+<tr><td>Vermeidung von Intoxikationen<br>Verdacht auf Nichteinnahme<br>Ausgeprägte Nebenwirkungen<br>Wechselwirkungen<br>Kinder und Jugendliche, Senioren</td><td>Therapieresistenz<br>Complianceprobleme<br>Hochdosisbehandlung<br>Verschlechterung unter konstanter Dosierung<br>Multimedizierte Patienten<br>Unerwartet starke unerwünschte Wirkungen</td></tr>
+</tbody></table></div>
+
+<h4>Patienteninformation und Aufklärung</h4>
+<ul>
+<li>Aufklärung <strong>mündlich und schriftlich</strong></li>
+<li>Mündlich aufzuklären ist über <strong>Dosis</strong>, <strong>zu erwartende therapeutische Wirkung</strong> und <strong>zu erwartende unerwünschte Wirkungen</strong> – alle drei</li>
+<li><strong>Einwilligungserklärung:</strong> vom Patienten eigenhändig datiert und unterzeichnet</li>
+</ul>
+<p><strong>Informationsquellen:</strong> Beipackzettel, Rote Liste, Fachinformation, Datenbanken (PubMed, Micromedex®).</p>
+<div class="bx praxis"><strong>Für die psychotherapeutische Praxis:</strong> Die Aufklärung über das Medikament ist ärztliche Aufgabe. Psychotherapeuten hören aber oft als Erste von Nebenwirkungen, Einnahmelücken oder Absetzwünschen – nachfragen, ernst nehmen und die Rückmeldung an die verordnende Ärztin anstoßen.</div>`,
+    karten:[
+     {q:"Definieren Sie Pharmakokinetik und nennen Sie ihre fünf Teilschritte.",a:"<strong>Schicksal von Arzneistoffen im Organismus:</strong> Freisetzung → Resorption → Verteilung → Metabolismus → Ausscheidung."},
+     {q:"Was geschieht in Phase I und Phase II der Metabolisierung?",a:"<strong>Phase I:</strong> Oxidation durch Cytochrom P450 (CYP).<br><strong>Phase II:</strong> Konjugation (Glucuronsäure, Glutathion), Acetylierung, Methylierung."},
+     {q:"Worüber muss ein Patient bei Verordnung eines Medikaments mündlich aufgeklärt werden?",a:"Über <strong>Dosis</strong>, zu erwartende <strong>therapeutische Wirkung</strong> und zu erwartende <strong>unerwünschte Wirkungen</strong> – alle drei. Einwilligung eigenhändig datiert und unterzeichnet."},
+     {q:"Wann ist therapeutisches Drug Monitoring bei Antidepressiva indiziert, und wie wird es durchgeführt?",a:"Therapieresistenz, Complianceprobleme, Hochdosisbehandlung, Verschlechterung unter konstanter Dosis, Multimedikation, unerwartet starke UAW. Durchführung: <strong>Talserumkonzentration</strong>."}
+    ]},
+
+   {id:"ad3",titel:"Zulassung & Arzneimittelsicherheit",icon:"📜",
+    lernziel:"Sie beschreiben die Phasen der Arzneimittelprüfung, klassifizieren unerwünschte Wirkungen und kennen Meldewege, Off-Label-Kriterien und Empfehlungsgrade.",
+    inhalt:`
+<h4>Arzneimittelzulassung</h4>
+<p>Drei Kriterien: <strong>Qualität · Wirksamkeit · Unbedenklichkeit</strong>.</p>
+<p><strong>Gründe für neue Medikamente:</strong> chronische Erkrankungen, bessere Verträglichkeit, bessere Compliance.</p>
+<p><strong>Wie werden Wirkstoffe gefunden?</strong> Zufälliges Screening · systematische Suche (Regenwald, Ozean) · gezielte Entwicklung (Molekülmodelle, Biotechnologie) · neue Indikation eines bekannten Arzneimittels.</p>
+
+<h4>Präklinische Studien</h4>
+<p>Erste Sicherheitsparameter, Pharmakologie, Toxikologie, Pharmakokinetik.</p>
+<p><strong>Toxikologie:</strong> Single Dose · Repeat Dose · Genotoxizität · Kanzerogenität · Reproduktions- und Embryonaltoxizität.</p>
+
+<h4>Phasen der klinischen Arzneimittelprüfung</h4>
+<div class="tw"><table><thead><tr><th>Phase</th><th>Fragestellung</th><th>Wer?</th></tr></thead><tbody>
+<tr><td><strong>I</strong></td><td>Dosis und Verträglichkeit</td><td>gesunde Probanden</td></tr>
+<tr><td><strong>II</strong></td><td>Dosisfindung bei der vorgesehenen Indikation</td><td>wenige Patienten</td></tr>
+<tr><td><strong>III</strong></td><td>Nachweis von Wirksamkeit und Verträglichkeit</td><td>meist mehrere tausend Patienten</td></tr>
+<tr><td><strong>IV</strong></td><td>Überprüfung des Risiko-Nutzen-Verhältnisses, Identifizierung seltener UAW</td><td>nach der Zulassung</td></tr>
+</tbody></table></div>
+<p><strong>Der Entwicklungstrichter</strong> – rund 12 Jahre von der Idee bis zur Vermarktung:</p>
+<div class="tw"><table><thead><tr><th>Zeit</th><th>Schritt</th><th>Verbleibende Substanzen</th></tr></thead><tbody>
+<tr><td>Jahr 0–2</td><td>Grundlagenforschung, Substanzoptimierung, Wirkungstest im Reagenzglas</td><td>500–10 000</td></tr>
+<tr><td>Jahr 3–4</td><td>Präklinik (Tierversuch)</td><td>6,7</td></tr>
+<tr><td>Jahr 5–6</td><td>Phase I bei gesunden Menschen</td><td>4,7</td></tr>
+<tr><td>Jahr 7–8</td><td>Phase II bei wenigen Patienten</td><td>3,3</td></tr>
+<tr><td>Jahr 9–10</td><td>Phase III bei meist mehreren tausend Patienten</td><td>1,5</td></tr>
+<tr><td>Jahr 11</td><td>Zulassung beantragt</td><td>1,2</td></tr>
+<tr><td>Jahr 12</td><td>Vermarktung</td><td>1</td></tr>
+</tbody></table></div>
+<p><strong>Weitere Studienarten:</strong> Anwendungsbeobachtung (AWB), Off-Label-Use.</p>
+
+<h4>Off-Label-Use</h4>
+<p>Einsatz außerhalb der zugelassenen Indikation, zulässig wenn <strong>alle drei</strong> Bedingungen erfüllt sind:</p>
+<ol>
+<li>schwerwiegende Erkrankung</li>
+<li>keine andere Therapie verfügbar</li>
+<li>begründete Aussicht auf Therapieerfolg</li>
+</ol>
+
+<h4>Unerwünschte Arzneimittelwirkungen (UAW)</h4>
+<p><strong>Definition:</strong> Unerwünschte Effekte, die auch bei <em>bestimmungsgemäßem Gebrauch</em> eines Arzneimittels auftreten können. Im weiteren Sinne zählen auch Unwirksamkeit und Missbrauch dazu.</p>
+<p><strong>Schwerwiegend</strong> ist eine UAW, wenn sie tödlich oder lebensbedrohend ist, zu dauerhafter Behinderung führt, eine stationäre Behandlung oder deren Verlängerung erfordert oder eine kongenitale Anomalie verursacht.</p>
+<div class="tw"><table><thead><tr><th>Typ</th><th>Merkmale</th></tr></thead><tbody>
+<tr><td><strong>Typ A</strong></td><td>dosisabhängig, reversibel (aus der Pharmakologie vorhersagbar)</td></tr>
+<tr><td><strong>Typ B</strong></td><td>idiosynkratisch (dosisunabhängig, individuell, nicht vorhersagbar)</td></tr>
+</tbody></table></div>
+<p>Zusätzlich wird zwischen <strong>erwarteten</strong> und <strong>unerwarteten</strong> UAW unterschieden.</p>
+
+<h4>Häufigkeitsangaben im Beipackzettel</h4>
+<div class="tw"><table><thead><tr><th>Angabe</th><th>Häufigkeit</th><th>Entspricht</th></tr></thead><tbody>
+<tr><td>sehr häufig</td><td>&gt; 10 %</td><td>mehr als 1 von 10</td></tr>
+<tr><td>häufig</td><td>&gt; 1 %</td><td>1 bis 10 von 100</td></tr>
+<tr><td><strong>gelegentlich</strong></td><td><strong>&gt; 0,1 %</strong></td><td>1 bis 10 von 1 000 – z. B. 0,3 %</td></tr>
+<tr><td>selten</td><td>&gt; 0,01 %</td><td>1 bis 10 von 10 000</td></tr>
+<tr><td>sehr selten</td><td>&lt; 0,01 %</td><td>weniger als 1 von 10 000</td></tr>
+</tbody></table></div>
+
+<h4>Kausalität und Meldung</h4>
+<p><strong>Kausalitätsbeurteilung:</strong> sicher – wahrscheinlich – möglich – unwahrscheinlich.</p>
+<p><strong>Zu melden sind:</strong> schwere UAW · UAW neu eingeführter Arzneimittel · unbekannte UAW · UAW bei Kindern · UAW mit zunehmender Häufigkeit · verzögert auftretende UAW.</p>
+<p><strong>Meldung an:</strong> Arzneimittelkommission der deutschen Ärzteschaft (AKdÄ), Bundesinstitut für Arzneimittel und Medizinprodukte (BfArM), Hersteller.</p>
+
+<h4>Leitlinien: Empfehlungsgrade</h4>
+<div class="tw"><table><thead><tr><th>Grad</th><th>Formulierung</th><th>Grundlage (laut Vorlesung)</th></tr></thead><tbody>
+<tr><td><strong>A</strong></td><td>„Soll“</td><td>eine randomisierte kontrollierte Studie</td></tr>
+<tr><td><strong>B</strong></td><td>„Sollte“</td><td>eine gut durchgeführte, aber nicht randomisierte klinische Studie</td></tr>
+<tr><td><strong>0</strong></td><td>„Kann“</td><td>Expertenmeinungen und/oder klinische Erfahrung</td></tr>
+</tbody></table></div>
+<div class="bx merke"><strong>Merke:</strong> Diese Grade tauchen im Modul „Therapieresistenz“ in Klammern hinter jeder Option auf – (A) Soll, (B) Sollte, (0) Kann.</div>`,
+    karten:[
+     {q:"Was wird in den Phasen I bis IV der klinischen Arzneimittelprüfung untersucht?",a:"<strong>I:</strong> Dosis/Verträglichkeit bei Gesunden.<br><strong>II:</strong> Dosisfindung bei der Indikation.<br><strong>III:</strong> Wirksamkeit und Verträglichkeit (tausende Patienten).<br><strong>IV:</strong> Risiko-Nutzen-Verhältnis, seltene UAW."},
+     {q:"Unter welchen Bedingungen ist ein Off-Label-Use zulässig?",a:"Schwerwiegende Erkrankung + keine andere Therapie verfügbar + begründete Aussicht auf Therapieerfolg."},
+     {q:"Wie häufig ist eine Nebenwirkung, die im Beipackzettel als „gelegentlich“ bezeichnet wird?",a:"&gt; 0,1 % bis 1 % (z. B. 0,3 %). Skala: sehr häufig &gt; 10 % · häufig &gt; 1 % · gelegentlich &gt; 0,1 % · selten &gt; 0,01 % · sehr selten &lt; 0,01 %."},
+     {q:"Unterscheiden Sie UAW Typ A und Typ B. An wen werden UAW gemeldet?",a:"<strong>Typ A:</strong> dosisabhängig, reversibel. <strong>Typ B:</strong> idiosynkratisch.<br>Meldung an AKdÄ, BfArM, Hersteller."},
+     {q:"Was bedeuten die Empfehlungsgrade A, B und 0 in Leitlinien?",a:"<strong>A</strong> = „Soll“ · <strong>B</strong> = „Sollte“ · <strong>0</strong> = „Kann“."}
+    ]},
+
+   {id:"ad4",titel:"Einteilung der Antidepressiva",icon:"🗂️",
+    lernziel:"Sie teilen Antidepressiva nach klinischer Wirkung und nach Angriffspunkt ein und leiten Nebenwirkungen aus dem Rezeptorprofil ab.",
+    inhalt:`
+<h4>Einteilung nach klinischer Wirkung</h4>
+<div class="tw"><table><thead><tr><th>Nicht sedierend / aktivierend</th><th>Sedierend / dämpfend</th></tr></thead><tbody>
+<tr><td><strong>MAO-Hemmer:</strong> Tranylcypromin, Moclobemid</td><td><strong>Tri-/tetrazyklische Antidepressiva:</strong> Maprotilin, Amitriptylin, Doxepin, Trimipramin</td></tr>
+<tr><td><strong>Trizyklische Antidepressiva:</strong> Desipramin, Nortriptylin</td><td></td></tr>
+<tr><td><strong>Selektive Antidepressiva:</strong> Fluoxetin, Escitalopram, Sertralin, Venlafaxin, Reboxetin</td><td><strong>Selektive Antidepressiva:</strong> Mirtazapin, Agomelatin</td></tr>
+</tbody></table></div>
+<p class="src">nach Laux et al. 2002</p>
+<div class="bx praxis"><strong>Klinische Konsequenz:</strong> Sedierende Substanzen abends geben und bei Schlafstörung, Unruhe und Appetitmangel nutzen. Aktivierende Substanzen morgens geben – bei gehemmt-antriebsarmen Bildern hilfreich, aber: Der Antrieb bessert sich oft <em>vor</em> der Stimmung. Deshalb zu Beginn Suizidgedanken erfragen.</div>
+
+<h4>Einteilung nach Angriffspunkt</h4>
+<div class="tw"><table><thead><tr><th>Klasse</th><th>Abkürzung</th><th>Vertreter (Handelsname)</th></tr></thead><tbody>
+<tr><td>Selektive Serotonin-Wiederaufnahmehemmer</td><td><strong>SSRI</strong></td><td>Fluoxetin (Fluctin®), Fluvoxamin (Fevarin®), Paroxetin (Tagonis®, Seroxat®), Citalopram (Cipramil®), Escitalopram (Cipralex®), Sertralin (Zoloft®)</td></tr>
+<tr><td>Selektive Serotonin-Noradrenalin-Wiederaufnahmehemmer</td><td><strong>SSNRI</strong></td><td>Venlafaxin (Trevilor®), Duloxetin (Cymbalta®), Milnacipran (Milnaneurax®, Ixel®)</td></tr>
+<tr><td>Selektive Noradrenalin-Wiederaufnahmehemmer</td><td><strong>SNRI</strong></td><td>Reboxetin (Solvex®, Edronax®)</td></tr>
+<tr><td>Selektive Noradrenalin-Dopamin-Wiederaufnahmehemmer</td><td><strong>NDRI</strong></td><td>Bupropion (Elontril®)</td></tr>
+<tr><td>Noradrenerg / spezifisch serotonerges Antidepressivum mit α<sub>2</sub>-Adrenozeptor-antagonistischer Wirkung</td><td><strong>NaSSA</strong></td><td>Mirtazapin (Remergil®)</td></tr>
+<tr><td>Monoaminooxidase-Hemmer</td><td><strong>MAO-Hemmer</strong></td><td>Tranylcypromin (Jatrosom®), Moclobemid (Aurorix®)</td></tr>
+<tr><td>Trizyklische Antidepressiva</td><td><strong>TZA</strong></td><td>Amitriptylin (Saroten®), Doxepin (Aponal®), Trimipramin (Stangyl®), Clomipramin (Anafranil®), Imipramin (Tofranil®), Desipramin (Pertofran®), Nortriptylin (Nortrilen®)</td></tr>
+<tr><td>Pflanzliche Antidepressiva</td><td>–</td><td>Johanniskraut-(Hypericum-)Extrakt</td></tr>
+<tr><td>Andere</td><td>–</td><td>Agomelatin (Valdoxan®)</td></tr>
+</tbody></table></div>
+<div class="bx cave"><strong>Begriffsfalle – prüfungsrelevant:</strong> In der Vorlesung (deutsche Nomenklatur nach Benkert) steht <strong>SSNRI</strong> für Venlafaxin, Duloxetin und Milnacipran und <strong>SNRI</strong> für den reinen Noradrenalin-Wiederaufnahmehemmer Reboxetin. International und in vielen Lehrbüchern meint „SNRI“ dagegen Venlafaxin und Duloxetin; Reboxetin heißt dort „NARI“. In der Prüfung die Abkürzung immer ausschreiben. Das Addendum führt Venlafaxin und Milnacipran in der Spalte Wirkmechanismus als „SSRI“ und Duloxetin als „SNRI“ – das ist uneinheitlich beschriftet; alle drei sind Serotonin-Noradrenalin-Wiederaufnahmehemmer.</div>
+
+<h4>Selektivität – warum sie zählt</h4>
+<p>Trizyklika hemmen die Wiederaufnahme von Serotonin und Noradrenalin, blockieren aber zusätzlich eine Reihe von Rezeptoren, die mit der antidepressiven Wirkung nichts zu tun haben. Die „selektiven“ Antidepressiva tun das nicht oder kaum – daher ihre bessere Verträglichkeit und geringere Toxizität bei vergleichbarer Wirksamkeit.</p>
+<div class="tw"><table><thead><tr><th>Blockierter Rezeptor</th><th>Unerwünschte Wirkung</th></tr></thead><tbody>
+<tr><td>Muskarinische Acetylcholinrezeptoren (anticholinerg)</td><td>Mundtrockenheit, Obstipation, Harnverhalt, Akkommodationsstörung, Augeninnendruckanstieg, Tachykardie, Gedächtnisstörungen, Delir</td></tr>
+<tr><td>Histamin-H<sub>1</sub></td><td>Sedierung, Appetit- und Gewichtszunahme</td></tr>
+<tr><td>α<sub>1</sub>-Adrenozeptor</td><td>Orthostatische Hypotonie, Schwindel, Sturzgefahr</td></tr>
+<tr><td>Natriumkanäle am Herzen (chinidinartig)</td><td>Erregungsleitungsstörung, QT-Verlängerung, Arrhythmien – Ursache der hohen Toxizität bei Überdosierung</td></tr>
+</tbody></table></div>
+<div class="bx erg"><strong>Ergänzung:</strong> Die Folien „Selektivität“ (Laux und Dietmaier 2012) und „Rezeptoreffekte und UAW“ liegen nur als Grafik vor. Die Tabelle gibt das dazugehörige Standardwissen wieder.</div>
+<div class="bx merke"><strong>Merke:</strong> Aus der Rezeptortabelle folgen direkt die Kontraindikationen der TZA (nächstes Modul): Glaukom, Prostatahypertrophie, intestinale Stenosen, kognitive Störungen, kardiale Erregungsleitungsstörungen.</div>`,
+    karten:[
+     {q:"Welche Antidepressiva wirken sedierend, welche aktivierend?",a:"<strong>Sedierend:</strong> Amitriptylin, Doxepin, Trimipramin, Maprotilin, Mirtazapin, Agomelatin.<br><strong>Aktivierend:</strong> MAO-Hemmer (Tranylcypromin, Moclobemid), Desipramin, Nortriptylin, SSRI (Fluoxetin, Escitalopram, Sertralin), Venlafaxin, Reboxetin."},
+     {q:"Ordnen Sie zu: SSNRI, SNRI, NDRI, NaSSA – je ein Vertreter.",a:"<strong>SSNRI:</strong> Venlafaxin, Duloxetin, Milnacipran.<br><strong>SNRI</strong> (reine Noradrenalin-Wiederaufnahmehemmung): Reboxetin.<br><strong>NDRI:</strong> Bupropion.<br><strong>NaSSA:</strong> Mirtazapin.<br>Cave: international meint „SNRI“ meist Venlafaxin/Duloxetin."},
+     {q:"Welche Nebenwirkungen folgen aus der Blockade von muskarinischen, H1- und α1-Rezeptoren?",a:"<strong>Muskarinisch:</strong> Mundtrockenheit, Obstipation, Harnverhalt, Augeninnendruck ↑, Tachykardie, kognitive Störung/Delir.<br><strong>H1:</strong> Sedierung, Gewichtszunahme.<br><strong>α1:</strong> orthostatische Hypotonie."}
+    ]},
+
+   {id:"ad5",titel:"SSRI, SSNRI, SNRI & NDRI",icon:"💊",
+    lernziel:"Sie kennen die selektiven Wiederaufnahmehemmer mit Dosisbereich, zugelassenen Indikationen, Nebenwirkungen und den klinisch wichtigen Unterschieden.",
+    inhalt:`
+<h4>Selektive Serotonin-Wiederaufnahmehemmer (SSRI)</h4>
+<p>Hemmung des Serotonintransporters → mehr Serotonin im synaptischen Spalt. Mittel der ersten Wahl in den meisten Situationen: gut verträglich, in Überdosierung kaum toxisch.</p>
+<div class="tw"><table><thead><tr><th>Präparat</th><th>Dosis/Tag</th><th>Zugelassene Indikationen</th><th>Toxizität</th><th>Hinweise</th></tr></thead><tbody>
+<tr><td><strong>Citalopram</strong> (Cipramil®)</td><td>10–40 mg</td><td>Depression, Panikstörung</td><td>+</td><td>geringe Wechselwirkungen</td></tr>
+<tr><td><strong>Escitalopram</strong> (Cipralex®)</td><td>10–20 mg</td><td>Depression, Panikstörung, GAS, Zwangsstörung</td><td>0</td><td>geringe Wechselwirkungen; wirkungsstärker als Citalopram</td></tr>
+<tr><td><strong>Fluoxetin</strong> (Fluctin®)</td><td>20–60 mg</td><td>Depression, Zwangsstörung, Bulimie</td><td>0</td><td><strong>starke</strong> Wechselwirkungen</td></tr>
+<tr><td><strong>Paroxetin</strong> (Seroxat®, Tagonis®)</td><td>20–50 mg</td><td>Depression, Panikstörung, GAS, Zwangsstörung, PTBS</td><td>0</td><td><strong>starke</strong> Wechselwirkungen</td></tr>
+<tr><td><strong>Sertralin</strong> (Zoloft®)</td><td>50–200 mg</td><td>Depression, Panikstörung, GAS, Zwangsstörung, PTBS</td><td>0</td><td>geringe Wechselwirkungen</td></tr>
+</tbody></table></div>
+<p class="src">Toxizität: 0 = nicht vorhanden, + = gering. Modifiziert nach Benkert et al. 2012. Fluvoxamin (Fevarin®) wird in der Vorlesung als sechster SSRI genannt, im Addendum aber nicht tabelliert.</p>
+<p><strong>Klassen-Nebenwirkungen</strong> (für alle „wie Citalopram“): gastrointestinale Beschwerden, Müdigkeit, Tremor, Libidominderung, Schlafstörungen. Bei allen SSRI: <strong>Risiko für Blutungsneigung prüfen</strong>.</p>
+<div class="bx cave"><strong>Drei Risiken, die man kennen muss:</strong><br>
+• <strong>Blutungsneigung</strong> – Serotonin fehlt in den Thrombozyten; kritisch zusammen mit ASS, NSAR, Antikoagulanzien<br>
+• <strong>Hyponatriämie</strong> – vor allem bei älteren Patienten; äußert sich als Verwirrtheit, Müdigkeit, Stürze<br>
+• <strong>QT-Zeit-Verlängerung</strong> – Escitalopram (und Citalopram)</div>
+
+<h4>SSRI im klinischen Vergleich</h4>
+<div class="tw"><table><thead><tr><th>SSRI</th><th>Halbwertszeit</th><th>Absetzsymptome</th><th>CYP-Hemmung</th><th>Besonderheit</th></tr></thead><tbody>
+<tr><td><strong>Fluoxetin</strong></td><td>~50 h (aktiver Metabolit Norfluoxetin 1–2 Wochen)</td><td>kaum</td><td>stark (2D6)</td><td>Lange Halbwertszeit wirkt als „eingebautes Ausschleichen“; aber wochenlange Nachwirkung bei Umstellungen</td></tr>
+<tr><td><strong>Sertralin</strong></td><td>~26 h</td><td>mild</td><td>gering</td><td>Wenig Interaktionen, gute Verträglichkeit</td></tr>
+<tr><td><strong>Escitalopram</strong></td><td>~27 h</td><td>mild bis moderat</td><td>minimal</td><td>S-Enantiomer von Citalopram; QT-Zeit beachten</td></tr>
+<tr><td><strong>Paroxetin</strong></td><td>~20 h</td><td>ausgeprägt</td><td>am stärksten (2D6)</td><td>Leicht anticholinerg, Gewichtszunahme</td></tr>
+<tr><td><strong>Fluvoxamin</strong></td><td>~15 h</td><td>moderat</td><td>stark (1A2)</td><td>Hemmt den Abbau von Clozapin erheblich</td></tr>
+</tbody></table></div>
+<div class="bx erg"><strong>Ergänzung:</strong> Die Vergleichstabelle stammt aus dem bisherigen Plattform-Beitrag (Standardwissen), nicht aus den Vorlesungsunterlagen.</div>
+
+<h4>Selektive Serotonin-Noradrenalin-Wiederaufnahmehemmer (SSNRI)</h4>
+<div class="tw"><table><thead><tr><th>Präparat</th><th>Dosis/Tag</th><th>Zugelassene Indikationen</th><th>Nebenwirkungen</th><th>Toxizität</th></tr></thead><tbody>
+<tr><td><strong>Venlafaxin</strong> (Trevilor retard®)</td><td>75–225 mg</td><td>Depression, GAS, Panikstörung, soziale Phobie</td><td>gastrointestinale Beschwerden, Schwitzen, Unruhe, Tremor, Schlafstörungen</td><td>+</td></tr>
+<tr><td><strong>Duloxetin</strong> (Cymbalta®)</td><td>60–120 mg</td><td>Depression, GAS</td><td>gastrointestinale Beschwerden, Schwitzen, Schwindel, Tremor, Schlafstörungen</td><td>0/+</td></tr>
+<tr><td><strong>Milnacipran</strong> (Ixel®, Milnaneurax®)</td><td>100–200 mg</td><td>Depression</td><td>Schwindel, Tremor, Dysurie, Schlafstörungen</td><td>0</td></tr>
+</tbody></table></div>
+<p>Alle drei: geringe Wechselwirkungen, Risiko für Blutungsneigung prüfen. Venlafaxin wirkt in niedriger Dosis überwiegend serotonerg, die noradrenerge Komponente kommt erst bei höherer Dosis hinzu – deshalb ist bei Venlafaxin eine <strong>Dosiserhöhung sinnvoll</strong> (siehe Modul Therapieresistenz). Blutdruck dosisabhängig kontrollieren.</p>
+
+<h4>Selektiver Noradrenalin-Wiederaufnahmehemmer (SNRI)</h4>
+<div class="tw"><table><thead><tr><th>Präparat</th><th>Dosis/Tag</th><th>Indikation</th><th>Nebenwirkungen</th><th>Hinweise</th></tr></thead><tbody>
+<tr><td><strong>Reboxetin</strong> (Edronax®, Solvex®)</td><td>4–8 mg</td><td>Depression</td><td>Mundtrockenheit, Obstipation, Schwitzen, Kopfschmerzen, Schlafstörungen</td><td>Toxizität +, geringe Wechselwirkungen, <strong>Blutdruckkontrollen</strong></td></tr>
+</tbody></table></div>
+
+<h4>Noradrenalin-Dopamin-Wiederaufnahmehemmer (NDRI)</h4>
+<div class="tw"><table><thead><tr><th>Präparat</th><th>Dosis/Tag</th><th>Indikation</th><th>Nebenwirkungen</th><th>Hinweise</th></tr></thead><tbody>
+<tr><td><strong>Bupropion</strong> (Elontril®)</td><td>150–300 mg</td><td>Depression</td><td>Schlafstörungen, Kopfschmerzen, Mundtrockenheit, gastrointestinale Beschwerden</td><td>Toxizität +, <strong>starke</strong> Wechselwirkungen, <strong>keine sexuelle Dysfunktion, keine Gewichtszunahme</strong>, Blutdruckkontrollen</td></tr>
+</tbody></table></div>
+<div class="bx praxis"><strong>Für die psychotherapeutische Praxis:</strong> Sexuelle Funktionsstörungen, Gewichtszunahme und Müdigkeit sind die drei häufigsten Gründe, warum Patienten ein Antidepressivum heimlich absetzen. Sexuelle Nebenwirkungen werden selten spontan berichtet – aktiv und selbstverständlich danach fragen. Bupropion ist die Alternative ohne sexuelle Dysfunktion und ohne Gewichtszunahme; Mirtazapin und Agomelatin beeinträchtigen die Sexualfunktion ebenfalls kaum.</div>`,
+    karten:[
+     {q:"Nennen Sie die Klassen-Nebenwirkungen der SSRI und drei besondere Risiken.",a:"Gastrointestinale Beschwerden, Müdigkeit, Tremor, Libidominderung, Schlafstörungen.<br><strong>Risiken:</strong> Blutungsneigung, Hyponatriämie, QT-Verlängerung (Escitalopram); serotonerge Effekte in Kombination."},
+     {q:"Welche SSRI haben starke, welche geringe Wechselwirkungen?",a:"<strong>Stark:</strong> Fluoxetin, Paroxetin (CYP2D6-Hemmung), Fluvoxamin (CYP1A2).<br><strong>Gering:</strong> Citalopram, Escitalopram, Sertralin."},
+     {q:"Für welche Indikationen sind Sertralin und Paroxetin zugelassen?",a:"Depression, Panikstörung, GAS, Zwangsstörung, PTBS. (Fluoxetin: Depression, Zwangsstörung, Bulimie. Citalopram: Depression, Panikstörung.)"},
+     {q:"Was zeichnet Bupropion aus?",a:"NDRI, 150–300 mg. <strong>Keine sexuelle Dysfunktion, keine Gewichtszunahme.</strong> Aber starke Wechselwirkungen (CYP2D6-Hemmung), Blutdruckkontrollen."},
+     {q:"Nennen Sie Dosisbereich und Indikationen von Venlafaxin.",a:"75–225 mg/Tag. Depression, GAS, Panikstörung, soziale Phobie. Nebenwirkungen: gastrointestinal, Schwitzen, Unruhe, Tremor, Schlafstörungen. Dosiserhöhung bei Nichtansprechen sinnvoll."}
+    ]},
+
+   {id:"ad6",titel:"Trizyklische Antidepressiva",icon:"🧪",
+    lernziel:"Sie kennen Vertreter, Nebenwirkungsprofil, Kontraindikationen und Sicherheitsvorkehrungen der Trizyklika und können erklären, warum sie nicht mehr erste Wahl sind.",
+    inhalt:`
+<p>Trizyklika (TZA) hemmen unselektiv die Wiederaufnahme von Noradrenalin und Serotonin und blockieren zusätzlich muskarinische, Histamin- und α<sub>1</sub>-Rezeptoren. Sie sind wirksam, aber schlechter verträglich und in Überdosierung gefährlich.</p>
+<div class="tw"><table><thead><tr><th>Präparat</th><th>Mechanismus</th><th>Dosis/Tag</th><th>Zugelassene Indikationen</th><th>Nebenwirkungen</th><th>Toxizität</th><th>Hinweise</th></tr></thead><tbody>
+<tr><td><strong>Amitriptylin</strong> (Saroten®)</td><td>NA- und 5-HT-Wiederaufnahmehemmung</td><td>75–300 mg</td><td>Depression, Insomnie, chronische Schmerzen</td><td>anticholinerg, Müdigkeit, Hypotonie</td><td>+++</td><td>mittlere Wechselwirkungen; schlafanstoßend</td></tr>
+<tr><td><strong>Clomipramin</strong> (Anafranil®)</td><td>nicht selektiver Serotonin-Wiederaufnahmehemmer</td><td>75–300 mg</td><td>Depression, Panikstörung, Zwangsstörung, chronische Schmerzen</td><td>anticholinerg, Müdigkeit, Unruhe</td><td>++</td><td>starke Wechselwirkungen; <strong>Referenzsubstanz bei Zwangsstörungen</strong></td></tr>
+<tr><td><strong>Imipramin</strong> (Tofranil®)</td><td>NA- und 5-HT-Wiederaufnahmehemmung</td><td>75–300 mg</td><td>Depression, chronische Schmerzen</td><td>wie Amitriptylin</td><td>+++</td><td>starke Wechselwirkungen</td></tr>
+<tr><td><strong>Nortriptylin</strong> (Nortrilen®)</td><td>nicht selektiver Noradrenalin-Wiederaufnahmehemmer</td><td>75–225 mg</td><td>Depression</td><td>anticholinerg, Müdigkeit, Unruhe</td><td>+++</td><td>starke Wechselwirkungen</td></tr>
+<tr><td><strong>Trimipramin</strong> (Stangyl®)</td><td>NA- und 5-HT-Wiederaufnahmehemmung</td><td>150–300 mg</td><td>Depression, Insomnie, chronische Schmerzen</td><td>anticholinerg, Müdigkeit</td><td>+++</td><td>stark antihistaminerg</td></tr>
+</tbody></table></div>
+<p class="src">NA = Noradrenalin, 5-HT = Serotonin. Toxizität: ++ mittel, +++ hoch. Modifiziert nach Benkert et al. 2012. Weitere Vertreter aus der Vorlesung: Doxepin (Aponal®), Desipramin (Pertofran®).</p>
+<p>Für <strong>alle</strong> TZA gilt: <strong>EKG und Blutbild kontrollieren</strong>.</p>
+
+<h4>Unerwünschte Wirkungen</h4>
+<ul>
+<li><strong>Anticholinerg:</strong> Mundtrockenheit, Obstipation, Harnverhalt, Akkommodationsstörungen, Augeninnendruckanstieg, Tachykardie, Gedächtnisstörungen bis zum Delir</li>
+<li><strong>Antihistaminerg:</strong> Müdigkeit, Gewichtszunahme</li>
+<li><strong>α<sub>1</sub>-blockierend:</strong> orthostatische Hypotonie</li>
+<li><strong>Kardial:</strong> Erregungsleitungsstörungen, QT-Zeit-Verlängerung</li>
+<li><strong>Zentral:</strong> Senkung der Krampfschwelle, Tremor</li>
+</ul>
+
+<h4>Kontraindikationen</h4>
+<ol>
+<li>Epilepsie</li>
+<li>Engwinkelglaukom</li>
+<li>Intestinale Stenosen</li>
+<li>Prostatahypertrophie</li>
+<li>Kognitive Störungen</li>
+<li>Kardiale Erregungsleitungsstörungen</li>
+</ol>
+<div class="bx merke"><strong>Merke:</strong> Die Kontraindikationen sind die Nebenwirkungen in Vorerkrankungsform – anticholinerg (Glaukom, Stenosen, Prostata, Kognition), kardial (Erregungsleitung), zentral (Epilepsie).</div>
+
+<h4>Untersuchungen vor Behandlungsbeginn</h4>
+<p>EKG, Blutbild, Leber- und Nierenwerte, Blutdruck und Puls; bei Anfallsanamnese EEG. Im Verlauf EKG und Blutbild wiederholen.</p>
+
+<h4>Konzentrations-Wirkungs-Beziehung</h4>
+<p>Für Trizyklika besteht ein Zusammenhang zwischen Plasmakonzentration und Wirkung bzw. Toxizität: Unterhalb des Zielbereichs fehlt die Wirkung, oberhalb nehmen Nebenwirkungen und kardiale Risiken zu. Deshalb ist bei TZA therapeutisches Drug Monitoring besonders sinnvoll und eine <strong>Dosiserhöhung bei Nichtansprechen</strong> lohnend.</p>
+<div class="bx erg"><strong>Ergänzung:</strong> Die Folien „Konzentrationswirkungsbeziehungen (TZA)“, „UAW von TZA“ und „Untersuchungen vor Behandlungsbeginn mit TZA“ liegen nur als Grafik vor. Die drei Abschnitte oben geben das zugehörige Standardwissen wieder; gesichert aus dem Addendum ist „EKG, Blutbild kontrollieren“.</div>
+
+<h4>Warum TZA nicht mehr erste Wahl sind</h4>
+<ul>
+<li><strong>Hohe Toxizität (+++)</strong> – die Wochenration kann tödlich sein. Bei suizidalen Patienten nur kleine Packungen oder besser eine andere Substanz.</li>
+<li><strong>Im höheren Lebensalter nicht zu empfehlen</strong> – Delir, Stürze, Harnverhalt. Falls doch: Dosis halbieren.</li>
+<li><strong>Starke Wechselwirkungen</strong> – Fluoxetin, Paroxetin und Fluvoxamin erhöhen den TZA-Spiegel (siehe Kasuistik 7).</li>
+</ul>
+<p><strong>Wo TZA weiterhin ihren Platz haben:</strong> Therapieresistenz, chronische Schmerzen (Amitriptylin), Insomnie (Amitriptylin, Trimipramin), Zwangsstörung (Clomipramin) und – laut Vorlesung – in der Schwangerschaft.</p>`,
+    karten:[
+     {q:"Nennen Sie die sechs Kontraindikationen der trizyklischen Antidepressiva.",a:"Epilepsie · Engwinkelglaukom · intestinale Stenosen · Prostatahypertrophie · kognitive Störungen · kardiale Erregungsleitungsstörungen."},
+     {q:"Welches TZA ist Referenzsubstanz bei Zwangsstörungen, und was ist sein Mechanismus?",a:"<strong>Clomipramin</strong> (Anafranil®), nicht selektiver Serotonin-Wiederaufnahmehemmer, 75–300 mg. Zugelassen auch für Depression, Panikstörung, chronische Schmerzen."},
+     {q:"Welche Kontrollen sind unter TZA erforderlich, und was gilt für ältere Patienten?",a:"EKG und Blutbild kontrollieren. Bei älteren Patienten Dosis halbieren; grundsätzlich sind TZA im höheren Lebensalter nicht zu empfehlen."},
+     {q:"Welche TZA sind für Insomnie und chronische Schmerzen zugelassen?",a:"<strong>Insomnie + chronische Schmerzen:</strong> Amitriptylin, Trimipramin.<br><strong>Chronische Schmerzen:</strong> zusätzlich Clomipramin, Imipramin."}
+    ]},
+
+   {id:"ad7",titel:"MAO-Hemmer, Mirtazapin, Agomelatin & Johanniskraut",icon:"🌙",
+    lernziel:"Sie kennen die Antidepressiva mit anderem Wirkprinzip, ihre typischen Einsatzgebiete und ihre spezifischen Risiken.",
+    inhalt:`
+<h4>Monoaminooxidase-Hemmer</h4>
+<p>Hemmung des Abbaus von Serotonin, Noradrenalin und Dopamin.</p>
+<div class="tw"><table><thead><tr><th>Präparat</th><th>Typ</th><th>Dosis/Tag</th><th>Indikation</th><th>Besonderheiten</th></tr></thead><tbody>
+<tr><td><strong>Tranylcypromin</strong> (Jatrosom®)</td><td><strong>irreversibel, nicht selektiv</strong></td><td>in der Studie von Adli 2008 im Mittel 52 mg</td><td>therapieresistente Depression</td><td><strong>Hypertone Blutdruckkrisen</strong> bei tyraminreicher Kost – strenge Diät erforderlich</td></tr>
+<tr><td><strong>Moclobemid</strong> (Aurorix®)</td><td><strong>reversibel, selektiv für MAO-A</strong></td><td>300–600 mg</td><td>Depression, soziale Phobie</td><td>Nebenwirkungen: Schlafstörungen, Übelkeit. Toxizität 0. Starke Wechselwirkungen. Tyraminhaltige Nahrungsmittel meiden.</td></tr>
+</tbody></table></div>
+<p><strong>UAW der MAO-Hemmer:</strong> orthostatische Hypotonie, Kopfschmerzen, hypertone Blutdruckkrisen (Tranylcypromin).</p>
+<div class="bx cave"><strong>Cave:</strong> MAO-Hemmer niemals mit serotonergen Arzneistoffen kombinieren (SSRI, SSNRI, Clomipramin) → <strong>Serotoninsyndrom</strong>. Bei Umstellungen Auswaschzeiten einhalten – nach Fluoxetin wegen der langen Halbwertszeit rund fünf Wochen.</div>
+
+<h4>Mirtazapin (Remergil®) – NaSSA</h4>
+<ul>
+<li><strong>Präsynaptischer α<sub>2</sub>-Rezeptorantagonist</strong> → vermehrte Ausschüttung von Noradrenalin und Serotonin</li>
+<li><strong>Postsynaptischer 5-HT<sub>2</sub>- und 5-HT<sub>3</sub>-Rezeptorantagonist</strong> → das ausgeschüttete Serotonin stimuliert gezielt 5-HT<sub>1</sub>-Rezeptoren</li>
+<li><strong>Antihistaminisch</strong></li>
+</ul>
+<p>Dosis 15–45 mg, zugelassen für Depression, Toxizität +, geringe Wechselwirkungen, <strong>gute schlafanstoßende Wirkung</strong>.<br><strong>UAW:</strong> Müdigkeit, Appetit- und Gewichtszunahme.</p>
+<div class="bx merke"><strong>Merke:</strong> Mirtazapin ist kein Wiederaufnahmehemmer. Durch die 5-HT<sub>2</sub>/5-HT<sub>3</sub>-Blockade fehlen die typischen SSRI-Nebenwirkungen (Übelkeit, sexuelle Dysfunktion, Unruhe). Ideal bei Schlafstörung und Appetitlosigkeit, ungünstig bei Adipositas. Im höheren Lebensalter neben SSRI Mittel der Wahl.</div>
+
+<h4>Agomelatin (Valdoxan®)</h4>
+<ul>
+<li><strong>Agonist an Melatonin-MT<sub>1</sub>- und MT<sub>2</sub>-Rezeptoren</strong> und <strong>Antagonist an 5-HT<sub>2C</sub>-Rezeptoren</strong> → Verstärkung der dopaminergen und noradrenergen Neurotransmission</li>
+<li>Ungeklärt, ob die Affinität zu Melatoninrezeptoren zum antidepressiven Effekt beiträgt – <strong>Melatonin selbst ist nicht antidepressiv</strong></li>
+<li>Dosis 25–50 mg, zugelassen für Depression, Toxizität +, mittlere Wechselwirkungen</li>
+<li><strong>UAW:</strong> Kopfschmerzen, Schläfrigkeit/Müdigkeit, Schlaflosigkeit, Angst</li>
+</ul>
+<div class="bx cave"><strong>Lebertoxizität:</strong> Transaminasen (AST und/oder ALT) kontrollieren. Bei Anstieg auf mehr als das <strong>Dreifache</strong> des oberen Normwerts: <strong>absetzen</strong>.</div>
+
+<h4>Johanniskrautextrakt (Hypericum)</h4>
+<ul>
+<li><strong>Mechanismus:</strong> Wiederaufnahmehemmung multipler Neurotransmitter</li>
+<li><strong>Indikation:</strong> nur <strong>leichte bis mittelgradige</strong> Depression</li>
+<li><strong>Dosis:</strong> 900 mg Extrakt pro Tag (Addendum); in der Vorlesung als Tagesdosis ≥ 3 × 900 µg Hypericin angegeben</li>
+<li><strong>UAW:</strong> Photosensibilisierung/Photodermatosen, <strong>Enzyminduktion</strong></li>
+<li><strong>Cave:</strong> variable Wirkstärke der Extrakte; Toxizität 0, aber <strong>unterschätzte Wechselwirkungen</strong></li>
+</ul>
+<div class="tw"><table><thead><tr><th>Substanz</th><th>Interaktion</th><th>Mögliche Folge</th></tr></thead><tbody>
+<tr><td>Ciclosporin</td><td>Wirkungsabschwächung</td><td>Transplantatverlust</td></tr>
+<tr><td>Orale Kontrazeptiva</td><td>Wirkungsabschwächung</td><td>ungewollte Schwangerschaft</td></tr>
+<tr><td>Indinavir</td><td>Wirkungsabschwächung</td><td>Fortschreiten der HIV-Erkrankung</td></tr>
+</tbody></table></div>
+<div class="bx praxis"><strong>Für die psychotherapeutische Praxis:</strong> Johanniskraut ist frei verkäuflich, gilt bei Patienten als „harmlos pflanzlich“ und wird beim Arzt oft nicht angegeben. Bei jeder Anamnese ausdrücklich nach frei verkäuflichen und pflanzlichen Präparaten fragen – siehe Kasuistik 6. Zusammen mit SSRI ist auch ein Serotoninsyndrom möglich.</div>`,
+    karten:[
+     {q:"Unterscheiden Sie Tranylcypromin und Moclobemid.",a:"<strong>Tranylcypromin:</strong> irreversibel, nicht selektiv; Gefahr hypertoner Blutdruckkrisen; Reserve bei Therapieresistenz.<br><strong>Moclobemid:</strong> reversibel, selektiv für MAO-A; 300–600 mg; Depression und soziale Phobie.<br>Beide: nicht mit serotonergen Substanzen kombinieren."},
+     {q:"Erklären Sie den Wirkmechanismus von Mirtazapin und seine typischen Nebenwirkungen.",a:"Präsynaptischer α2-Antagonist (→ mehr Noradrenalin und Serotonin), postsynaptischer 5-HT2- und 5-HT3-Antagonist (→ Stimulation von 5-HT1), antihistaminisch. UAW: Müdigkeit, Appetit- und Gewichtszunahme. 15–45 mg, schlafanstoßend."},
+     {q:"Was ist bei Agomelatin zu überwachen?",a:"Transaminasen (AST/ALT). Bei Anstieg auf mehr als das Dreifache des Normwerts absetzen. Mechanismus: MT1/MT2-Agonist, 5-HT2C-Antagonist; Melatonin selbst ist nicht antidepressiv."},
+     {q:"Welche Wechselwirkungen von Johanniskraut sind klinisch gefährlich?",a:"Enzyminduktion → Wirkungsabschwächung von <strong>Ciclosporin</strong> (Transplantatverlust), <strong>oralen Kontrazeptiva</strong> (Schwangerschaft), <strong>Indinavir</strong> (HIV-Progression). Nur bei leichter bis mittelgradiger Depression wirksam; Photosensibilisierung."}
+    ]},
+
+   {id:"ad8",titel:"Wechselwirkungen & Risiken",icon:"⚠️",
+    lernziel:"Sie erkennen ein Serotoninsyndrom, benennen die relevanten pharmakodynamischen und pharmakokinetischen Interaktionen und klären über Absetzsymptome auf.",
+    inhalt:`
+<h4>Pharmakodynamische Interaktionen</h4>
+<div class="tw"><table><thead><tr><th>Wechselwirkung</th><th>Betroffene Antidepressiva</th><th>Kritisch zusammen mit …</th></tr></thead><tbody>
+<tr><td>Verstärkte anticholinerge Effekte</td><td>TZA</td><td>anderen anticholinergen Substanzen (z. B. niederpotente Antipsychotika, Biperiden)</td></tr>
+<tr><td>QT-Zeit-Verlängerung</td><td>TZA, Escitalopram</td><td>anderen QT-verlängernden Medikamenten</td></tr>
+<tr><td>Verstärkte serotonerge Effekte</td><td>SSRI, MAO-Hemmer, SSNRI</td><td>untereinander; Tramadol, Triptanen, Johanniskraut, Lithium</td></tr>
+<tr><td>Blutungsneigung</td><td>SSRI, SSNRI</td><td>ASS, NSAR, Antikoagulanzien</td></tr>
+<tr><td>Hyponatriämie</td><td>SSRI, SSNRI</td><td>Diuretika; höheres Lebensalter</td></tr>
+</tbody></table></div>
+<p class="src">Linke und mittlere Spalte aus der Vorlesung; rechte Spalte ergänzt.</p>
+
+<h4>Serotoninsyndrom</h4>
+<div class="tw"><table><thead><tr><th>Symptomenkomplex</th><th>Klinische Zeichen</th></tr></thead><tbody>
+<tr><td><strong>Verhaltens- und Bewusstseinsstörungen</strong></td><td>Agitiertheit, Verwirrtheit, Bewusstseinstrübung, Koma</td></tr>
+<tr><td><strong>Neuromuskuläre Störungen</strong></td><td>Reflexsteigerung, Tremor, Ataxie, Myoklonien</td></tr>
+<tr><td><strong>Autonomes Nervensystem</strong></td><td>Schüttelfrost, Fieber, Diarrhö</td></tr>
+</tbody></table></div>
+<div class="bx cave"><strong>Notfall.</strong> Typischer Auslöser: Kombination serotonerger Substanzen (klassisch SSRI + MAO-Hemmer), Dosissteigerung oder Umstellung ohne Auswaschzeit. Beginn meist innerhalb von Stunden. Maßnahmen: serotonerge Medikation sofort absetzen, ärztliche Vorstellung bzw. Notruf, Überwachung, symptomatische Behandlung.</div>
+
+<h4>Pharmakokinetische Interaktionen: CYP-Hemmung durch Antidepressiva</h4>
+<p>Viele Antidepressiva hemmen Cytochrom-P450-Enzyme und erhöhen dadurch den Spiegel anderer Medikamente, die über dasselbe Enzym abgebaut werden. Klinisch entscheidend ist <strong>CYP2D6</strong>, über das unter anderem Trizyklika, viele Antipsychotika, Betablocker und Tamoxifen verstoffwechselt werden.</p>
+<div class="tw"><table><thead><tr><th>Antidepressivum</th><th>Hemmstärke</th><th>Einordnung</th></tr></thead><tbody>
+<tr><td><strong>Paroxetin</strong></td><td>+++</td><td>stärkster CYP2D6-Hemmer</td></tr>
+<tr><td><strong>Fluoxetin</strong></td><td>++ / ++</td><td>CYP2D6 und ein weiteres Enzym; wirkt wegen langer Halbwertszeit noch Wochen nach</td></tr>
+<tr><td><strong>Bupropion</strong></td><td>++</td><td>CYP2D6</td></tr>
+<tr><td><strong>Duloxetin</strong></td><td>++</td><td>CYP2D6</td></tr>
+<tr><td>Venlafaxin</td><td>+ / (+)</td><td>gering</td></tr>
+<tr><td>Citalopram, Escitalopram</td><td>(+) / (+)</td><td>minimal</td></tr>
+<tr><td>Mirtazapin</td><td>(+) / (+)</td><td>minimal</td></tr>
+<tr><td>Agomelatin</td><td>–</td><td>keine relevante Hemmung</td></tr>
+</tbody></table></div>
+<div class="bx erg"><strong>Hinweis zur Quelle:</strong> Die Folie zeigt drei Spalten (CYP1A2, 2D6, 3A4). In der Textfassung ist die Spaltenzuordnung der Einträge nicht mehr eindeutig erkennbar; die Tabelle gibt deshalb die Hemmstärken an und ordnet nur die eindeutigen Fälle einem Enzym zu. Ergänzung: Fluvoxamin (nicht auf der Folie) ist ein starker CYP1A2-Hemmer.</div>
+<p><strong>Enzyminduktion</strong> ist der umgekehrte Fall: Johanniskraut beschleunigt den Abbau anderer Medikamente und schwächt deren Wirkung ab.</p>
+
+<h4>Kombinationen</h4>
+<div class="tw"><table><thead><tr><th>Sinnvoll</th><th>Cave</th></tr></thead><tbody>
+<tr><td>Antidepressivum + <strong>Benzodiazepin</strong> (zeitlich begrenzt, zur Überbrückung der Wirklatenz bei Angst, Unruhe, Suizidalität)</td><td><strong>SSRI + MAO-Hemmer</strong> → Serotoninsyndrom</td></tr>
+<tr><td>Antidepressivum + <strong>Antipsychotikum</strong> (wahnhafte Depression, Augmentation)</td><td><strong>Fluoxetin, Paroxetin, Fluvoxamin + TZA</strong> → TZA-Spiegel ↑</td></tr>
+<tr><td>Antidepressivum + <strong>Lithium</strong> (Augmentation, Rezidivprophylaxe)</td><td><strong>Antidepressiva + Alkohol</strong> → Sedierung ↑</td></tr>
+</tbody></table></div>
+
+<h4>Complianceprobleme</h4>
+<p>Die drei häufigsten Gründe für eigenmächtiges Absetzen: <strong>sexuelle Funktionsstörung · Gewichtszunahme · Müdigkeit</strong>.</p>
+
+<h4>Absetzsymptome</h4>
+<ul>
+<li>Schwindel</li>
+<li>Stromschlagempfindungen</li>
+<li>Konzentrations- und Gedächtnisstörungen</li>
+<li>Reizbarkeit</li>
+<li>Persistierende sexuelle Dysfunktion</li>
+</ul>
+<p>Deshalb immer <strong>ausschleichend absetzen</strong>. Absetzsymptome sind am stärksten bei Substanzen mit kurzer Halbwertszeit (Paroxetin, Venlafaxin) und am geringsten bei Fluoxetin.</p>
+<div class="tw"><table><thead><tr><th></th><th>Absetzsymptome</th><th>Rezidiv der Depression</th></tr></thead><tbody>
+<tr><td>Beginn</td><td>innerhalb von Tagen nach Dosisreduktion</td><td>meist erst nach Wochen</td></tr>
+<tr><td>Symptome</td><td>neuartig: Schwindel, Stromschläge, grippeartig</td><td>die bekannten depressiven Symptome</td></tr>
+<tr><td>Verlauf</td><td>klingen meist binnen Wochen ab</td><td>zunehmend</td></tr>
+<tr><td>Wiederansetzen</td><td>bessert binnen Stunden bis Tagen</td><td>bessert erst nach Wochen</td></tr>
+</tbody></table></div>
+<div class="bx praxis"><strong>Für die psychotherapeutische Praxis:</strong> Absetzsymptome sind kein Zeichen von Abhängigkeit im Sinne einer Sucht – es fehlen Craving, Dosissteigerung und Kontrollverlust. Patienten erleben sie trotzdem oft als „Entzug“ und fühlen sich getäuscht, wenn niemand sie vorbereitet hat. Frühzeitig besprechen, Absetzen gemeinsam mit der Ärztin planen und in eine stabile Lebensphase legen. Merkhilfe FINISH: <strong>F</strong>lu-like, <strong>I</strong>nsomnia, <strong>N</strong>ausea, <strong>I</strong>mbalance, <strong>S</strong>ensory disturbances, <strong>H</strong>yperarousal.</div>
+<div class="bx erg"><strong>Ergänzung:</strong> Vergleichstabelle Absetzsymptome/Rezidiv und FINISH-Merkhilfe sind Standardwissen aus dem bisherigen Plattform-Beitrag, nicht aus den Folien.</div>`,
+    karten:[
+     {q:"Beschreiben Sie die drei Symptomenkomplexe des Serotoninsyndroms.",a:"<strong>Verhalten/Bewusstsein:</strong> Agitiertheit, Verwirrtheit, Bewusstseinstrübung, Koma.<br><strong>Neuromuskulär:</strong> Reflexsteigerung, Tremor, Ataxie, Myoklonien.<br><strong>Autonom:</strong> Schüttelfrost, Fieber, Diarrhö."},
+     {q:"Welche Kombinationen mit Antidepressiva sind sinnvoll, welche gefährlich?",a:"<strong>Sinnvoll:</strong> + Benzodiazepin, + Antipsychotikum, + Lithium.<br><strong>Cave:</strong> SSRI + MAO-Hemmer (Serotoninsyndrom); Fluoxetin/Paroxetin/Fluvoxamin + TZA (TZA-Spiegel ↑); Antidepressiva + Alkohol (Sedierung)."},
+     {q:"Welche Antidepressiva sind starke CYP2D6-Hemmer?",a:"Paroxetin (+++), Fluoxetin (++), Bupropion (++), Duloxetin (++). Gering: Venlafaxin, Citalopram, Escitalopram, Mirtazapin."},
+     {q:"Nennen Sie typische Absetzsymptome von Antidepressiva.",a:"Schwindel, Stromschlagempfindungen, Konzentrations- und Gedächtnisstörungen, Reizbarkeit, persistierende sexuelle Dysfunktion. Konsequenz: ausschleichend absetzen."},
+     {q:"Ordnen Sie zu: anticholinerge Effekte, QT-Verlängerung, Blutungsneigung, Hyponatriämie – welche Antidepressiva?",a:"<strong>Anticholinerg:</strong> TZA.<br><strong>QT-Zeit:</strong> TZA, Escitalopram.<br><strong>Blutungsneigung, Hyponatriämie:</strong> SSRI, SSNRI.<br><strong>Serotonerge Effekte:</strong> SSRI, MAO-Hemmer, SSNRI."}
+    ]},
+
+   {id:"ad9",titel:"Behandlungspraxis",icon:"🩺",
+    lernziel:"Sie wenden die Auswahlkriterien und Behandlungsgrundsätze an und kennen die Besonderheiten in Schwangerschaft und höherem Lebensalter.",
+    inhalt:`
+<h4>Auswahl des Antidepressivums</h4>
+<p>Die Antidepressiva unterscheiden sich untereinander kaum in der Wirksamkeit, wohl aber im Nebenwirkungs- und Interaktionsprofil. Die Wahl richtet sich deshalb nach:</p>
+<ol>
+<li><strong>Früheres Ansprechen</strong> – was beim Patienten (oder bei Verwandten ersten Grades) schon einmal geholfen hat</li>
+<li><strong>Verträglichkeit</strong></li>
+<li><strong>Handhabbarkeit</strong></li>
+<li><strong>Sicherheit</strong> – vor allem Überdosierungssicherheit</li>
+<li><strong>Komorbidität und Komedikation</strong></li>
+<li><strong>Patientenpräferenz</strong></li>
+</ol>
+<div class="tw"><table><thead><tr><th>Situation</th><th>Naheliegende Wahl</th><th>Eher meiden</th></tr></thead><tbody>
+<tr><td>Schlafstörung, Appetitlosigkeit, Gewichtsverlust</td><td>Mirtazapin</td><td>aktivierende Substanzen am Abend</td></tr>
+<tr><td>Sexuelle Dysfunktion oder Gewichtszunahme unter Vorbehandlung</td><td>Bupropion</td><td>Paroxetin, Mirtazapin (Gewicht)</td></tr>
+<tr><td>Chronische Schmerzen</td><td>Amitriptylin, Duloxetin</td><td></td></tr>
+<tr><td>Zwangsstörung</td><td>SSRI, Clomipramin</td><td></td></tr>
+<tr><td>Kardiale Vorerkrankung</td><td>Sertralin, Mirtazapin</td><td>TZA</td></tr>
+<tr><td>Viele Begleitmedikamente</td><td>Sertralin, Citalopram, Escitalopram, Mirtazapin</td><td>Fluoxetin, Paroxetin, Fluvoxamin, Johanniskraut</td></tr>
+<tr><td>Suizidalität</td><td>Substanzen mit geringer Toxizität</td><td>TZA</td></tr>
+</tbody></table></div>
+<p class="src">Übersicht aus den Unterlagen abgeleitet und um Standardwissen ergänzt (kardiale Vorerkrankung, Begleitmedikation).</p>
+
+<h4>Grundsätze der Behandlung</h4>
+<ol>
+<li><strong>Mit niedrigster Dosierung beginnen</strong></li>
+<li><strong>TZA bei älteren Patienten halbieren</strong></li>
+<li><strong>Über Wirklatenz informieren</strong> – die antidepressive Wirkung setzt erst nach etwa zwei bis vier Wochen ein, Nebenwirkungen sofort</li>
+<li><strong>Beeinträchtigung der Fahrtauglichkeit beachten</strong> – besonders in der Einstellungsphase und bei sedierenden Substanzen</li>
+<li><strong>Suizidgedanken erfragen</strong></li>
+<li><strong>Erhaltungstherapie nach Remission 4 bis 9 Monate</strong></li>
+<li><strong>Rezidivprophylaxe mit Antidepressivum oder Lithium</strong></li>
+<li><strong>Ausschleichendes Absetzen</strong></li>
+</ol>
+<div class="bx merke"><strong>Prüfungsfrage der Vorlesung:</strong> Wie lange wird die Behandlung nach Abklingen einer <em>ersten</em> depressiven Episode fortgesetzt? → <strong>9 Monate</strong> (obere Grenze des Fensters 4–9 Monate).</div>
+<div class="bx erg"><strong>Ergänzung:</strong> Die aktuelle Nationale VersorgungsLeitlinie Unipolare Depression nennt für die Erhaltungstherapie 6–12 Monate nach Remission und für die Rezidivprophylaxe bei rezidivierendem Verlauf mindestens zwei Jahre. Für die Prüfung beim Dozenten gilt die Angabe der Folie.</div>
+
+<h4>Behandlungsverlauf und Wirkungsprüfung</h4>
+<ul>
+<li>Vor Beginn Zielsymptome und Überprüfungszeitpunkte festlegen</li>
+<li>Wirkungsprüfung nach <strong>drei bis vier Wochen</strong> in ausreichender Dosis; zeigt sich bis dahin keinerlei Besserung, ist ein späteres Ansprechen unwahrscheinlich → Strategie ändern (Modul Therapieresistenz)</li>
+<li>In den ersten Wochen engmaschige Kontakte: Nebenwirkungen, Adhärenz, Suizidalität</li>
+</ul>
+<div class="bx cave"><strong>Suizidalität zu Behandlungsbeginn:</strong> Der Antrieb bessert sich häufig vor der Stimmung. In dieser Phase – und besonders bei unter 25-Jährigen – kann das Suizidrisiko vorübergehend steigen. Deshalb: Suizidgedanken aktiv erfragen, kurze Wiedervorstellungsintervalle, kleine Packungsgrößen, keine toxischen Substanzen.</div>
+<div class="bx erg"><strong>Ergänzung:</strong> Die Folie „Behandlungsverlauf“ liegt nur als Grafik vor; Wirklatenz, Prüfzeitpunkt und der Hinweis auf junge Erwachsene sind Standardwissen.</div>
+<div class="bx merke"><strong>Fazit der Vorlesung:</strong> Depressionsbehandlung mit (1) einem klaren Konzept, (2) einem angemessenen Zeitrahmen und (3) systematischer Überprüfung der Wirksamkeit zu vorher festgelegten Zeitpunkten.</div>
+
+<h4>Antidepressiva in der Schwangerschaft</h4>
+<ul>
+<li>Eine <strong>niedrig dosierte Monotherapie fortsetzen</strong> – nicht abrupt absetzen</li>
+<li><strong>Alternativ Psychotherapie</strong></li>
+<li><strong>TZA erste Wahl</strong></li>
+<li><strong>SSRI relativ sicher</strong></li>
+</ul>
+<div class="bx erg"><strong>Ergänzung:</strong> Aktuelle Empfehlungen (z. B. Embryotox) nennen bei Neueinstellung vor allem Sertralin und Citalopram als gut untersuchte Mittel der Wahl. Paroxetin und Fluoxetin gelten als weniger günstig; Valproat ist bei Frauen im gebärfähigen Alter wegen Teratogenität zu vermeiden.</div>
+
+<h4>Antidepressiva im höheren Lebensalter</h4>
+<ul>
+<li><strong>Komorbide somatische Störungen beachten</strong> – und die Begleitmedikation</li>
+<li><strong>SSRI und Mirtazapin sind Mittel der Wahl</strong></li>
+<li><strong>TZA nicht zu empfehlen</strong> – anticholinerges Delir, Stürze, kardiale Risiken</li>
+</ul>
+<p>Unter SSRI im Alter an <strong>Hyponatriämie</strong> und <strong>Blutungsneigung</strong> denken. Kognitive Einbußen bei älteren depressiven Patienten können Ausdruck der Depression sein („Pseudodemenz“, Kasuistik 1) – ein anticholinerges Medikament würde das Bild verschlechtern.</p>
+
+<div class="bx praxis"><strong>Für die psychotherapeutische Praxis – woran Sie mitdenken:</strong><br>
+• Hat der Patient verstanden, dass die Wirkung erst nach Wochen kommt? Viele setzen nach zehn Tagen „wirkungslos“ ab.<br>
+• Wird nach Remission weiterbehandelt? Das häufigste Muster hinter einem Frührezidiv ist das zu frühe Absetzen (Kasuistiken 3 und 24).<br>
+• Fährt der Patient Auto, bedient er Maschinen?<br>
+• Besteht eine Schwangerschaft oder ein Kinderwunsch?<br>
+• Trinkt der Patient Alkohol, nimmt er frei verkäufliche Präparate?</div>`,
+    karten:[
+     {q:"Nach welchen sechs Kriterien wird ein Antidepressivum ausgewählt?",a:"Früheres Ansprechen · Verträglichkeit · Handhabbarkeit · Sicherheit · Komorbidität und Komedikation · Patientenpräferenz."},
+     {q:"Nennen Sie die acht Grundsätze der Antidepressiva-Behandlung.",a:"Niedrig beginnen · TZA im Alter halbieren · über Wirklatenz informieren · Fahrtauglichkeit beachten · Suizidgedanken erfragen · Erhaltungstherapie 4–9 Monate · Rezidivprophylaxe mit Antidepressivum oder Lithium · ausschleichend absetzen."},
+     {q:"Wie lange wird ein Antidepressivum nach Abklingen einer ersten depressiven Episode weitergegeben?",a:"Erhaltungstherapie <strong>4 bis 9 Monate</strong> nach Remission – Antwort in der Vorlesung: <strong>9 Monate</strong>. (Aktuelle NVL: 6–12 Monate.)"},
+     {q:"Was gilt für Antidepressiva in der Schwangerschaft und im höheren Lebensalter?",a:"<strong>Schwangerschaft:</strong> niedrig dosierte Monotherapie fortsetzen, alternativ Psychotherapie; laut Vorlesung TZA erste Wahl, SSRI relativ sicher.<br><strong>Alter:</strong> SSRI und Mirtazapin Mittel der Wahl, TZA nicht zu empfehlen, somatische Komorbidität beachten."}
+    ]},
+
+   {id:"ad10",titel:"Therapieresistenz",icon:"🔁",
+    lernziel:"Sie prüfen eine Pseudoresistenz, kennen die Optionen bei Nichtansprechen mit ihren Empfehlungsgraden und die nichtmedikamentösen Verfahren.",
+    inhalt:`
+<h4>Therapieresistenz ist häufig</h4>
+<p>In der STAR*D-Studie (Rush 2005) blieb nach dem ersten Behandlungsversuch über acht Wochen die Mehrheit der Patienten ohne Remission; mit jedem weiteren Versuch sinkt die Chance auf Remission.</p>
+<div class="bx erg"><strong>Ergänzung:</strong> Die Zahlen der Folie liegen nur als Grafik vor. Größenordnung aus STAR*D: Remission nach dem ersten Schritt bei etwa einem Drittel, nach vier Schritten kumulativ bei etwa zwei Dritteln.</div>
+
+<h4>Schritt 1: Pseudoresistenz prüfen</h4>
+<ol>
+<li><strong>Inadäquat durchgeführte Behandlung</strong> – zu niedrige Dosis, zu kurze Dauer</li>
+<li><strong>Non-Compliance</strong> – Plasmaspiegel bestimmen</li>
+<li><strong>Zu großer sekundärer Krankheitsgewinn</strong></li>
+<li><strong>Unerkannte somatische Komorbidität</strong> – z. B. Hypothyreose, Schlafapnoe, Anämie</li>
+<li><strong>Unerkannte psychiatrische Komorbidität</strong> – z. B. Sucht, Persönlichkeitsstörung, bipolare Störung, PTBS</li>
+</ol>
+<div class="bx praxis"><strong>Für die psychotherapeutische Praxis:</strong> Die Punkte 2 bis 5 fallen oft zuerst in der Psychotherapie auf – eine nicht eingenommene Medikation, Alkoholkonsum, ein Rentenbegehren, eine bislang verschwiegene Traumatisierung, hypomane Phasen in der Vorgeschichte. Diese Information gehört (mit Einverständnis) an die Verordnerin.</div>
+
+<h4>Schritt 2: Optionen bei echter Therapieresistenz</h4>
+<div class="tw"><table><thead><tr><th>Option</th><th>Grad</th><th>Details</th></tr></thead><tbody>
+<tr><td><strong>Kombination mit Psychotherapie</strong></td><td><strong>A</strong></td><td>stärkste Empfehlung neben der EKT</td></tr>
+<tr><td><strong>Augmentation</strong></td><td><strong>B</strong></td><td>Lithium oder atypisches Antipsychotikum zusätzlich zum Antidepressivum</td></tr>
+<tr><td>Kombination mit anderem Antidepressivum</td><td>0</td><td>SSRI, SSNRI oder TZA <strong>plus Mirtazapin oder Trazodon</strong></td></tr>
+<tr><td>Wechsel des Antidepressivums</td><td>0</td><td><strong>bei Non-Response nicht erste Wahl</strong> (B)</td></tr>
+<tr><td>Dosiserhöhung</td><td>–</td><td>sinnvoll bei <strong>TZA, Venlafaxin, Duloxetin</strong> (Adli et al. 2005)</td></tr>
+<tr><td>S-Ketamin</td><td>0</td><td>Esketamin-Nasenspray (Spravato®)</td></tr>
+<tr><td>Tranylcypromin</td><td>–</td><td>irreversibler MAO-Hemmer als Reserve</td></tr>
+<tr><td><strong>Elektrokonvulsionstherapie (EKT)</strong></td><td><strong>A</strong></td><td>50–60 % Response</td></tr>
+<tr><td>Repetitive transkranielle Magnetstimulation (rTMS)</td><td>0</td><td></td></tr>
+</tbody></table></div>
+<div class="bx merke"><strong>Merke:</strong> Der intuitive Reflex – „wirkt nicht, also wechseln“ – ist gerade <em>nicht</em> die bevorzugte Strategie. Besser belegt sind Psychotherapie dazu (A), Augmentation (B) und EKT (A).</div>
+<div class="bx erg"><strong>Ergänzung:</strong> Bei SSRI bringt eine Dosiserhöhung über die Standarddosis hinaus in der Regel keinen Zusatznutzen (flache Dosis-Wirkungs-Kurve). Der „Behandlungsalgorithmus“ der Vorlesung liegt nur als Grafik vor.</div>
+
+<h4>Augmentation mit Lithium</h4>
+<p>Lithium wird zum bestehenden Antidepressivum hinzugegeben. Die Wirkung zeigt sich meist innerhalb von zwei bis vier Wochen bei ausreichendem Spiegel; bei Ansprechen wird die Kombination fortgeführt. Zusatznutzen: Lithium wirkt suizidpräventiv. Zu beachten ist die geringe therapeutische Breite (Modul Stimmungsstabilisierer) und die Vorsicht bei Kombination mit SSRI (serotonerge Effekte).</p>
+
+<h4>Augmentation mit Antipsychotika</h4>
+<p>Atypische Antipsychotika in niedriger Dosis zusätzlich zum Antidepressivum (Metaanalyse Nelson und Papakostas 2009): wirksam, aber um den Preis von Nebenwirkungen wie Gewichtszunahme, Sedierung und Akathisie. Substanzen: vor allem Quetiapin und Aripiprazol.</p>
+
+<h4>S-Ketamin (Esketamin)</h4>
+<p>Nasenspray (Spravato®) bei therapieresistenter Depression, zusätzlich zu einem oralen Antidepressivum. Anwendung nur unter medizinischer Aufsicht mit Nachbeobachtung. Wirkprinzip: NMDA-Rezeptor-Antagonismus mit raschem Wirkungseintritt innerhalb von Stunden bis Tagen. Nebenwirkungen: Dissoziation, Schwindel, Blutdruckanstieg; Missbrauchspotenzial.</p>
+<div class="bx erg"><strong>Ergänzung:</strong> Folien zu Lithium-Augmentation und S-Ketamin liegen nur als Grafik vor (Quelle S-Ketamin: Fachinformation Spravato®, Dezember 2022); die Texte geben Standardwissen wieder.</div>
+
+<h4>Tranylcypromin bei Therapieresistenz</h4>
+<p>Studie Adli et al. 2008: 32 Patienten mit durchschnittlich <strong>3,3 vorangehenden Therapieversuchen</strong>, behandelt über durchschnittlich <strong>6,5 Wochen</strong> mit im Mittel <strong>52 mg</strong> Tranylcypromin – ein relevanter Teil sprach noch an. Voraussetzung: tyraminarme Diät und Auswaschphase nach serotonergen Vormedikamenten.</p>
+
+<h4>Elektrokonvulsionstherapie</h4>
+<ul>
+<li><strong>50–60 % Response</strong> – auch bei Patienten, die auf Medikamente nicht angesprochen haben</li>
+<li><strong>Bilateral wirksamer als unilateral</strong> (aber mehr kognitive Nebenwirkungen)</li>
+<li><strong>UAW:</strong> vorübergehende mnestische Störungen, Anästhesierisiko</li>
+<li>Besonders indiziert bei wahnhafter Depression, depressivem Stupor, akuter Suizidalität, Nahrungsverweigerung und im höheren Lebensalter</li>
+</ul>
+
+<h4>Unterstützende Maßnahmen</h4>
+<div class="tw"><table><thead><tr><th>Maßnahme</th><th>Grad</th><th>Details</th></tr></thead><tbody>
+<tr><td><strong>Sport und Bewegung</strong></td><td>A</td><td>Aerobes Training bei 80 % der maximalen Herzfrequenz, <strong>3×/Woche 45–60 min</strong>: Walking, Nordic Walking, Radfahren, Schwimmen</td></tr>
+<tr><td><strong>Lichttherapie</strong></td><td>A</td><td>bei <strong>saisonal abhängiger Depression</strong>; initial <strong>10 000 Lux täglich</strong>; cave photosensibilisierende Pharmaka (z. B. Johanniskraut)</td></tr>
+<tr><td><strong>Selbsthilfeangebote</strong></td><td>A</td><td></td></tr>
+<tr><td><strong>Wachtherapie</strong></td><td>B</td><td><strong>prompte Besserung bei 40–60 %</strong>, aber der Effekt hält <strong>maximal 2 Tage</strong></td></tr>
+<tr><td><strong>Ergotherapie</strong></td><td>B</td><td></td></tr>
+</tbody></table></div>
+
+<h4>Neue Ansätze</h4>
+<p>Zuranolon · Dextromethorphan · Buprenorphin · Psilocybin.</p>
+<div class="bx erg"><strong>Ergänzung:</strong> Zuranolon ist ein Neurosteroid (GABA<sub>A</sub>-Modulator, postpartale Depression), Dextromethorphan wirkt in Kombination mit Bupropion als NMDA-Antagonist, Psilocybin wird in Studien mit psychotherapeutischer Begleitung geprüft.</div>`,
+    karten:[
+     {q:"Welche fünf Ursachen einer Pseudoresistenz sind vor der Diagnose „therapieresistent“ zu prüfen?",a:"Inadäquat durchgeführte Behandlung · Non-Compliance · zu großer sekundärer Krankheitsgewinn · unerkannte somatische Komorbidität · unerkannte psychiatrische Komorbidität."},
+     {q:"Nennen Sie die Optionen bei Therapieresistenz mit Empfehlungsgrad.",a:"<strong>A:</strong> Kombination mit Psychotherapie, EKT.<br><strong>B:</strong> Augmentation (Lithium, Antipsychotikum).<br><strong>0:</strong> Wechsel des Antidepressivums, Kombination zweier Antidepressiva, S-Ketamin, rTMS.<br>Außerdem Tranylcypromin. Wechsel bei Non-Response ist nicht erste Wahl."},
+     {q:"Für welche Antidepressiva ist eine Dosiserhöhung bei Nichtansprechen sinnvoll?",a:"TZA, Venlafaxin, Duloxetin (Adli et al. 2005). Bei SSRI in der Regel nicht."},
+     {q:"Was wissen Sie zur Elektrokonvulsionstherapie?",a:"50–60 % Response; bilateral &gt; unilateral; UAW: vorübergehende mnestische Störungen, Anästhesierisiko. Empfehlungsgrad A bei Therapieresistenz."},
+     {q:"Wachtherapie, Lichttherapie, Sport: Kennzahlen?",a:"<strong>Wachtherapie:</strong> prompte Besserung bei 40–60 %, hält maximal 2 Tage (B).<br><strong>Lichttherapie:</strong> saisonale Depression, 10 000 Lux täglich (A).<br><strong>Sport:</strong> aerob, 80 % max. Herzfrequenz, 3×/Woche 45–60 min (A)."}
+    ]},
+
+   {id:"ad11",titel:"Lithium & Stimmungsstabilisierer",icon:"⚖️",
+    lernziel:"Sie kennen Indikationen, Risiken und Kontrollen der Stimmungsstabilisierer und erkennen eine Lithiumintoxikation.",
+    inhalt:`
+<p>Stimmungsstabilisierer gehören in diesen Kurs, weil sie an drei Stellen mit der Depressionsbehandlung verzahnt sind: <strong>Augmentation</strong> bei therapieresistenter Depression, <strong>Rezidivprophylaxe</strong> und die Behandlung der <strong>bipolaren Depression</strong>, bei der Antidepressiva allein riskant sind. Vertiefung in der Lektion „Stimmungsstabilisierer &amp; Antikonvulsiva“.</p>
+
+<h4>Substanzen und Indikationen</h4>
+<p><strong>Substanzen:</strong> Lithium · Valproat · Carbamazepin · Lamotrigin · atypische Antipsychotika (Aripiprazol, Olanzapin, Risperidon, Quetiapin).</p>
+<p><strong>Indikationen:</strong> manische Episode · Phasenprophylaxe affektiver Störungen · Augmentation bei therapieresistenter Depression.</p>
+
+<h4>Bipolare affektive Störung</h4>
+<ul>
+<li>Lebenszeitprävalenz <strong>1 %</strong></li>
+<li>Frauen und Männer <strong>gleich häufig</strong> betroffen (anders als bei unipolarer Depression)</li>
+<li>Erkrankungsbeginn <strong>früher</strong> und Verlauf <strong>schwerer</strong> als bei unipolarer depressiver Störung</li>
+</ul>
+<p><strong>Manische Episode</strong> – Hauptsymptom: gehobene, expansive oder reizbare Stimmung. Zusatzsymptome: gesteigertes Selbstwertgefühl · vermindertes Schlafbedürfnis · Rededrang · Ideenflucht, Gedankenjagen · Ablenkbarkeit · gesteigerte Aktivität, exzessive Beschäftigung mit angenehmen Aktivitäten.<br><strong>Psychotische Symptome:</strong> Größenwahn, akustische Halluzinationen, Zerfahrenheit.</p>
+
+<h4>Akuttherapie der Manie</h4>
+<p>Alle mit Empfehlungsgrad <strong>B</strong>: Lithium · Valproat · Olanzapin · Quetiapin · Aripiprazol · Asenapin · Risperidon · Ziprasidon.</p>
+
+<h4>Phasenprophylaxe</h4>
+<p><strong>Indikation (laut Vorlesung):</strong> mehr als 3 Phasen insgesamt · mehr als 2 Phasen innerhalb von 4 Jahren · Rapid Cycling (mehr als 4 Phasen pro Jahr).</p>
+<div class="tw"><table><thead><tr><th>Substanz</th><th>Empfehlungsgrad zur Erhaltungstherapie und Phasenprophylaxe bipolarer Störungen</th></tr></thead><tbody>
+<tr><td><strong>Lithium</strong></td><td><strong>A</strong></td></tr>
+<tr><td>Lamotrigin</td><td>B</td></tr>
+<tr><td>Quetiapin</td><td>B</td></tr>
+<tr><td>Valproinsäure, Carbamazepin</td><td>0</td></tr>
+<tr><td>Olanzapin, Aripiprazol, Risperidon</td><td>0</td></tr>
+</tbody></table></div>
+<p><strong>Phasenkalender:</strong> Der Verlauf wird auf einer Zeitachse eingetragen – Ausschläge nach oben (Manie) und unten (Depression), jeweils in drei Stufen: 1 = Einschränkung der Leistungsfähigkeit, 2 = deutliche Beeinträchtigung (z. B. Arbeitsunfähigkeit), 3 = stationäre Behandlung. Darunter die Medikation. So wird sichtbar, welche Medikamente Phasen verhindert oder ausgelöst haben (Kasuistik 11).</p>
+
+<h4>Lithiumsalze</h4>
+<ul>
+<li>Antimanisch und stimmungsstabilisierend</li>
+<li><strong>Geringe therapeutische Breite</strong> – cave Elektrolytverluste (Durchfall, Erbrechen, Schwitzen, Diuretika, salzarme Kost)</li>
+<li><strong>UAW:</strong> Tremor, Gewichtszunahme, Polyurie, kognitive Störungen</li>
+<li><strong>Cave Kombination mit SSRI</strong> (serotonerge Effekte)</li>
+</ul>
+<div class="bx cave"><strong>Lithiumintoxikation – Symptome:</strong> Übelkeit, Erbrechen, Diarrhö · <strong>grobschlägiger</strong> Tremor · Rigor · Dysarthrie · Ataxie · Krampfanfälle · Koma.<br>Der feinschlägige Tremor ist eine gewöhnliche Nebenwirkung, der grobschlägige ein Warnzeichen. Bei Verdacht: Lithium pausieren, sofortige ärztliche Vorstellung, Spiegelbestimmung.</div>
+<p><strong>Untersuchungen bei Lithiumtherapie:</strong> Schwangerschaftstest · Blutdruck und Puls · Blutbild · EKG · Nierenwerte · Elektrolyte im Serum · Schilddrüsenwerte · Körpergewicht und Halsumfang (Struma) · Plasmakonzentration.</p>
+<div class="bx erg"><strong>Ergänzung:</strong> Typische Auslöser eines Spiegelanstiegs sind Medikamente, die die renale Lithiumausscheidung senken – ACE-Hemmer, Sartane, Thiazid-Diuretika, NSAR (Kasuistik 9).</div>
+
+<h4>Weitere Stimmungsstabilisierer</h4>
+<div class="tw"><table><thead><tr><th>Substanz</th><th>Einsatz</th><th>Risiken</th></tr></thead><tbody>
+<tr><td><strong>Valproinsäure</strong> (Ergenyl®, Orfiril®)</td><td>antimanisch, Rezidivprophylaxe manischer Episoden</td><td>Leberfunktionsstörungen · <strong>teratogen</strong> · Thrombozytopenie, Leukozytopenie · cave Kombination mit Antikoagulanzien</td></tr>
+<tr><td><strong>Lamotrigin</strong> (Lamictal®)</td><td>Rezidivprophylaxe <strong>depressiver</strong> Episoden bei Bipolarstörung</td><td><strong>einschleichende Dosierung über Wochen</strong> · cave allergische Hautreaktionen</td></tr>
+<tr><td><strong>Carbamazepin</strong> (Timonil®, Tegretal®)</td><td>Rezidivprophylaxe bei Bipolarstörung, wenn Lithium nicht möglich; antimanisch (dafür nicht zugelassen)</td><td>allergische Hautreaktionen · Leukopenie · Leberfunktionsstörungen</td></tr>
+</tbody></table></div>
+
+<h4>Antidepressiva bei bipolarer Störung</h4>
+<div class="bx cave"><strong>Switch-Risiko:</strong> Antidepressiva können bei bipolaren Patienten eine Manie auslösen oder den Phasenwechsel beschleunigen – am stärksten Trizyklika und Venlafaxin. Deshalb: vor jeder Antidepressiva-Verordnung nach früheren hypomanen oder manischen Phasen fragen; bei bipolarer Depression Antidepressiva allenfalls zusammen mit einem Stimmungsstabilisierer, bevorzugt SSRI, und nach Remission wieder absetzen.</div>
+<div class="bx erg"><strong>Ergänzung:</strong> Das Switch-Risiko wird in den Folien nicht ausformuliert, ist aber der Kern von Kasuistik 11 und Standardwissen.</div>`,
+    karten:[
+     {q:"Nennen Sie die Symptome der Lithiumintoxikation.",a:"Übelkeit, Erbrechen, Diarrhö · grobschlägiger Tremor · Rigor · Dysarthrie · Ataxie · Krampfanfälle · Koma. Ursache oft Elektrolytverlust oder interagierende Medikamente (geringe therapeutische Breite)."},
+     {q:"Welche Untersuchungen gehören zur Lithiumtherapie?",a:"Schwangerschaftstest, Blutdruck/Puls, Blutbild, EKG, Nierenwerte, Elektrolyte, Schilddrüsenwerte, Körpergewicht und Halsumfang, Plasmakonzentration."},
+     {q:"Welche Empfehlungsgrade haben die Substanzen zur Phasenprophylaxe bipolarer Störungen?",a:"<strong>Lithium A.</strong> Lamotrigin B, Quetiapin B. Valproinsäure, Carbamazepin, Olanzapin, Aripiprazol, Risperidon 0."},
+     {q:"Wann ist eine Phasenprophylaxe affektiver Störungen indiziert (laut Vorlesung)?",a:"Mehr als 3 Phasen insgesamt, mehr als 2 Phasen innerhalb von 4 Jahren, Rapid Cycling (&gt; 4 Phasen/Jahr)."},
+     {q:"Nennen Sie je das wichtigste Risiko von Valproinsäure, Lamotrigin und Carbamazepin.",a:"<strong>Valproinsäure:</strong> teratogen, Leberfunktionsstörung, Thrombozytopenie.<br><strong>Lamotrigin:</strong> allergische Hautreaktionen – einschleichen über Wochen.<br><strong>Carbamazepin:</strong> allergische Hautreaktionen, Leukopenie, Leberfunktionsstörungen."},
+     {q:"Wodurch unterscheidet sich die bipolare von der unipolaren affektiven Störung epidemiologisch?",a:"Lebenszeitprävalenz 1 %; Frauen und Männer gleich häufig; früherer Beginn, schwererer Verlauf."}
+    ]},
+
+   {id:"ad12",titel:"Kasuistiken",icon:"📂",
+    lernziel:"Sie übertragen das Kurswissen auf die Fälle des Handouts: Diagnose, Risiken, Medikamentenwahl und Behandlungsfehler.",
+    inhalt:`
+<div class="bx erg"><strong>Zur Einordnung:</strong> Das Handout enthält die Fallvignetten ohne Musterlösung. Die Lösungshinweise sind aus den Vorlesungsfolien und dem Addendum abgeleitet und als Vorschlag zu verstehen – die Besprechung im Seminar hat Vorrang. Erst selbst überlegen, dann aufklappen.</div>
+
+<h4>Depression: Diagnostik und Ersteinstellung</h4>
+
+<details><summary>Kasuistik 1 – 68-Jährige mit Depression und Gedächtnisstörungen</summary><div>
+<p><strong>Fall:</strong> Seit dem Tod des Ehemannes vor zwei Jahren traurig-depressiv, Schlaf- und Appetitstörungen, lustlos. Angehörige berichten Gedächtnisstörungen, die zeitgleich begannen; leichte Desorientiertheit in fremder Umgebung. Haushalt selbstständig und ohne Qualitätsverlust. Befund: depressives Syndrom, wach, voll orientiert, keine Suizidalität.</p>
+<p><strong>Leitfragen:</strong> Depression oder beginnende Demenz? Welches Antidepressivum?</p>
+<p><strong>Lösungshinweise:</strong></p>
+<ul>
+<li>Für eine <strong>depressive „Pseudodemenz“</strong> sprechen: zeitgleicher Beginn mit der Depression, erhaltene Alltagskompetenz, volle Orientierung im Befund. Eine beginnende Demenz ist damit nicht ausgeschlossen → Basisdiagnostik (Labor, Bildgebung, kognitive Testung) und Verlaufskontrolle der Kognition nach Remission.</li>
+<li>Auch an eine anhaltende Trauerreaktion denken.</li>
+<li>Medikament: im höheren Lebensalter <strong>SSRI oder Mirtazapin</strong> (Schlaf, Appetit). <strong>Keine TZA</strong> – kognitive Störungen sind eine Kontraindikation, anticholinerge Wirkung verschlechtert das Gedächtnis.</li>
+<li>Unter SSRI Natrium kontrollieren.</li>
+</ul></div></details>
+
+<details><summary>Kasuistik 2 – 46-Jähriger mit Kopf- und Rückenschmerzen</summary><div>
+<p><strong>Fall:</strong> Seit vier Wochen dumpfer Dauerkopfschmerz, verstärkte Rückenschmerzen, Rückzug von Schach, Ausflügen, Haushalt; seit drei Tagen arbeitsunfähig. Körperlich ohne Befund. Erst auf Nachfrage: kraftlos, Interessenverlust, Freudlosigkeit, 2,5 kg Gewichtsverlust, Einschlafstörung und Früherwachen um 4–5 Uhr. Übermäßige Sorge um Arbeitsplatz und Finanzen. Großvater aus ungeklärter Ursache verstorben.</p>
+<p><strong>Leitfragen:</strong> Warum wird diese Depression leicht übersehen? Was muss noch erfragt werden? Welche Behandlung?</p>
+<p><strong>Lösungshinweise:</strong></p>
+<ul>
+<li><strong>Somatisch präsentierte („larvierte“) depressive Episode</strong> – der Patient klagt Schmerzen, die Kernsymptome kommen erst auf gezieltes Fragen. Mindestens mittelgradig, mit somatischem Syndrom (Früherwachen, Gewichtsverlust, Interessenverlust, Anhedonie).</li>
+<li><strong>Suizidalität aktiv erfragen.</strong> Der ungeklärte Tod des Großvaters kann ein Suizid gewesen sein – familiäre Belastung.</li>
+<li>Die Sorgen um die finanzielle Zukunft sind noch nachvollziehbar, aber auf Verarmungsideen achten.</li>
+<li>Behandlung: Aufklärung über das Krankheitsbild, Psychotherapie und/oder Antidepressivum. Bei Schmerzkomponente bieten sich <strong>Duloxetin</strong> oder (abendlich, schlaffördernd) <strong>Amitriptylin</strong> an – Amitriptylin erst nach EKG und nur ohne Suizidalität.</li>
+<li>Über Wirklatenz und Fahrtauglichkeit informieren, Wiedervorstellung in kurzen Abständen.</li>
+</ul></div></details>
+
+<details><summary>Kasuistik 3 – Die übernommene Patientenakte: Was lief falsch?</summary><div>
+<p><strong>Fall:</strong> 4/2002 mittelschwere Depression, Fluoxetin 10 mg, Wiedervorstellung in drei Monaten. 7/2002 keine Besserung, 16 Stunden täglich im Bett, Todeswünsche → Amitriptylin 2 × 25 mg, Empfehlung einer Beratungsstelle, Wiedervorstellung in acht Wochen. 2/2003 nach stationärem Aufenthalt wegen <strong>Suizidversuch mit Antidepressiva</strong>: Citalopram 40 mg, Mirtazapin 30 mg, Risperidon 3 mg. 5/2003 arbeitet wieder; Risperidon und Mirtazapin abgesetzt. 5/2004 schweres Rezidiv, Citalopram ein halbes Jahr zuvor selbst abgesetzt; erneut Citalopram 40 mg, Wiedervorstellung in acht Wochen. 8/2004 unverändert, Todeswünsche, hoffnungslos → Einweisung in psychosomatische Klinik mit drei Wochen Wartezeit. Diagnose durchgehend „dito“.</p>
+<p><strong>Leitfrage:</strong> Welche Behandlungsfehler finden Sie?</p>
+<p><strong>Lösungshinweise:</strong></p>
+<ol>
+<li><strong>Unterdosierung:</strong> Fluoxetin 10 mg (Bereich 20–60 mg), Amitriptylin 50 mg (Bereich 75–300 mg). Beides „inadäquat durchgeführte Behandlung“ = Pseudoresistenz.</li>
+<li><strong>Viel zu lange Kontrollintervalle:</strong> drei Monate bzw. acht Wochen statt Wirkungsprüfung nach drei bis vier Wochen und engmaschiger Kontakte zu Beginn.</li>
+<li><strong>Suizidalität nicht systematisch erhoben</strong> und Todeswünsche ohne Konsequenz dokumentiert.</li>
+<li><strong>Toxisches Trizyklikum</strong> (Toxizität +++) für einen Patienten mit Todeswünschen – er unternimmt einen Suizidversuch mit Antidepressiva.</li>
+<li><strong>Interaktion:</strong> Amitriptylin direkt nach Fluoxetin – Fluoxetin hemmt wochenlang CYP2D6 und erhöht den TZA-Spiegel.</li>
+<li><strong>Diagnose nie angepasst:</strong> Bei 16 Stunden Bettlägerigkeit und Todeswünschen lag eine schwere Episode vor, ab 2004 eine rezidivierende depressive Störung.</li>
+<li><strong>Kein strukturiertes Vorgehen bei Nichtansprechen:</strong> kein Plasmaspiegel, keine Augmentation (Lithium wäre auch suizidpräventiv), keine Psychotherapie – nur der Verweis auf eine Beratungsstelle.</li>
+<li><strong>Erhaltungstherapie und Rezidivprophylaxe nicht besprochen:</strong> Der Patient setzt selbst ab und erleidet ein Rezidiv; die wirksame Kombination wird früh reduziert.</li>
+<li><strong>2004 dieselbe Strategie</strong> wie zuvor, obwohl der Patient Citalopram als unwirksam erlebt hatte.</li>
+<li><strong>Akute Gefährdung falsch versorgt:</strong> Hoffnungslosigkeit und Todeswünsche nach früherem Suizidversuch erfordern eine sofortige psychiatrische Vorstellung, keine Warteliste.</li>
+</ol>
+<p>Gegenbild: das Fazit der Vorlesung – klares Konzept, angemessener Zeitrahmen, systematische Überprüfung.</p></div></details>
+
+<details><summary>Kasuistik 24 – 52-Jährige, vierte depressive Episode</summary><div>
+<p><strong>Fall:</strong> Rezidivierende Depression seit zehn Jahren, jetzt vierte Episode seit vier Wochen ohne äußeren Anlass. Citalopram wirkte früher nicht, Venlafaxin 225 mg half bei den letzten Episoden gut; vor sechs Monaten abgesetzt.</p>
+<p><strong>Lösungshinweise:</strong></p>
+<ul>
+<li>Auswahlkriterium Nr. 1 – <strong>früheres Ansprechen:</strong> wieder Venlafaxin, aufdosieren bis zur früher wirksamen Dosis (Bereich 75–225 mg). Kein erneuter Versuch mit Citalopram.</li>
+<li>Blutdruck kontrollieren; Blutungsrisiko prüfen.</li>
+<li>Vier Episoden in zehn Jahren, Rezidiv nach dem Absetzen → <strong>langfristige Rezidivprophylaxe</strong> mit der wirksamen Substanz in der wirksamen Dosis; Psychotherapie mit Schwerpunkt Rückfallprävention (Frühwarnzeichen, Krisenplan).</li>
+<li>Absetzgründe erfragen (Nebenwirkungen? Wunsch nach Unabhängigkeit?) – das bestimmt die künftige Adhärenz.</li>
+</ul></div></details>
+
+<details><summary>Kasuistik 25 – 62-Jähriger nach Herzinfarkt</summary><div>
+<p><strong>Fall:</strong> Stationär in der Kardiologie nach Hinterwandinfarkt, internistisch komplikationslos. Niedergeschlagen, schleppende Mobilisierung, Schlaf- und Konzentrationsstörungen, Antriebsminderung, Freudlosigkeit, Grübeln, Zukunftsangst, intermittierend passiver Todeswunsch ohne Suizidgedanken. Vor acht Jahren nach dem Infarkttod des Vaters ein halbes Jahr in ähnlichem Zustand.</p>
+<p><strong>Lösungshinweise:</strong></p>
+<ul>
+<li>Depressive Episode bei <strong>rezidivierender depressiver Störung</strong>. Depression nach Infarkt ist häufig und verschlechtert die kardiale Prognose (weniger Bewegung, schlechtere Adhärenz) – behandeln, nicht als „verständliche Reaktion“ abtun.</li>
+<li><strong>TZA kontraindiziert</strong> (kardiale Erregungsleitung, QT-Zeit, Hypotonie).</li>
+<li>Geeignet: <strong>SSRI, vor allem Sertralin</strong>; alternativ Mirtazapin. Bei Escitalopram/Citalopram QT-Zeit beachten.</li>
+<li>Der Patient erhält nach Infarkt Thrombozytenaggregationshemmer → SSRI erhöhen die <strong>Blutungsneigung</strong>; Magenschutz erwägen.</li>
+<li>Psychotherapeutisch: Krankheitsverarbeitung, Identifikation mit dem verstorbenen Vater, Aktivierung; Weiterbehandlung in der Anschlussheilbehandlung sicherstellen.</li>
+</ul></div></details>
+
+<h4>Suizidalität</h4>
+
+<details><summary>Kasuistik 4 – 18-jährige Abiturientin nach Trennung</summary><div>
+<p><strong>Fall:</strong> Vor zwei Wochen Trennung durch den ersten Freund. Zunächst wie betäubt, dann gedankliche Einengung, Interessenverlust, sozialer Rückzug, Weinen; Schlaf gut, Konzentration bei Ablenkung erhalten, Heißhungerattacken. Seit einer Woche Suizidgedanken: Schmerzmittel in mehreren Apotheken gekauft, Herzmedikamente der Großmutter bereitgelegt, Abschiedsbrief geschrieben, Einnahme für heute Abend geplant. Hat sich bei der Freundin verabschiedet und „im tiefsten Inneren“ gehofft, dass diese etwas unternimmt. Keine Vorgeschichte.</p>
+<p><strong>Leitfragen:</strong> Diagnose? Wie akut ist die Suizidalität? Antidepressivum?</p>
+<p><strong>Lösungshinweise:</strong></p>
+<ul>
+<li>Diagnostisch am ehesten <strong>Anpassungsstörung</strong> (klarer Auslöser, zwei Wochen, kein Vollbild einer depressiven Episode: Schlaf und Konzentration erhalten).</li>
+<li><strong>Akute Suizidalität mit hohem Handlungsdruck:</strong> konkrete Methode, Mittel beschafft, Abschiedsbrief, Zeitpunkt festgelegt. Die Diagnose „nur Anpassungsstörung“ relativiert das nicht.</li>
+<li>Ressource: <strong>Ambivalenz</strong> – der Anruf bei der Freundin war ein Appell. Daran anknüpfen.</li>
+<li>Vorgehen: Krisenintervention, in der Regel <strong>stationäre Aufnahme</strong>; Medikamente sichern (auch die der Großmutter); Eltern einbeziehen; engmaschige Kontakte.</li>
+<li><strong>Antidepressivum nicht vorrangig:</strong> Wirklatenz von Wochen hilft in der Krise nicht, und bei jungen Erwachsenen können Suizidgedanken zu Behandlungsbeginn zunehmen. Zur akuten Entlastung allenfalls kurzfristig ein Benzodiazepin unter Aufsicht.</li>
+</ul></div></details>
+
+<details><summary>Kasuistik 5 – 43-jährige Filialleiterin im Nachtdienst</summary><div>
+<p><strong>Fall:</strong> Seit fünf Wochen Freud- und Interessenlosigkeit, Gefühl der Gefühllosigkeit, Wertlosigkeit, Konzentrations- und Gedächtnisstörungen, Antriebshemmung, Grübeln, Selbstvorwürfe, Ein- und Durchschlafstörungen, 4 kg Gewichtsverlust; seit zehn Tagen arbeitsunfähig. Beginn nach Übernahme einer Filialleitung vor drei Monaten. Vor drei Jahren ähnliche Phase, stationär mit Sertralin behandelt. Nie gehobene Stimmung. Seit einer Woche durchgehend Suizidgedanken, seit gestern fester Plan, von einer bestimmten Brücke zu springen.</p>
+<p><strong>Lösungshinweise:</strong></p>
+<ul>
+<li><strong>Rezidivierende depressive Störung, gegenwärtig schwere Episode ohne psychotische Symptome.</strong> Die Frage nach hypomanen/manischen Phasen wurde gestellt und verneint – wichtig vor jeder Antidepressiva-Gabe.</li>
+<li><strong>Akute Suizidalität mit konkretem Plan</strong> → stationäre Aufnahme, bei fehlender Absprachefähigkeit geschützt.</li>
+<li>Medikation: <strong>Sertralin</strong> (früheres Ansprechen), zur Überbrückung der Wirklatenz <strong>Benzodiazepin</strong> – eine der „sinnvollen Kombinationen“. Alternativ oder ergänzend Mirtazapin bei Schlafstörung und Gewichtsverlust.</li>
+<li>Schwere Episode → <strong>Kombination mit Psychotherapie</strong>. Thema: Überforderung in der neuen Rolle, Selbstwert.</li>
+<li>Nach Remission Erhaltungstherapie; zweite Episode in drei Jahren → Rezidivprophylaxe besprechen.</li>
+</ul></div></details>
+
+<h4>Wechselwirkungen</h4>
+
+<details><summary>Kasuistik 6 – Ungewollte Schwangerschaft trotz Pille</summary><div>
+<p><strong>Fall:</strong> 36-jährige Frau mit Depression, seit einem Jahr zuverlässige Einnahme eines kombinierten oralen Kontrazeptivums (Valette®). Etwa drei Monate vor der Konzeption Beginn einer Selbstmedikation mit frei verkäuflichem Johanniskrautextrakt (Helarium® 425), bis zu 1700 mg täglich. Ungeplante Schwangerschaft.</p>
+<p><strong>Lösungshinweise:</strong></p>
+<ul>
+<li><strong>Enzyminduktion durch Johanniskraut</strong> → beschleunigter Abbau der Hormone → Wirkungsverlust des Kontrazeptivums. Die Dosis lag zudem weit über den üblichen 900 mg.</li>
+<li>Gleicher Mechanismus: Ciclosporin (Transplantatverlust), Indinavir (HIV-Progression).</li>
+<li>Lehre: Selbstmedikation aktiv erfragen; „pflanzlich“ heißt nicht „wechselwirkungsfrei“; Frauen unter Johanniskraut brauchen zusätzliche Verhütung.</li>
+</ul></div></details>
+
+<details><summary>Kasuistik 7 – Plötzlicher Herztod unter Amitriptylin und Fluoxetin</summary><div>
+<p><strong>Fall:</strong> 36-jähriger Mann erhält wegen einer depressiven Störung Amitriptylin 150 mg und Fluoxetin 40 mg täglich. Sechs Wochen später wird er tot aufgefunden; wahrscheinlich plötzlicher Herztod, Umstände sprechen gegen Suizid.</p>
+<p><strong>Lösungshinweise:</strong></p>
+<ul>
+<li><strong>Pharmakokinetische Interaktion:</strong> Fluoxetin hemmt CYP2D6 → der Abbau von Amitriptylin ist blockiert → der TZA-Spiegel steigt in den toxischen Bereich, obwohl 150 mg eine übliche Dosis sind.</li>
+<li>Folge: Erregungsleitungsstörung, QT-Verlängerung, maligne Rhythmusstörung.</li>
+<li>Genau die Kombination, vor der die Vorlesung warnt: <strong>Fluoxetin, Paroxetin, Fluvoxamin + TZA → TZA-Spiegel ↑</strong>.</li>
+<li>Vermeidbar durch: andere Kombination (z. B. Mirtazapin statt TZA), niedrige TZA-Dosis, <strong>Plasmaspiegel</strong> und <strong>EKG-Kontrollen</strong>.</li>
+</ul></div></details>
+
+<details><summary>Kasuistik 8 – Stupor zwei Tage nach Augmentation</summary><div>
+<p><strong>Fall:</strong> 44-jähriger Patient mit schwerer depressiver Episode mit psychotischen Symptomen, mehrere erfolglose Vorbehandlungen. Escitalopram wird binnen weniger Tage auf 20 mg aufdosiert, gleichzeitig Augmentation mit Aripiprazol 15 mg. Zwei Tage später liegt er mit offenen Augen im Bett und reagiert weder auf Ansprache noch auf Schmerzreize. Grobschlägiges Zittern der Extremitäten, vermehrter Speichelfluss, unwillkürliche Muskelzuckungen (Kloni).</p>
+<p><strong>Lösungshinweise:</strong></p>
+<ul>
+<li>Der Befund passt zum <strong>Serotoninsyndrom</strong>: Bewusstseinsstörung plus neuromuskuläre Zeichen (Tremor, Kloni) kurz nach rascher Aufdosierung eines SSRI und Zugabe einer weiteren serotonerg wirksamen Substanz.</li>
+<li>Differenzialdiagnosen: <strong>malignes neuroleptisches Syndrom</strong> (Rigor, Fieber, CK-Anstieg; entwickelt sich meist langsamer), <strong>katatoner Stupor</strong> bei psychotischer Depression, akute extrapyramidale Störung, nichtkonvulsiver Status.</li>
+<li>Sofortmaßnahmen: beide Medikamente absetzen, Vitalzeichen und Temperatur, Labor (CK, Elektrolyte), internistische bzw. intensivmedizinische Überwachung, symptomatisch Benzodiazepine.</li>
+<li>Lehre: nicht zwei Dinge gleichzeitig verändern; langsam aufdosieren; Augmentation erst, wenn die Basismedikation stabil ist.</li>
+</ul></div></details>
+
+<details><summary>Kasuistik 9 – Erregungszustand unter Lithium und neuem Blutdruckmittel</summary><div>
+<p><strong>Fall:</strong> 58-jähriger Mann mit bekannter manisch-depressiver Erkrankung wird nachts von der Polizei gebracht: sehr erregt, laut, paranoid – so schlimm und so plötzlich wie nie zuvor, obwohl er seine Medikamente zuverlässig nimmt. Seit Monaten hoher Blutdruck; vor einer Woche neues Mittel vom Internisten, Name endet auf „-il“. Am Vortag Durchfall. Medikationsplan: Captopril + Hydrochlorothiazid 50 mg zur Nacht, Lithium retard 1–0–0–1,5, ASS 100.</p>
+<p><strong>Lösungshinweise:</strong></p>
+<ul>
+<li>Nicht vorschnell „manisches Rezidiv“ – an eine <strong>Lithiumintoxikation</strong> denken: ungewöhnlich abrupter Beginn trotz Adhärenz, Durchfall, neue Medikation.</li>
+<li><strong>ACE-Hemmer</strong> („-pril“) und <strong>Thiazid-Diuretikum</strong> senken die renale Lithiumausscheidung → Spiegel steigt. Der <strong>Durchfall</strong> ist zugleich Frühsymptom und – über den Elektrolytverlust – Verstärker.</li>
+<li>Geringe therapeutische Breite: Ein bisher gut eingestellter Spiegel kann binnen Tagen toxisch werden.</li>
+<li>Vorgehen: sofort Lithiumspiegel, Nierenwerte, Elektrolyte; Lithium pausieren; Flüssigkeits- und Elektrolytausgleich; bei hohem Spiegel oder schwerer Symptomatik Dialyse. Antihypertensivum umstellen.</li>
+<li>Niedrig dosiertes ASS ist für den Lithiumspiegel unproblematisch – anders als andere NSAR.</li>
+<li>Lehre: Jede neue Verordnung bei Lithiumpatienten muss mit dem Psychiater abgestimmt werden; Patienten und Angehörige kennen die Warnzeichen.</li>
+</ul></div></details>
+
+<h4>Wahnhafte Depression und Therapieresistenz</h4>
+
+<details><summary>Kasuistik 12 – 72-Jährige mit Verarmungs- und Versündigungswahn</summary><div>
+<p><strong>Fall:</strong> Seit drei Monaten zunehmend Schlafstörung, Rückzug, Starren, Freud- und Interessenverlust; übermäßige Sorge um Finanzen, Hadern mit Gott. Verarmungs- und Versündigungswahn, Früherwachen um 4 Uhr, Morgentief, 6 kg Gewichtsverlust. Lehnt Suizid aus Angst vor der Hölle ab. Fünf Wochen Citalopram 20 mg ohne Erfolg bei Plasmaspiegel im Zielbereich. Vorerkrankungen: Brusterkrankung vor zwölf Jahren, seit drei Jahren <strong>grüner Star</strong>. Die Tochter hat sie mit einem Vorwand zur Aufnahme bewegt. Stationär: Nortriptylin bis 100 mg (Spiegel ausreichend), Risperidon 2 × 1 mg, Lorazepam 2 × 0,5 mg, Citalopram abgesetzt. Nach vier Wochen keine Besserung, Wahn nimmt zu, Patientin wird suizidal und weglaufgefährdet → geschlossene Station.</p>
+<p><strong>Leitfragen:</strong> Was ist richtig an diesem Vorgehen, was problematisch? Wie geht es weiter?</p>
+<p><strong>Lösungshinweise:</strong></p>
+<ul>
+<li>Diagnose: <strong>schwere depressive Episode mit psychotischen Symptomen</strong> (synthymer Wahn), bei früherer Episode vor 15 Jahren rezidivierend. Kurzzeitgedächtnis intakt – keine Demenz.</li>
+<li><strong>Richtig:</strong> Plasmaspiegel bestimmt (Pseudoresistenz geprüft); Kombination Antidepressivum + Antipsychotikum bei wahnhafter Depression; Benzodiazepin zur Entlastung; Nortriptylin ist unter den TZA vergleichsweise wenig anticholinerg.</li>
+<li><strong>Problematisch:</strong> Trizyklikum bei einer 72-Jährigen („TZA nicht zu empfehlen“) und bei <strong>Glaukom</strong> – beim Engwinkelglaukom kontraindiziert, also zuvor augenärztlich klären. Der Wechsel des Antidepressivums ist bei Non-Response ohnehin nicht die erste Wahl.</li>
+<li><strong>Nächster Schritt: Elektrokonvulsionstherapie</strong> (Empfehlungsgrad A) – wahnhafte Depression, zwei erfolglose Versuche, höheres Lebensalter, zunehmende Suizidalität sind die klassische Konstellation.</li>
+<li>Ethik: Die Aufnahme unter einem Vorwand untergräbt das Vertrauen; Aufklärung und Einwilligung (bzw. die Prüfung der Einwilligungsfähigkeit bei Wahn) sind nachzuholen.</li>
+<li>Suizidalität: „Angst vor der Hölle“ ist ein fragiler Schutzfaktor, wenn der Versündigungswahn zunimmt.</li>
+</ul></div></details>
+
+<h4>Bipolare Störung</h4>
+
+<details><summary>Kasuistiken 10 und 17 – 19-Jährige, singend und barfuß im Winter</summary><div>
+<p><strong>Fall:</strong> Von der Polizei gebracht, leicht bekleidet, laut singend. Bisher unauffällig, Abitur mit besten Noten. Befund: wach, orientiert, Konzentration herabgesetzt, zeitweise wirr mit Wortsalat, schnelles Stakkato, Größenideen (Entdeckung als Sängerin), paranoide Ideen (Ex-Freund sabotiere den Plattenvertrag), keine Halluzinationen, Stimmung läppisch-gehoben, Antrieb gesteigert, Suizidalität nicht sicher auszuschließen.</p>
+<p><strong>Lösungshinweise:</strong></p>
+<ul>
+<li><strong>Manische Episode mit psychotischen Symptomen</strong> (Größenwahn, Zerfahrenheit), Erstmanifestation. Differenzialdiagnosen: substanzinduziert (Drogenscreening), schizoaffektive Störung, Schizophrenie, organische Ursache.</li>
+<li>Akuttherapie (alle Grad B): Lithium, Valproat oder atypisches Antipsychotikum (Olanzapin, Quetiapin, Aripiprazol, Risperidon); bei Erregung zusätzlich Benzodiazepin.</li>
+<li>Junge Frau: <strong>Schwangerschaftstest</strong>; <strong>Valproat wegen Teratogenität vermeiden</strong>.</li>
+<li><strong>Kein Antidepressivum.</strong></li>
+<li>Bipolare Störungen beginnen früh – das Alter ist typisch.</li>
+</ul></div></details>
+
+<details><summary>Kasuistik 11 – 27-Jähriger, erneut depressiv unter Lithium</summary><div>
+<p><strong>Fall:</strong> Seit drei Wochen niedergeschlagen, freudlos, erschöpft, Früherwachen, 3 kg Gewichtsverlust, hoffnungslos, passiver Todeswunsch („würde es meiner Frau nicht antun“). Nimmt zuverlässig Lithium (Quilonum retard 2 × 1). Verlauf: 2006 Manie (Haloperidol), danach leichtere Depression. 2008 Manie (Haloperidol + Lithium), danach schwere Depression bis 2009 (Amitriptylin). Lithium 2011 ausgeschlichen. 2013 Depression (Lithium + Amitriptylin), direkt danach <strong>Hochphase</strong>; seit Ende 2013 stabil unter Lithium.</p>
+<p><strong>Aufgabe aus dem Handout:</strong> Phasenkalender zeichnen.</p>
+<div class="tw"><table><thead><tr><th>Zeitraum</th><th>Phase</th><th>Stufe</th><th>Medikation</th></tr></thead><tbody>
+<tr><td>2006</td><td>Manie</td><td>+3 (stationär)</td><td>Haloperidol, Beruhigungsmittel</td></tr>
+<tr><td>2006/07</td><td>Depression, einige Monate</td><td>−1 bis −2</td><td>keine</td></tr>
+<tr><td>Mitte 2008</td><td>Manie</td><td>+2 (ambulant)</td><td>Haloperidol kurz, Lithium neu</td></tr>
+<tr><td>Mitte 2008 – Mitte 2009</td><td>schwere Depression</td><td>−2 bis −3</td><td>Lithium + Amitriptylin</td></tr>
+<tr><td>2009 – Mitte 2011</td><td>stabil</td><td>0</td><td>Lithium</td></tr>
+<tr><td>Mitte 2011 – 2013</td><td>stabil, dann Rezidiv</td><td>0</td><td><strong>keine</strong> (Lithium ausgeschlichen)</td></tr>
+<tr><td>1. Halbjahr 2013</td><td>Depression</td><td>−3 (stationär)</td><td>Lithium + Amitriptylin</td></tr>
+<tr><td>2. Halbjahr 2013</td><td>Hochphase</td><td>+1 bis +2</td><td>Lithium + Amitriptylin (bis Herbst)</td></tr>
+<tr><td>Ende 2013 – 2016</td><td>stabil</td><td>0</td><td>Lithium</td></tr>
+<tr><td>2016</td><td>Depression</td><td>−2 bis −3</td><td>Lithium</td></tr>
+</tbody></table></div>
+<p><strong>Lösungshinweise:</strong></p>
+<ul>
+<li><strong>Bipolar-I-Störung, gegenwärtig depressive Episode.</strong></li>
+<li>Der Kalender zeigt zwei Muster: (1) Rezidiv nach dem <strong>Absetzen von Lithium</strong> 2011; (2) Hochphase unmittelbar nach der Behandlung mit dem <strong>Trizyklikum</strong> 2013 → Verdacht auf antidepressivainduzierten Switch.</li>
+<li>Jetzt: Lithiumspiegel prüfen und optimieren; Schilddrüse kontrollieren (Lithium-Hypothyreose kann eine Depression unterhalten).</li>
+<li>Bipolare Depression: Quetiapin oder Lamotrigin (Rezidivprophylaxe depressiver Episoden) erwägen. Wenn Antidepressivum, dann <strong>kein TZA</strong>, sondern ein SSRI, nur zusammen mit Lithium und zeitlich begrenzt – cave serotonerge Effekte der Kombination Lithium + SSRI.</li>
+<li>Passiven Todeswunsch ernst nehmen; Lithium wirkt suizidpräventiv.</li>
+<li>Psychotherapie/Psychoedukation: Frühwarnzeichen beider Pole, Phasenkalender weiterführen, Ehefrau einbeziehen.</li>
+</ul></div></details>
+
+<details><summary>Kasuistik 26 – Manie nach Absetzen von Lithium, dann depressive Nachschwankung</summary><div>
+<p><strong>Fall:</strong> 33-jähriger Mann, Ersterkrankung mit 24 (ausgeprägte Manie), früher Amphetaminkonsum. Lithium als Phasenprophylaxe vor vier Monaten abgesetzt („brauche ich nicht mehr“). Seit zwei Wochen manisch, 2–3 Stunden Schlaf, beschleunigte Sprache, gereizt bei Begrenzung. Nach vier Wochen stationär ist die Manie abgeklungen, es folgt eine depressive Nachschwankung.</p>
+<p><strong>Lösungshinweise:</strong></p>
+<ul>
+<li>Akut: Lithium wieder ansetzen, gegebenenfalls plus atypisches Antipsychotikum und kurzfristig Benzodiazepin.</li>
+<li><strong>Depressive Nachschwankung: nicht reflexhaft ein Antidepressivum</strong> – Switch-Risiko. Sie klingt oft unter fortgeführter Phasenprophylaxe ab; sedierende antimanische Medikation reduzieren; bei ausgeprägter Depression Quetiapin oder Lamotrigin.</li>
+<li>Suizidalität prüfen: Der Wechsel von der Manie in die Depression ist eine Risikophase (Scham über das Verhalten in der Manie, Schulden).</li>
+<li>Kernthema ist die <strong>Adhärenz</strong>: Psychoedukation – Lithium wirkt nur, solange man es nimmt; abruptes Absetzen erhöht das Rückfallrisiko.</li>
+</ul></div></details>
+
+<h4>Antidepressiva außerhalb der Depression</h4>
+
+<details><summary>Kasuistik 22 – 28-jähriger Medizinstudent mit Kontrollhandlungen</summary><div>
+<p><strong>Fall:</strong> Muss sich ständig vergewissern, ob der Geldbeutel in der Tasche ist, obwohl er es weiß. Seit Wochen aufdrängende, als pervers erlebte sexuelle Gedanken, schambesetzt. Angst, vom Freund verlassen zu werden.</p>
+<p><strong>Lösungshinweise:</strong></p>
+<ul>
+<li><strong>Zwangsstörung</strong> mit Zwangshandlungen (Kontrollieren) und Zwangsgedanken; ich-dyston, Einsicht erhalten.</li>
+<li>Erste Wahl: Verhaltenstherapie mit Exposition und Reaktionsmanagement. Entlastend: Zwangsgedanken sagen nichts über Absichten.</li>
+<li>Medikamentös: <strong>SSRI</strong> (für Zwangsstörung zugelassen: Escitalopram, Fluoxetin, Paroxetin, Sertralin) oder <strong>Clomipramin</strong> als Referenzsubstanz. Bei Zwang sind meist höhere Dosen und eine längere Wirklatenz nötig als bei Depression.</li>
+<li>Komorbide Depression und Suizidalität abklären („kommt mit dem Leben nicht mehr zurecht“).</li>
+</ul></div></details>
+
+<details><summary>Kasuistik 18 – 32-Jähriger: „Können Sie mir etwas zum Schlafen geben?“</summary><div>
+<p><strong>Fall:</strong> Überangepasst-freundlich, arbeitet unbezahlt Überstunden aus Angst vor Kritik, zahlt die Schulden der Freundin, kann nicht um Hilfe bitten, „kann nicht allein sein“, fühlt sich nur wohl, wenn er sicher gemocht wird; seit 15 Jahren ständige Sorgen, jetzt Schlafstörung.</p>
+<p><strong>Lösungshinweise:</strong></p>
+<ul>
+<li>Hinter dem Schlafwunsch stehen <strong>abhängige und ängstlich-vermeidende Persönlichkeitszüge</strong> sowie ein generalisiertes Sorgenmuster; Depression ausschließen.</li>
+<li><strong>Kein Benzodiazepin</strong> – chronisches Problem, Abhängigkeitsrisiko (vgl. Kasuistik 23).</li>
+<li>Behandlung der Wahl ist Psychotherapie. Falls medikamentös unterstützt wird: für die generalisierte Angststörung zugelassene Antidepressiva (Escitalopram, Paroxetin, Sertralin, Venlafaxin, Duloxetin).</li>
+</ul></div></details>
+
+<details><summary>Kasuistiken 19, 21 und 23 – Schlafstörungen und Schlafmittel</summary><div>
+<p><strong>Fälle:</strong> (19) 57-Jährige mit Einschlafstörungen seit zwei Monaten und Erschöpfung. (21) 54-Jähriger mit organisch abgeklärter Insomnie, Leistungsdruck und Angst vor dem Einschlafen. (23) Frau K. entwickelt nach monatelangem nächtlichem Kontrollieren ihres Säuglings eine Insomnie; unter Schlafmitteln Wirkverlust, Dosisverdopplung, Rebound-Insomnie bei Absetzversuchen, schließlich Arztwechsel für weitere Rezepte.</p>
+<p><strong>Lösungshinweise mit Bezug zu diesem Kurs:</strong></p>
+<ul>
+<li>Insomnie ist häufig <strong>Symptom einer Depression</strong> – immer nach Stimmung, Antrieb und Früherwachen fragen.</li>
+<li>Erste Wahl bei chronischer Insomnie ist die kognitive Verhaltenstherapie für Insomnie; in Fall 21 steht der Teufelskreis aus Leistungsdruck und Schlaferwartungsangst im Vordergrund.</li>
+<li>Fall 23 zeigt die <strong>Abhängigkeitsentwicklung</strong> unter Hypnotika: Toleranz, Dosissteigerung, Rebound, Beschaffungsverhalten. Behandlung: langsames Ausschleichen statt abruptem Absetzen, begleitend Psychotherapie.</li>
+<li><strong>Sedierende Antidepressiva</strong> sind die Alternative ohne Abhängigkeitspotenzial: Amitriptylin und Trimipramin sind für Insomnie zugelassen, Mirtazapin wirkt schlafanstoßend (bei komorbider Depression).</li>
+</ul></div></details>
+
+<p class="src">Die Kasuistiken 13–16 (psychotische Störungen, Clozapin) und 20 (Narkolepsie) gehören thematisch zu Antipsychotika und Schlafmedizin und werden hier nicht besprochen. Quellen der Fälle im Handout: Becker-Pfaff und Engel 2010 (9), Lieb et al. 2016 (11), Elsesser und Sartory 2005 (23), Dreher 2024 (24).</p>`,
+    karten:[
+     {q:"Kasuistik: Ein Patient erhält Amitriptylin 150 mg plus Fluoxetin 40 mg und stirbt am plötzlichen Herztod. Erklären Sie den Mechanismus.",a:"Fluoxetin hemmt CYP2D6 → Abbau von Amitriptylin blockiert → TZA-Spiegel toxisch → Erregungsleitungsstörung/QT-Verlängerung. Vermeidung: Kombination meiden, Plasmaspiegel, EKG."},
+     {q:"Kasuistik: Eine Frau wird trotz zuverlässiger Pilleneinnahme schwanger. Sie nimmt seit drei Monaten Johanniskraut. Zusammenhang?",a:"Johanniskraut induziert Abbauenzyme → Wirkungsabschwächung des Kontrazeptivums. Gleiches gilt für Ciclosporin und Indinavir. Selbstmedikation immer erfragen."},
+     {q:"Kasuistik: Bipolarer Patient unter Lithium bekommt ACE-Hemmer und Thiazid, entwickelt Durchfall und einen akuten Erregungszustand. Woran denken Sie?",a:"Lithiumintoxikation: ACE-Hemmer und Thiazide senken die Lithiumausscheidung, Durchfall verstärkt über Elektrolytverlust. Sofort Spiegel, Nierenwerte, Elektrolyte; Lithium pausieren."},
+     {q:"Kasuistik: 72-Jährige mit wahnhafter Depression spricht weder auf Citalopram noch auf Nortriptylin + Risperidon an und wird suizidal. Nächster Schritt?",a:"Elektrokonvulsionstherapie (Empfehlungsgrad A, 50–60 % Response). Kritisch am Vorverlauf: TZA im Alter und bei Glaukom."},
+     {q:"Kasuistik: Bipolarer Patient entwickelt nach Behandlung einer Depression mit Amitriptylin jeweils eine Hochphase. Konsequenz?",a:"Verdacht auf antidepressivainduzierten Switch. Keine TZA; bipolare Depression mit Stimmungsstabilisierer behandeln (Lithium optimieren, Quetiapin, Lamotrigin), Antidepressivum allenfalls als SSRI in Kombination und befristet."}
+    ]},
+
+   {id:"ad13",titel:"Prüfungswissen kompakt",icon:"🎯",
+    lernziel:"Sie wiederholen die prüfungsrelevanten Zahlen, Listen und die Fragen der Vorlesung auf einen Blick.",
+    inhalt:`
+<h4>Die Fragen der Vorlesung</h4>
+<details><summary>Was ist Pharmakokinetik?</summary><div><p>A Schicksal von Arzneistoffen im Organismus · B Einflüsse von Arzneistoffen auf den Organismus · C Synthese von Arzneistoffen · D Ökonomische Kosten von Arzneistoffen</p><p><strong>Lösung: A.</strong> B wäre die Pharmakodynamik.</p></div></details>
+<details><summary>Über welche Inhalte ist ein Patient mündlich aufzuklären, wenn ihm ein Medikament verschrieben wird? (1) Dosis, (2) zu erwartende therapeutische Wirkung, (3) zu erwartende unerwünschte Wirkungen</summary><div><p>A 1 · B 2 · C 3 · D 1 + 3 · E 1 + 2 + 3</p><p><strong>Lösung: E</strong> – über alle drei.</p></div></details>
+<details><summary>Wie häufig ist mit einer Nebenwirkung zu rechnen, wenn auf dem Beipackzettel „gelegentlich“ angegeben ist?</summary><div><p>A 30 % · B 3 % · C 0,3 % · D 0,03 %</p><p><strong>Lösung: C (0,3 %).</strong> „Gelegentlich“ = mehr als 0,1 %, höchstens 1 %.</p></div></details>
+<details><summary>Wie lange setzt man die Behandlung mit einem Antidepressivum nach dem Abklingen einer ersten depressiven Episode fort?</summary><div><p>A 6 Wochen · B 3 Monate · C 9 Monate · D 24 Monate · E 60 Monate</p><p><strong>Lösung: C (9 Monate).</strong> Erhaltungstherapie nach Remission 4 bis 9 Monate.</p></div></details>
+
+<h4>Zahlen, die man kennen muss</h4>
+<div class="tw"><table><thead><tr><th>Thema</th><th>Zahl</th></tr></thead><tbody>
+<tr><td>Prävalenz depressiver Störungen</td><td>Frauen 14 %, Männer 8 %</td></tr>
+<tr><td>Lebenszeitprävalenz bipolare Störung</td><td>1 %, Geschlechter gleich</td></tr>
+<tr><td>Erhaltungstherapie nach Remission</td><td>4–9 Monate</td></tr>
+<tr><td>Rapid Cycling</td><td>mehr als 4 Phasen pro Jahr</td></tr>
+<tr><td>EKT</td><td>50–60 % Response</td></tr>
+<tr><td>Wachtherapie</td><td>40–60 % prompte Besserung, hält maximal 2 Tage</td></tr>
+<tr><td>Lichttherapie</td><td>10 000 Lux täglich</td></tr>
+<tr><td>Sport</td><td>3×/Woche 45–60 min bei 80 % der maximalen Herzfrequenz</td></tr>
+<tr><td>Agomelatin absetzen</td><td>Transaminasen über dem Dreifachen der Norm</td></tr>
+<tr><td>Johanniskraut</td><td>900 mg Extrakt pro Tag; nur leichte bis mittelgradige Depression</td></tr>
+<tr><td>UAW „gelegentlich“</td><td>über 0,1 % bis 1 %</td></tr>
+<tr><td>Arzneimittelentwicklung</td><td>etwa 12 Jahre; aus 500–10 000 Substanzen wird 1 Medikament</td></tr>
+</tbody></table></div>
+
+<h4>Dosisbereiche (pro Tag)</h4>
+<div class="tw"><table><thead><tr><th>Substanz</th><th>Dosis</th><th>Substanz</th><th>Dosis</th></tr></thead><tbody>
+<tr><td>Citalopram</td><td>10–40 mg</td><td>Mirtazapin</td><td>15–45 mg</td></tr>
+<tr><td>Escitalopram</td><td>10–20 mg</td><td>Bupropion</td><td>150–300 mg</td></tr>
+<tr><td>Fluoxetin</td><td>20–60 mg</td><td>Reboxetin</td><td>4–8 mg</td></tr>
+<tr><td>Paroxetin</td><td>20–50 mg</td><td>Moclobemid</td><td>300–600 mg</td></tr>
+<tr><td>Sertralin</td><td>50–200 mg</td><td>Agomelatin</td><td>25–50 mg</td></tr>
+<tr><td>Venlafaxin</td><td>75–225 mg</td><td>Amitriptylin, Clomipramin, Imipramin</td><td>75–300 mg</td></tr>
+<tr><td>Duloxetin</td><td>60–120 mg</td><td>Nortriptylin</td><td>75–225 mg</td></tr>
+<tr><td>Milnacipran</td><td>100–200 mg</td><td>Trimipramin</td><td>150–300 mg</td></tr>
+</tbody></table></div>
+
+<h4>Zugelassene Indikationen über die Depression hinaus</h4>
+<div class="tw"><table><thead><tr><th>Indikation</th><th>Zugelassene Substanzen (laut Addendum)</th></tr></thead><tbody>
+<tr><td>Panikstörung</td><td>Citalopram, Escitalopram, Paroxetin, Sertralin, Venlafaxin, Clomipramin</td></tr>
+<tr><td>Generalisierte Angststörung</td><td>Escitalopram, Paroxetin, Sertralin, Venlafaxin, Duloxetin</td></tr>
+<tr><td>Soziale Phobie</td><td>Venlafaxin, Moclobemid</td></tr>
+<tr><td>Zwangsstörung</td><td>Escitalopram, Fluoxetin, Paroxetin, Sertralin, Clomipramin (Referenzsubstanz)</td></tr>
+<tr><td>PTBS</td><td>Paroxetin, Sertralin</td></tr>
+<tr><td>Bulimie</td><td>Fluoxetin</td></tr>
+<tr><td>Insomnie</td><td>Amitriptylin, Trimipramin</td></tr>
+<tr><td>Chronische Schmerzen</td><td>Amitriptylin, Clomipramin, Imipramin, Trimipramin</td></tr>
+</tbody></table></div>
+
+<h4>Ein-Satz-Steckbriefe</h4>
+<div class="tw"><table><thead><tr><th>Substanz</th><th>Das Stichwort</th></tr></thead><tbody>
+<tr><td>Fluoxetin, Paroxetin</td><td>starke Wechselwirkungen (CYP2D6)</td></tr>
+<tr><td>Escitalopram</td><td>QT-Zeit</td></tr>
+<tr><td>Bupropion</td><td>keine sexuelle Dysfunktion, keine Gewichtszunahme</td></tr>
+<tr><td>Mirtazapin</td><td>schlafanstoßend, Gewichtszunahme; α<sub>2</sub>-Antagonist</td></tr>
+<tr><td>Agomelatin</td><td>Transaminasen</td></tr>
+<tr><td>Clomipramin</td><td>Referenzsubstanz Zwang</td></tr>
+<tr><td>Trimipramin</td><td>stark antihistaminerg</td></tr>
+<tr><td>Tranylcypromin</td><td>irreversibel, Blutdruckkrisen, Reserve bei Therapieresistenz</td></tr>
+<tr><td>Moclobemid</td><td>reversibel, MAO-A-selektiv</td></tr>
+<tr><td>Johanniskraut</td><td>Enzyminduktion, Photosensibilisierung</td></tr>
+<tr><td>Lithium</td><td>geringe therapeutische Breite; Grad A in der Phasenprophylaxe</td></tr>
+<tr><td>Valproinsäure</td><td>teratogen</td></tr>
+<tr><td>Lamotrigin</td><td>langsam einschleichen, Hautreaktionen</td></tr>
+</tbody></table></div>
+
+<h4>Listen zum Auswendiglernen</h4>
+<ul>
+<li><strong>Kontraindikationen TZA (6):</strong> Epilepsie, Engwinkelglaukom, intestinale Stenosen, Prostatahypertrophie, kognitive Störungen, kardiale Erregungsleitungsstörungen</li>
+<li><strong>Auswahlkriterien (6):</strong> früheres Ansprechen, Verträglichkeit, Handhabbarkeit, Sicherheit, Komorbidität/Komedikation, Patientenpräferenz</li>
+<li><strong>Pseudoresistenz (5):</strong> inadäquate Behandlung, Non-Compliance, sekundärer Krankheitsgewinn, somatische Komorbidität, psychiatrische Komorbidität</li>
+<li><strong>Complianceprobleme (3):</strong> sexuelle Funktionsstörung, Gewichtszunahme, Müdigkeit</li>
+<li><strong>Absetzsymptome (5):</strong> Schwindel, Stromschlagempfindungen, Konzentrations-/Gedächtnisstörungen, Reizbarkeit, persistierende sexuelle Dysfunktion</li>
+<li><strong>Serotoninsyndrom (3 Komplexe):</strong> Verhalten/Bewusstsein, neuromuskulär, autonom</li>
+<li><strong>Off-Label (3):</strong> schwerwiegende Erkrankung, keine andere Therapie, begründete Erfolgsaussicht</li>
+<li><strong>Zulassung (3):</strong> Qualität, Wirksamkeit, Unbedenklichkeit</li>
+<li><strong>UAW-Meldung (3):</strong> AKdÄ, BfArM, Hersteller</li>
+<li><strong>Therapieresistenz, Grad A:</strong> Psychotherapie dazu, EKT · <strong>Grad B:</strong> Augmentation · <strong>Grad 0:</strong> Wechsel, Kombination, S-Ketamin, rTMS</li>
+</ul>`,
+    karten:[]}
+   ]},
   {id:"antipsychotika_kurs",name:"Antipsychotika – 1. und 2. Generation",cat:"Psychopharmakologie",catStyle:"tx-pill-schema",
    kurz:"Typische vs. atypische AP, D2-Blockade, EPS, metabolisches Syndrom, Clozapin",schwierigkeit:"Fortgeschritten",
    lernziele:["Typische und atypische Antipsychotika mechanistisch unterscheiden","Extrapyramidale Symptome (EPS) erkennen, erklären und behandeln","Das metabolische Syndrom unter atypischen AP monitoren","Clozapin-spezifische Risiken und Monitoring erklären","Depot-Formulierungen in der Praxis einordnen"],
@@ -6492,7 +7547,7 @@ const MED_TOPICS = [
    klinisch:"Akathisie wird häufig als Angst, Unruhe oder psychotische Agitation fehlgedeutet und führt zur Dosiserhöhung des AP – was die Akathisie verschlimmert. Klinische Regel: Unruhe unter AP = immer zuerst Akathisie ausschließen.",
    praxis:["Akathisie-Checkliste: Sitz- und Stehunfähigkeit, innere Brenngefühl, patient will ständig umherlaufen. Propranolol 10–20mg ist erste Maßnahme","Clozapin-Aufklärung: Leukopenie-Symptome ('Halsschmerz, Fieber = sofort zur Notaufnahme')","Metabolisches Monitoring konsequent dokumentieren – auch wenn Patient sich weigert, Dokumentation schützt","Depot-AP bei Compliance-Problemen: Risperidon microspheres, Paliperidon palmitat, Aripiprazol monohydrate"],
   fallbeispiel:"Frau M., 28J, Schizophrenie, unter Risperidon 6mg. Zunehmende Unruhe, kann nicht stillsitzen, greift Personal an. Stationsarzt erhöht Risperidon auf 8mg. Unruhe schlimmer. Fachärztliche Konsil: Akathisie! Nicht psychotische Agitation. Intervention: Risperidon auf 4mg reduzieren + Propranolol 20mg 2× täglich + Lorazepam 1mg kurzfristig. Drei Tage später: Akathisie verschwunden, Patient kooperativ.",
-   quiz:[{f:"Was ist Akathisie und welche häufige Verwechslung ist klinisch gefährlich?",o:["Frühdyskinesie mit Muskelkrämpfen – wird mit Parkinsonoid verwechselt","Innere Unruhe/Sitz- und Stehunfähigkeit – wird häufig als psychotische Agitation fehlgedeutet und führt zu gefährlicher Dosiserhöhung","Tardive Dyskinesie mit Zungenbewegungen – wird mit Psychosesymptomen verwechselt","Parkinsonoid mit Rigor – wird mit katatoner Schizophrenie verwechselt"],r:1,a:"Akathisie = unerträgliche innere Unruhe, Patient kann nicht stillsitzen. Wird oft als Psychose-Verschlechterung fehlgedeutet → AP-Dosiserhöhung verschlimmert die Akathisie."},{f:"Warum muss unter Clozapin in den ersten 18 Wochen wöchentlich ein Blutbild gemacht werden?",o:["Wegen des Risikos einer Lebertoxizität","Wegen des Risikos einer Agranulozytose (1–2% der Patienten verlieren lebensbedrohlich weiße Blutkörperchen)","Wegen des Risikos einer Thrombozytopenie","Wegen der Überwachung des Lithium-Spiegels"],r:1,a:"Clozapin verursacht bei 1–2% eine Agranulozytose (Abfall der Neutrophilen <500/µl) – potenziell lebensbedrohlich durch Infektionen. Pflicht-Blutbildmonitoring ist Voraussetzung für Verschreibung."},{f:"Aripiprazol unterscheidet sich von anderen Antipsychotika durch:",o:["Stärkste D2-Blockade aller AP","Partiellen D2-Agonismus (nicht vollständige Blockade)","Keine Wirkung auf Dopamin – rein serotonerger Mechanismus","Stärksten anticholinergischen Effekt"],r:1,a:"Aripiprazol ist ein partieller D2-Agonist: es aktiviert D2 teilweise (funktioniert als 'Dopamin-Stabilisator') – senkt übermäßige Dopaminaktivität, erhöht aber unzureichende. Daher kein Prolaktinanstieg und geringe metabolische Effekte."}]},
+  },
   {id:"stimmungsstabilisierer",name:"Stimmungsstabilisierer & Antikonvulsiva",cat:"Psychopharmakologie",catStyle:"tx-pill-schema",
    kurz:"Lithium, Valproat, Lamotrigin, Carbamazepin – Bipolare Prophylaxe",schwierigkeit:"Fortgeschritten",
    lernziele:["Lithium in Wirkung, Monitoring und Toxizität vollständig beschreiben","Valproat-Risiken in der Schwangerschaft kennen und kommunizieren","Lamotrigin und Stevens-Johnson-Syndrom erkennen","Carbamazepin-Interaktionen einschätzen","Bipolare Prophylaxe leitliniengerecht auswählen"],
@@ -6500,7 +7555,7 @@ const MED_TOPICS = [
    klinisch:"Lithium-Toxizität ist ein medizinischer Notfall. Symptome: grobschlagiger Tremor, Ataxie, Verwirrtheit, Dysarthrie, Krämpfe. Ursachen: Dehydratation (Durchfall, Hitze, Sport), NSAR, ACE-Hemmer. Sofort: Lithium absetzen, reichlich Flüssigkeit, ggf. Hämodialyse bei schwerem Verlauf.",
    praxis:["Lithium-Patientenausweis: 'Kein Ibuprofen ohne Arzt. Bei Durchfall/Erbrechen/Hitze sofort trinken und Lithium-Spiegel kontrollieren lassen'","Valproat-PREVENT-Programm: jährliche Dokumentation der Kontrazeptionsvereinbarung und Aufklärung","Lamotrigin-Aufklärung: 'Jeder Hautausschlag in den ersten 2 Monaten = sofort Arzt aufsuchen, nicht abwarten'","Rauchstopp-Aufklärung bei Clozapin: Vorab informieren und engmaschig TDM nach Rauchstopp"],
   fallbeispiel:"Frau K., 32J, Bipolar I, auf Lithium 900mg (Spiegel 0.7 mmol/l), entwickelt wegen Knieschmerzen selbst Ibuprofen (ohne Arzt). 5 Tage später: grobschlägiger Tremor, Ataxie, Dysarthrie. Lithium-Spiegel: 2.1 mmol/l (toxisch!). NSAR reduzieren renale Lithium-Clearance → Akkumulation. Behandlung: Lithium absetzen, Flüssigkeit, stationäre Überwachung. Normalisierung nach 48h. Aufklärung: schriftlicher Lithium-Notfallausweis.",
-   quiz:[{f:"Was ist die wichtigste Interaktion zwischen Valproat und Lamotrigin?",o:["Valproat senkt Lamotrigin-Spiegel um 50%","Valproat hemmt Lamotrigin-Metabolismus → Lamotrigin-Spiegel verdoppelt sich → Stevens-Johnson-Syndrom-Risiko","Lamotrigin induziert Valproat-Abbau","Die Kombination ist kontraindiziert"],r:1,a:"Valproat hemmt den Glucuronidierungsmetabolismus von Lamotrigin → Spiegel verdoppeln sich. Deshalb: bei Kombination Lamotrigin-Dosis halbieren und sehr langsam eintitrieren (SJS-Risiko!)."},{f:"Welches Zeichen deutet auf eine Lithium-Toxizität hin?",o:["Feinschlägiger Tremor der Hände (bekannte therapeutische NW)","Grobschlägiger Tremor + Ataxie + Dysarthrie + Verwirrtheit","Gewichtszunahme + Hypothyreose","Polyurie + Polydipsie"],r:1,a:"Feinschlägiger Tremor ist normale NW. TOXIZITÄT (ab 1.5 mmol/l): Grobschlägiger Tremor, Ataxie, Dysarthrie, Verwirrtheit → medizinischer Notfall. Polyurie/Polydipsie sind häufige NW, kein Toxizitätszeichen."},{f:"Warum ist Valproat bei Frauen im gebärfähigen Alter kontraindiziert?",o:["Wegen erhöhtem Thromboserisiko in der Schwangerschaft","Wegen teratogener Wirkung (Neuralrohrdefekte, kognitive Entwicklungsstörungen beim Kind) – stärkste Teratogenität aller Antiepileptika","Wegen erhöhtem Risiko postpartaler Depression","Wegen Wechselwirkung mit Kontrazeptiva"],r:1,a:"Valproat ist das teratogenste Antiepileptikum: Neuralrohrdefekte (2–5%), Herzfehler, Gesichtsfehlbildungen, IQ-Reduktion beim Kind (-8–9 IQ-Punkte). EU-Richtlinie: nur unter sicherer Kontrazeption und jährlicher Dokumentation (PREVENT-Programm)."}]},
+  },
   {id:"genetik_epigenetik",name:"Genetik, Epigenetik & GxE-Interaktion",cat:"Genetik & Epigenetik",catStyle:"tx-pill-3w",
    kurz:"Heritabilität, Kandidatengene, Epigenetik, transgenerationale Transmission",schwierigkeit:"Aufbauend",
    lernziele:["Heritabilitätswerte für wichtige psychische Störungen nennen und richtig interpretieren","Wichtige Kandidatengene und ihre Funktion erklären","Epigenetische Mechanismen beschreiben","Gen-Umwelt-Interaktion anhand eines konkreten Beispiels erklären","Transgenerationale Weitergabe von Traumafolgen erläutern"],
@@ -6508,9 +7563,9 @@ const MED_TOPICS = [
    klinisch:"'Sie haben eine genetische Prädisposition – aber kein genetisches Schicksal.' Die differential susceptibility hypothesis bedeutet: wer auf schlechte Umwelt stärker reagiert, reagiert auch auf Therapie stärker. Hohe Sensitivität ist eine Ressource, keine Schwäche.",
    praxis:["GxE in der Anamnese: genetische Belastung + psychosoziale Stressoren = höheres Risiko, aber auch höhere Therapieresponse","Transgenerationale Transmission erklären: 'Das Trauma Ihrer Eltern hat biologische Spuren hinterlassen – das erklärt einige Ihrer Reaktionen'","Epigenetik als Hoffnung: 'Therapie verändert nachweislich, wie Ihre Gene exprimiert werden'","Pharmakogenetik: CYP2D6-Genotyping bei Non-Response oder extremen NW"],
   fallbeispiel:"Frau A., 30J, schwere Angststörung trotz 'gutem Leben'. In der Anamnese: Mutter PTBS nach Krieg, Großmutter ebenfalls traumatisiert. Biologische Erklärung: transgenerationale Epigenetik – veränderte HPA-Achsen-Programmierung. Gleichzeitig: 5-HTTLPR-Genotyp (kurzes Allel) ergibt erhöhte Amygdala-Reaktivität. GxE: biologische Vulnerabilität + transgenerationale Belastung. Therapeutische Implikation: kurzes Allel → auch bessere Therapieresponse zu erwarten (differential susceptibility). Psychoedukation entschuldet und erklärt.",
-   quiz:[{f:"Was bedeutet eine Heritabilität von 80% bei Schizophrenie?",o:["80% aller Schizophreniepatienten haben eine genetische Ursache","80% der Varianz in der Schizophrenie-Ausprägung in einer Population ist auf genetische Unterschiede zurückzuführen","Wenn ein Elternteil Schizophrenie hat, erkranken 80% der Kinder","Gene verursachen in 80% der Fälle direkt die Erkrankung"],r:1,a:"Heritabilität beschreibt nicht das individuelle Erkrankungsrisiko, sondern den Anteil genetischer Varianz an der Gesamtvarianz in einer Population. 80% Heritabilität bedeutet nicht 80% Erkrankungswahrscheinlichkeit für Kinder."},{f:"Was ist der Kernbefund der Gen-Umwelt-Interaktionsstudie von Caspi et al. (2003)?",o:["Das kurze 5-HTTLPR-Allel verursacht alleine Depression","Stressereignisse alleine verursachen immer Depression","Kurzes 5-HTTLPR-Allel PLUS Stressereignisse führen synergistisch zu erhöhtem Depressionsrisiko","Die Studie fand keine signifikante GxE-Interaktion"],r:2,a:"GxE: kurzes Allel allein → kein erhöhtes Risiko. Stress allein → leicht erhöht. Kombiniert → stark erhöht (Synergismus). Dies ist das klassische Diathese-Stress-Modell auf genetischer Ebene."},{f:"Was versteht man unter der 'differential susceptibility hypothesis' (Belsky)?",o:["Genetisch sensible Menschen sind immer gefährdeter und schlechter gestellt","Genetisch sensible Personen reagieren stärker auf BEIDE Richtungen – schlechte UND gute Umwelten","Epigenetische Veränderungen sind irreversibel","Nur genetisch resistente Personen profitieren von Psychotherapie"],r:1,a:"'Orchid-Dandelion'-Modell: 'Orchideen' (genetisch sensitiv) verwelken in schlechter Umgebung ABER blühen in guter Umgebung auf. Therapeutische Implikation: Kurzallelträger bei 5-HTTLPR zeigen oft stärkere Therapieresponse!"}]}
+  }
 ,
-  {id:"kognitive_biases",name:"Kognitive Biases & Heuristiken",cat:"Kognitive Psychologie",catStyle:"tx-pill-vt",kurz:"Systematische Denkverzerrungen – Kahneman, Beck, Tversky – klinische Anwendung",schwierigkeit:"Fortgeschritten",lernziele:["Die Zwei-System-Theorie (Kahneman) erklären und auf psychische Störungen anwenden","Die 13 Denkfehler nach Beck/Hautzinger benennen und an klinischen Beispielen erkennen","Mindestens 5 allgemeine kognitive Biases (Verfügbarkeit, Ankerheuristik, Confirmation Bias, Framing, Verlustaversion) erläutern","Den Zusammenhang zwischen kognitiven Biases und spezifischen psychischen Störungen beschreiben","Kognitive Biases therapeutisch nutzen (Reframing, Peak-End-Effekt, Metakognition)","Mood Congruent Memory als aufrechterhaltenden Faktor bei Depression erklären"],inhalt:[{titel:"Was sind kognitive Biases?",text:"Kognitive Biases (kognitive Verzerrungen) sind systematische Abweichungen von rationalem Denken, die durch Heuristiken – mentale Abkürzungen – entstehen. Sie sind evolutionär adaptiv (schnelle Entscheidungen, Ressourcenersparnis), führen aber in komplexen Situationen zu vorhersagbaren Fehlern. Grundlegendes Zwei-System-Modell (Kahneman 2011): <strong>System 1</strong> – schnell, automatisch, assoziativ, emotional, fehleranfällig für Biases. <strong>System 2</strong> – langsam, bewusst, analytisch, ressourcenintensiv. Biases entstehen v.a. wenn System 1 dominiert: bei Zeitdruck, Müdigkeit, emotionaler Belastung, hoher kognitiver Last."},{titel:"Kognitive Verzerrungen bei Depression (Beck)",text:"<strong>Die 13 Denkfehler nach Hautzinger/Beck</strong> sind klassische depressogene Biases:<br>1. <strong>Alles-oder-nichts-Denken</strong> – Schwarz-Weiß ohne Graustufen: 'Wenn ich nicht perfekt bin, bin ich ein Versager.'<br>2. <strong>Übergeneralisierung</strong> – aus einem Ereignis globale Regel ableiten: 'Ich werde immer scheitern.'<br>3. <strong>Geistiger Filter</strong> – ein negatives Detail färbt alles: 'Das Referat war schlecht, weil ich einmal gestockt habe.'<br>4. <strong>Abwertung des Positiven</strong> – Erfolge nicht zählen lassen: 'Das war nur Glück.'<br>5. <strong>Voreilige Schlüsse</strong> – (a) Gedankenlesen: 'Sie denkt, ich bin inkompetent.' (b) Wahrsagen: 'Das wird schiefgehen.'<br>6. <strong>Katastrophisieren / Minimieren</strong> – Negatives aufbauschen, Positives kleinerreden.<br>7. <strong>Emotionale Beweisführung</strong> – Gefühle als Fakten: 'Ich fühle mich wertlos, also bin ich es.'<br>8. <strong>Müssen und Sollen</strong> (Mussturbationen) – rigide Regeln: 'Ich muss immer stark sein.'<br>9. <strong>Etikettierung</strong> – globale negative Urteile: 'Ich bin ein Versager' statt 'Ich habe einen Fehler gemacht.'<br>10. <strong>Personalisierung</strong> – sich für alles verantwortlich machen: 'Sie ist schlecht gelaunt – das habe ich verursacht.'<br>11. <strong>Selektive Abstraktion</strong> – nur negative Details herausfiltern.<br>12. <strong>Tunnelblick</strong> – nur das Negative wahrnehmen.<br>13. <strong>Über- / Untertreibung</strong> – Fehler überbewerten, Stärken unterbewerten."},{titel:"Soziale und interpersonale Biases",text:"<strong>Fundamentaler Attributionsfehler</strong> – Verhalten anderer wird auf Persönlichkeit attribuiert, eigenes auf Situation: 'Er ist aggressiv' (statt: er ist gestresst). Klinisch relevant bei: Borderline (Andere immer böswillig), Paranoia, Beziehungsproblemen.<br><br><strong>Selbstwertdienliche Verzerrung</strong> – Erfolge sich selbst zuschreiben (internal), Misserfolge anderen/Umständen (external). Klinisch: fehlt bei Depression (reversed self-serving bias).<br><br><strong>Bestätigungsfehler (Confirmation Bias)</strong> – Informationen bevorzugen die bestehende Überzeugungen bestätigen. Klinisch: Patient sucht Beweise für 'alle hassen mich' und ignoriert Gegenbeweise.<br><br><strong>False Consensus Effect</strong> – eigene Einstellungen als 'normal' wahrnehmen: 'Alle denken wie ich.'<br><br><strong>In-group/Out-group Bias</strong> – eigene Gruppe bevorzugen, Außengruppe abwerten. Relevant bei Gruppentherapie, Vorurteilen, Diskriminierungserfahrungen von Patienten."},{titel:"Heuristiken und Urteilsverzerrungen (Kahneman & Tversky)",text:"<strong>Verfügbarkeitsheuristik</strong> – Häufigkeit/Wahrscheinlichkeit anhand leichter Erinnerbarkeit beurteilen. Flugzeugangst nach Unfall im TV; Krebsangst nach Diagnose im Bekanntenkreis. Klinisch: Katastrophisierung bei Angststörungen.<br><br><strong>Repräsentativitätsheuristik</strong> – Ähnlichkeit mit Prototyp als Wahrscheinlichkeitskriterium. Basisraten werden ignoriert. Fehldiagnosen in der Klinik.<br><br><strong>Ankereffekt</strong> – erste Information beeinflusst alle folgenden Urteile unverhältnismäßig stark. Erster Eindruck bei Diagnostik. Relevanz für therapeutische Erstgespräche.<br><br><strong>Framing-Effekt</strong> – Darstellungsform beeinflusst Entscheidung: '10% Rückfallwahrscheinlichkeit' vs. '90% bleiben rückfallfrei.' Therapeutisch nutzbar: positive Reformulierung, Reframing.<br><br><strong>Rückschaufehler (Hindsight Bias)</strong> – Nach Ereignis: 'Das war doch vorherzusehen.' Verhindert Lernen aus Fehlern, erzeugt Schuldgefühle bei Patienten.<br><br><strong>Sunk Cost Fallacy</strong> – Festhalten an Entscheidungen wegen bereits investierter Ressourcen. Klinisch: Patient bleibt in dysfunktionaler Beziehung wegen 'Wir haben schon so viel zusammen durchgemacht.'"},{titel:"Gedächtnis- und Wahrnehmungsbiases",text:"<strong>Negativity Bias</strong> – Negative Ereignisse werden stärker gewichtet, besser erinnert und länger verarbeitet als positive. Evolutionär adaptiv; bei Depression verstärkt: selektive Erinnerung negativer Ereignisse.<br><br><strong>Mood Congruent Memory</strong> – In depressiver Stimmung werden negative Erinnerungen leichter abgerufen. Aufrechterhaltender Faktor bei Depression. Basis für Verhaltensaktivierung und positive Aktivitäten.<br><br><strong>Peak-End-Effekt</strong> – Erinnerung an Erlebnisse basiert auf intensivstem Moment (Peak) + letztem Moment (End), nicht auf Durchschnitt. Therapeutisch: Ende der Sitzung bewusst positiv gestalten.<br><br><strong>Rosy Retrospection</strong> – vergangene Ereignisse werden retrospektiv positiver bewertet als erlebt. Kontrast zu Mood Congruent Memory bei Depression.<br><br><strong>Implizite Assoziationen (IAT)</strong> – unbewusste Verknüpfungen zwischen Konzepten prägen Verhalten ohne bewusstes Wissen (z.B. Selbstwert-Assoziationen, Vorurteile)."},{titel:"Entscheidungsverzerrungen – klinisch relevant",text:"<strong>Status Quo Bias</strong> – Präferenz für den aktuellen Zustand, Veränderungen werden vermieden. Klinisch: Ambitendenz bei Patienten, die Therapie wollen aber keine Veränderung.<br><br><strong>Verlustaversion</strong> – Verluste werden ca. doppelt so stark gewichtet wie gleich große Gewinne (Kahneman & Tversky). Klinisch: 'Was wenn die Therapie nichts bringt?' überwiegt 'Was wenn sie hilft?'<br><br><strong>Illusion of Control</strong> – Überzeugung, unkontrollierbare Ereignisse kontrollieren zu können. Klinisch: Zwangsstörung (Ritual verhindert Katastrophe), magisches Denken.<br><br><strong>Optimism Bias</strong> – übermäßiger Optimismus bezüglich eigener Zukunft. Gegenteil bei Depression: pessimistischer Bias ('Nichts wird sich je ändern').<br><br><strong>Dunning-Kruger-Effekt</strong> – inkompetente Personen überschätzen sich, kompetente unterschätzen sich. Klinisch: Therapiemotivation, realistische Selbsteinschätzung."},{titel:"Klinische Anwendung – kognitive Biases in der Therapie",text:"<strong>Psychoedukation</strong>: Patienten lernen ihre eigenen Denkfehler kennen. Normalisierung: 'Diese Denkfehler hat jeder Mensch – bei Depression sind sie verstärkt aktiviert.'<br><br><strong>Kognitive Umstrukturierung</strong>: Systematisches Hinterfragen kognitiver Verzerrungen. Pfeil-Abwärts-Technik zur Aufdeckung, Gedankenprotokoll zur Dokumentation. Frage: 'Welcher Denkfehler könnte hier vorliegen?'<br><br><strong>Reframing / Framing nutzen</strong>: Therapeutisch bewusst positiv formulieren: '80% der Patienten zeigen Verbesserung' statt '20% sprechen nicht an.'<br><br><strong>Metakognitive Therapie (Wells)</strong>: Nicht die Inhalte der Gedanken verändern, sondern die Beziehung zu Gedanken ('Gedanken sind nur Gedanken, keine Fakten'). Dezentrierung, Defusion (ACT).<br><br><strong>Peak-End-Effekt nutzen</strong>: Sitzungsende bewusst positiv gestalten. Zusammenfassung von Fortschritten. Positive Hausaufgabe als letzter Eindruck.<br><br><strong>Confirmation Bias aufzeigen</strong>: 'Welche Beweise sprechen für Ihre Überzeugung – und welche dagegen?' Evidenz-Gegenevidenz-Technik direkt gegen Bestätigungsfehler."}],klinisch:["Biases sind KEINE Zeichen von Dummheit – sie sind universell und evolutionär sinnvoll. Psychoedukation normalisiert und entstigmatisiert","Bei Depression: Negativity Bias + Mood Congruent Memory + reversed self-serving bias bilden selbstverstärkende Abwärtsspirale","Bei Angststörungen: Verfügbarkeitsheuristik + Katastrophisieren überschätzen Bedrohungswahrscheinlichkeit und -intensität","Bei OCD: Illusion of Control + Verschmelzung Gedanke/Handlung (Thought-Action Fusion) als zentrale Bias-Muster","Metakognitive Therapie (Wells): nicht Inhalte der Gedanken verändern, sondern Beziehung zu Gedanken","Peak-End-Effekt therapeutisch nutzen: Sitzungsende immer bewusst positiv gestalten"],praxis:["Denkfehler-Tagebuch: Patient identifiziert täglich einen eigenen Denkfehler und benennt die Kategorie","Bias-Psychoedukation: Kahneman's System 1 / System 2 anhand Alltagsbeispielen erklären (Schläger + Ball Aufgabe)","Framing-Übung: Dieselbe Situation in 3 verschiedenen Framings formulieren lassen","Bestätigungsfehler aufdecken: Für eine negative Überzeugung systematisch Beweise + Gegenbeweise sammeln","Peak-End-Effekt: Patienten letzte 3 Sitzungen retrospektiv bewerten lassen – Ende besonders berücksichtigen"],quiz:[{frage:"Ein Patient sagt: 'Ich habe bei der Prüfung eine schlechte Note bekommen – ich werde im Leben nie erfolgreich sein.' Welcher Denkfehler liegt vor?",antworten:["Übergeneralisierung","Personalisierung","Emotionale Beweisführung","Ankereffekt"],richtig:0,erklaerung:"Übergeneralisierung: aus einem einzelnen Ereignis wird eine globale Regel abgeleitet ('nie erfolgreich sein')."},{frage:"Was beschreibt der 'Mood Congruent Memory'-Effekt?",antworten:["In depressiver Stimmung werden negative Erinnerungen leichter abgerufen","Positive Ereignisse werden grundsätzlich besser erinnert","Traumatische Erinnerungen sind immer vollständig gespeichert","Stimmungen verändern keine Gedächtnisinhalte"],richtig:0,erklaerung:"Mood Congruent Memory: die aktuelle Stimmung beeinflusst welche Erinnerungen leichter zugänglich sind. Bei Depression werden bevorzugt negative Erinnerungen abgerufen – aufrechterhaltender Faktor."},{frage:"Der Framing-Effekt besagt, dass...",antworten:["die Darstellungsform einer Information das Urteil beeinflusst","Patienten immer die positive Interpretation wählen","kognitive Biases nur bei psychisch kranken Menschen auftreten","erste Informationen irrelevant für spätere Urteile sind"],richtig:0,erklaerung:"'90% Erfolgsrate' wirkt überzeugender als '10% Misserfolgsrate' – obwohl identisch. Therapeutisch nutzbar: positive Reformulierungen, Reframing."},{frage:"Welcher Bias erklärt, warum Patienten mit Zwangsstörung glauben, ein schlimmer Gedanke mache eine schlimme Tat wahrscheinlicher?",antworten:["Thought-Action Fusion / Illusion of Control","Bestätigungsfehler","Rückschaufehler","Verfügbarkeitsheuristik"],richtig:0,erklaerung:"Thought-Action Fusion (Verschmelzung Gedanke/Handlung) + Illusion of Control: 'Wenn ich daran denke, passiert es' – zentrales kognitives Muster der OCD."}]}
+  {id:"kognitive_biases",name:"Kognitive Biases & Heuristiken",cat:"Kognitive Psychologie",catStyle:"tx-pill-vt",kurz:"Systematische Denkverzerrungen – Kahneman, Beck, Tversky – klinische Anwendung",schwierigkeit:"Fortgeschritten",lernziele:["Die Zwei-System-Theorie (Kahneman) erklären und auf psychische Störungen anwenden","Die 13 Denkfehler nach Beck/Hautzinger benennen und an klinischen Beispielen erkennen","Mindestens 5 allgemeine kognitive Biases (Verfügbarkeit, Ankerheuristik, Confirmation Bias, Framing, Verlustaversion) erläutern","Den Zusammenhang zwischen kognitiven Biases und spezifischen psychischen Störungen beschreiben","Kognitive Biases therapeutisch nutzen (Reframing, Peak-End-Effekt, Metakognition)","Mood Congruent Memory als aufrechterhaltenden Faktor bei Depression erklären"],inhalt:[{titel:"Was sind kognitive Biases?",text:"Kognitive Biases (kognitive Verzerrungen) sind systematische Abweichungen von rationalem Denken, die durch Heuristiken – mentale Abkürzungen – entstehen. Sie sind evolutionär adaptiv (schnelle Entscheidungen, Ressourcenersparnis), führen aber in komplexen Situationen zu vorhersagbaren Fehlern. Grundlegendes Zwei-System-Modell (Kahneman 2011): <strong>System 1</strong> – schnell, automatisch, assoziativ, emotional, fehleranfällig für Biases. <strong>System 2</strong> – langsam, bewusst, analytisch, ressourcenintensiv. Biases entstehen v.a. wenn System 1 dominiert: bei Zeitdruck, Müdigkeit, emotionaler Belastung, hoher kognitiver Last."},{titel:"Kognitive Verzerrungen bei Depression (Beck)",text:"<strong>Die 13 Denkfehler nach Hautzinger/Beck</strong> sind klassische depressogene Biases:<br>1. <strong>Alles-oder-nichts-Denken</strong> – Schwarz-Weiß ohne Graustufen: 'Wenn ich nicht perfekt bin, bin ich ein Versager.'<br>2. <strong>Übergeneralisierung</strong> – aus einem Ereignis globale Regel ableiten: 'Ich werde immer scheitern.'<br>3. <strong>Geistiger Filter</strong> – ein negatives Detail färbt alles: 'Das Referat war schlecht, weil ich einmal gestockt habe.'<br>4. <strong>Abwertung des Positiven</strong> – Erfolge nicht zählen lassen: 'Das war nur Glück.'<br>5. <strong>Voreilige Schlüsse</strong> – (a) Gedankenlesen: 'Sie denkt, ich bin inkompetent.' (b) Wahrsagen: 'Das wird schiefgehen.'<br>6. <strong>Katastrophisieren / Minimieren</strong> – Negatives aufbauschen, Positives kleinerreden.<br>7. <strong>Emotionale Beweisführung</strong> – Gefühle als Fakten: 'Ich fühle mich wertlos, also bin ich es.'<br>8. <strong>Müssen und Sollen</strong> (Mussturbationen) – rigide Regeln: 'Ich muss immer stark sein.'<br>9. <strong>Etikettierung</strong> – globale negative Urteile: 'Ich bin ein Versager' statt 'Ich habe einen Fehler gemacht.'<br>10. <strong>Personalisierung</strong> – sich für alles verantwortlich machen: 'Sie ist schlecht gelaunt – das habe ich verursacht.'<br>11. <strong>Selektive Abstraktion</strong> – nur negative Details herausfiltern.<br>12. <strong>Tunnelblick</strong> – nur das Negative wahrnehmen.<br>13. <strong>Über- / Untertreibung</strong> – Fehler überbewerten, Stärken unterbewerten."},{titel:"Soziale und interpersonale Biases",text:"<strong>Fundamentaler Attributionsfehler</strong> – Verhalten anderer wird auf Persönlichkeit attribuiert, eigenes auf Situation: 'Er ist aggressiv' (statt: er ist gestresst). Klinisch relevant bei: Borderline (Andere immer böswillig), Paranoia, Beziehungsproblemen.<br><br><strong>Selbstwertdienliche Verzerrung</strong> – Erfolge sich selbst zuschreiben (internal), Misserfolge anderen/Umständen (external). Klinisch: fehlt bei Depression (reversed self-serving bias).<br><br><strong>Bestätigungsfehler (Confirmation Bias)</strong> – Informationen bevorzugen die bestehende Überzeugungen bestätigen. Klinisch: Patient sucht Beweise für 'alle hassen mich' und ignoriert Gegenbeweise.<br><br><strong>False Consensus Effect</strong> – eigene Einstellungen als 'normal' wahrnehmen: 'Alle denken wie ich.'<br><br><strong>In-group/Out-group Bias</strong> – eigene Gruppe bevorzugen, Außengruppe abwerten. Relevant bei Gruppentherapie, Vorurteilen, Diskriminierungserfahrungen von Patienten."},{titel:"Heuristiken und Urteilsverzerrungen (Kahneman & Tversky)",text:"<strong>Verfügbarkeitsheuristik</strong> – Häufigkeit/Wahrscheinlichkeit anhand leichter Erinnerbarkeit beurteilen. Flugzeugangst nach Unfall im TV; Krebsangst nach Diagnose im Bekanntenkreis. Klinisch: Katastrophisierung bei Angststörungen.<br><br><strong>Repräsentativitätsheuristik</strong> – Ähnlichkeit mit Prototyp als Wahrscheinlichkeitskriterium. Basisraten werden ignoriert. Fehldiagnosen in der Klinik.<br><br><strong>Ankereffekt</strong> – erste Information beeinflusst alle folgenden Urteile unverhältnismäßig stark. Erster Eindruck bei Diagnostik. Relevanz für therapeutische Erstgespräche.<br><br><strong>Framing-Effekt</strong> – Darstellungsform beeinflusst Entscheidung: '10% Rückfallwahrscheinlichkeit' vs. '90% bleiben rückfallfrei.' Therapeutisch nutzbar: positive Reformulierung, Reframing.<br><br><strong>Rückschaufehler (Hindsight Bias)</strong> – Nach Ereignis: 'Das war doch vorherzusehen.' Verhindert Lernen aus Fehlern, erzeugt Schuldgefühle bei Patienten.<br><br><strong>Sunk Cost Fallacy</strong> – Festhalten an Entscheidungen wegen bereits investierter Ressourcen. Klinisch: Patient bleibt in dysfunktionaler Beziehung wegen 'Wir haben schon so viel zusammen durchgemacht.'"},{titel:"Gedächtnis- und Wahrnehmungsbiases",text:"<strong>Negativity Bias</strong> – Negative Ereignisse werden stärker gewichtet, besser erinnert und länger verarbeitet als positive. Evolutionär adaptiv; bei Depression verstärkt: selektive Erinnerung negativer Ereignisse.<br><br><strong>Mood Congruent Memory</strong> – In depressiver Stimmung werden negative Erinnerungen leichter abgerufen. Aufrechterhaltender Faktor bei Depression. Basis für Verhaltensaktivierung und positive Aktivitäten.<br><br><strong>Peak-End-Effekt</strong> – Erinnerung an Erlebnisse basiert auf intensivstem Moment (Peak) + letztem Moment (End), nicht auf Durchschnitt. Therapeutisch: Ende der Sitzung bewusst positiv gestalten.<br><br><strong>Rosy Retrospection</strong> – vergangene Ereignisse werden retrospektiv positiver bewertet als erlebt. Kontrast zu Mood Congruent Memory bei Depression.<br><br><strong>Implizite Assoziationen (IAT)</strong> – unbewusste Verknüpfungen zwischen Konzepten prägen Verhalten ohne bewusstes Wissen (z.B. Selbstwert-Assoziationen, Vorurteile)."},{titel:"Entscheidungsverzerrungen – klinisch relevant",text:"<strong>Status Quo Bias</strong> – Präferenz für den aktuellen Zustand, Veränderungen werden vermieden. Klinisch: Ambitendenz bei Patienten, die Therapie wollen aber keine Veränderung.<br><br><strong>Verlustaversion</strong> – Verluste werden ca. doppelt so stark gewichtet wie gleich große Gewinne (Kahneman & Tversky). Klinisch: 'Was wenn die Therapie nichts bringt?' überwiegt 'Was wenn sie hilft?'<br><br><strong>Illusion of Control</strong> – Überzeugung, unkontrollierbare Ereignisse kontrollieren zu können. Klinisch: Zwangsstörung (Ritual verhindert Katastrophe), magisches Denken.<br><br><strong>Optimism Bias</strong> – übermäßiger Optimismus bezüglich eigener Zukunft. Gegenteil bei Depression: pessimistischer Bias ('Nichts wird sich je ändern').<br><br><strong>Dunning-Kruger-Effekt</strong> – inkompetente Personen überschätzen sich, kompetente unterschätzen sich. Klinisch: Therapiemotivation, realistische Selbsteinschätzung."},{titel:"Klinische Anwendung – kognitive Biases in der Therapie",text:"<strong>Psychoedukation</strong>: Patienten lernen ihre eigenen Denkfehler kennen. Normalisierung: 'Diese Denkfehler hat jeder Mensch – bei Depression sind sie verstärkt aktiviert.'<br><br><strong>Kognitive Umstrukturierung</strong>: Systematisches Hinterfragen kognitiver Verzerrungen. Pfeil-Abwärts-Technik zur Aufdeckung, Gedankenprotokoll zur Dokumentation. Frage: 'Welcher Denkfehler könnte hier vorliegen?'<br><br><strong>Reframing / Framing nutzen</strong>: Therapeutisch bewusst positiv formulieren: '80% der Patienten zeigen Verbesserung' statt '20% sprechen nicht an.'<br><br><strong>Metakognitive Therapie (Wells)</strong>: Nicht die Inhalte der Gedanken verändern, sondern die Beziehung zu Gedanken ('Gedanken sind nur Gedanken, keine Fakten'). Dezentrierung, Defusion (ACT).<br><br><strong>Peak-End-Effekt nutzen</strong>: Sitzungsende bewusst positiv gestalten. Zusammenfassung von Fortschritten. Positive Hausaufgabe als letzter Eindruck.<br><br><strong>Confirmation Bias aufzeigen</strong>: 'Welche Beweise sprechen für Ihre Überzeugung – und welche dagegen?' Evidenz-Gegenevidenz-Technik direkt gegen Bestätigungsfehler."}],klinisch:["Biases sind KEINE Zeichen von Dummheit – sie sind universell und evolutionär sinnvoll. Psychoedukation normalisiert und entstigmatisiert","Bei Depression: Negativity Bias + Mood Congruent Memory + reversed self-serving bias bilden selbstverstärkende Abwärtsspirale","Bei Angststörungen: Verfügbarkeitsheuristik + Katastrophisieren überschätzen Bedrohungswahrscheinlichkeit und -intensität","Bei OCD: Illusion of Control + Verschmelzung Gedanke/Handlung (Thought-Action Fusion) als zentrale Bias-Muster","Metakognitive Therapie (Wells): nicht Inhalte der Gedanken verändern, sondern Beziehung zu Gedanken","Peak-End-Effekt therapeutisch nutzen: Sitzungsende immer bewusst positiv gestalten"],praxis:["Denkfehler-Tagebuch: Patient identifiziert täglich einen eigenen Denkfehler und benennt die Kategorie","Bias-Psychoedukation: Kahneman's System 1 / System 2 anhand Alltagsbeispielen erklären (Schläger + Ball Aufgabe)","Framing-Übung: Dieselbe Situation in 3 verschiedenen Framings formulieren lassen","Bestätigungsfehler aufdecken: Für eine negative Überzeugung systematisch Beweise + Gegenbeweise sammeln","Peak-End-Effekt: Patienten letzte 3 Sitzungen retrospektiv bewerten lassen – Ende besonders berücksichtigen"]}
 ];
 
 // ═══════════════════════════════════════════════════════════════
@@ -6609,8 +7664,7 @@ function renderMedGrid() {
       const done = medRead.has(t.id);
       const diffBg = MED_DIFF_COLOR[t.schwierigkeit||"Grundlagen"];
       const diffBorder = MED_DIFF_BORDER[t.schwierigkeit||"Grundlagen"];
-      const quizCount = t.quiz ? t.quiz.length : 0;
-      const sectionCount = t.inhalt ? t.inhalt.length : 0;
+      const sectionLabel = t.kurs && t.kursModule ? `📚 Kurs · ${t.kursModule.length} Module` : `${t.inhalt ? t.inhalt.length : 0} Abschnitte`;
       // recommended sequence number within category
       const globalIdx = MED_TOPICS.indexOf(t) + 1;
       html += `
@@ -6622,7 +7676,7 @@ function renderMedGrid() {
           <div style="display:flex;gap:5px;flex-wrap:wrap;">
             <span style="font-size:10px;padding:2px 7px;border-radius:4px;background:${catBg};color:#1a1a18;border:1px solid ${catBorder};">${cat}</span>
             <span style="font-size:10px;padding:2px 7px;border-radius:4px;background:${diffBg};border:1px solid ${diffBorder};">${t.schwierigkeit||'Grundlagen'}</span>
-            <span style="font-size:10px;padding:2px 7px;border-radius:4px;background:#f1efe8;border:1px solid #d3d1c7;">${sectionCount} Abschnitte · ${quizCount} Quiz</span>
+            <span style="font-size:10px;padding:2px 7px;border-radius:4px;background:#f1efe8;border:1px solid #d3d1c7;">${sectionLabel}</span>
           </div>
         </div>`;
     });
@@ -6657,25 +7711,33 @@ function showMed(id) {
     `<span class="tx-meta-badge" style="background:${catBg};border:1px solid ${catBorder};">${t.cat}</span>
      <span class="tx-meta-badge" style="background:${diffBg};border:1px solid ${diffBorder};">${t.schwierigkeit||'Grundlagen'}</span>
      ${t.lernziele?`<span class="tx-meta-badge" style="background:#f1efe8;border:1px solid #d3d1c7;">${t.lernziele.length} Lernziele</span>`:''}
-     ${t.quiz?`<span class="tx-meta-badge" style="background:#f1efe8;border:1px solid #d3d1c7;">${t.quiz.length} Quiz-Fragen</span>`:''}`;
+     ${t.kurs&&t.kursModule?`<span class="tx-meta-badge" style="background:#EEEDFE;border:1px solid #AFA9EC;color:#3C3489;font-weight:500;">📚 Vertiefungskurs · ${t.kursModule.length} Module</span>`:''}`;
 
   updateMarkBtn();
   updateMedTopicProgress();
 
   // Render all content
-  document.getElementById("med-content").innerHTML = renderMedFull(t);
+  activeMedModule = 0;
+  if(t.kurs && t.kursModule) {
+    renderMedKurs(t);
+  } else {
+    document.getElementById("med-content").innerHTML = renderMedFull(t);
+  }
 
   // TOC
-  if(t.inhalt && t.inhalt.length) {
+  if(t.kurs && t.kursModule) {
+    /* Modulnavigation wird von renderMedKurs gesetzt */
+  } else if(t.inhalt && t.inhalt.length) {
     document.getElementById("med-toc").innerHTML = `
       <div style="background:#f5f4ef;border-radius:10px;padding:12px 16px;border:1px solid #d3d1c7;">
         <div style="font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Inhaltsverzeichnis</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:4px;">
           ${t.inhalt.map((s,i)=>`<a href="#med-section-${t.id}-${i}" onclick="event.preventDefault();document.getElementById('med-section-${t.id}-${i}').scrollIntoView({behavior:'smooth',block:'start'})" style="font-size:12px;color:#0C447C;text-decoration:none;padding:2px 0;display:flex;align-items:center;gap:5px;"><span style="color:#b4b2a9;">${i+1}.</span>${s.titel}</a>`).join("")}
           <a href="#med-lernziele-${t.id}" onclick="event.preventDefault();document.getElementById('med-lernziele-${t.id}').scrollIntoView({behavior:'smooth',block:'start'})" style="font-size:12px;color:#3B6D11;text-decoration:none;padding:2px 0;">📋 Lernziele</a>
-          ${t.quiz?`<a href="#med-quiz-${t.id}" onclick="event.preventDefault();document.getElementById('med-quiz-${t.id}').scrollIntoView({behavior:'smooth',block:'start'})" style="font-size:12px;color:#633806;text-decoration:none;padding:2px 0;">✏ Quiz (${t.quiz.length} Fragen)</a>`:''}
         </div>
       </div>`;
+  } else {
+    document.getElementById("med-toc").innerHTML = "";
   }
 
   md.scrollIntoView({behavior:"smooth",block:"start"});
@@ -6686,7 +7748,7 @@ function updateMedTopicProgress() {
   if(!activeMed) return;
   const t = MED_TOPICS.find(x=>x.id===activeMed);
   if(!t) return;
-  const total = (t.inhalt||[]).length + (t.quiz?1:0) + (t.lernziele?1:0);
+  const total = (t.inhalt||[]).length + (t.kursModule||[]).length + (t.lernziele?1:0);
   const done = medRead.has(activeMed) ? total : 0;
   const el = document.getElementById("med-topic-progress");
   if(!el) return;
@@ -6740,32 +7802,6 @@ neurotransmitter:`
           <tr style="border-bottom:1px solid #e8e6df;background:#fff;"><td style="padding:7px 10px;font-weight:500;color:#0C447C;">Noradrenalin</td><td style="padding:7px 10px;">Locus coeruleus</td><td style="padding:7px 10px;">Aufmerksamkeit, Stress, Gedächtnis, Vigilanz</td><td style="padding:7px 10px;color:#791F1F;">Depression (Antrieb), ADHS</td><td style="padding:7px 10px;color:#633806;">PTBS (Hyperarousal), Panik</td><td style="padding:7px 10px;">SNRI, Atomoxetin, Prazosin (α1-Block)</td></tr>
           <tr style="border-bottom:1px solid #e8e6df;background:#fafaf8;"><td style="padding:7px 10px;font-weight:500;color:#0C447C;">GABA</td><td style="padding:7px 10px;">Interneurone (diffus)</td><td style="padding:7px 10px;">Hemmung, Angst↓, Schlaf, Muskelrelaxation</td><td style="padding:7px 10px;color:#791F1F;">Angst, Epilepsie, Entzug-Krämpfe</td><td style="padding:7px 10px;color:#633806;">Sedierung, Koma (Barbiturat-OD)</td><td style="padding:7px 10px;">BZD, Pregabalin, Barbiturate, Alkohol</td></tr>
           <tr style="background:#fff;"><td style="padding:7px 10px;font-weight:500;color:#0C447C;">Glutamat</td><td style="padding:7px 10px;">Kortex, Hippocampus</td><td style="padding:7px 10px;">Lernen (LTP), Gedächtnis, Kognition</td><td style="padding:7px 10px;color:#791F1F;">Schizophrenie (NMDA↓), Kognition↓</td><td style="padding:7px 10px;color:#633806;">Exzitotoxizität (Stroke, Trauma)</td><td style="padding:7px 10px;">Memantin (NMDA-Blocker), Ketamin</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>`,
-
-antidepressiva_kurs:`
-  <div style="margin-bottom:1.5rem;border:1px solid #d3d1c7;border-radius:12px;overflow:hidden;background:#fff;">
-    <div style="background:#f1efe8;padding:10px 16px;border-bottom:1px solid #d3d1c7;display:flex;align-items:center;gap:8px;">
-      <span style="font-size:15px;">⚖</span>
-      <span style="font-size:13px;font-weight:500;">SSRI-Vergleich: Klinisch relevante Unterschiede</span>
-    </div>
-    <div style="overflow-x:auto;">
-      <table style="width:100%;border-collapse:collapse;font-size:11px;min-width:620px;">
-        <thead><tr style="background:#f5f4ef;border-bottom:2px solid #d3d1c7;">
-          <th style="padding:8px 10px;text-align:left;font-weight:500;">SSRI</th>
-          <th style="padding:8px 10px;text-align:left;font-weight:500;">HWZ</th>
-          <th style="padding:8px 10px;text-align:left;font-weight:500;">Absetzsyndrom</th>
-          <th style="padding:8px 10px;text-align:left;font-weight:500;">CYP-Interaktion</th>
-          <th style="padding:8px 10px;text-align:left;font-weight:500;">Besonderheit</th>
-        </tr></thead>
-        <tbody>
-          <tr style="border-bottom:1px solid #e8e6df;background:#fff;"><td style="padding:7px 10px;font-weight:500;">Fluoxetin</td><td style="padding:7px 10px;">~50h (NM: 1–2 Wo.)</td><td style="padding:7px 10px;color:#3B6D11;">Kein/minimal</td><td style="padding:7px 10px;color:#791F1F;">Starker CYP2D6-Inhibitor</td><td style="padding:7px 10px;">5-Wo. Wash-out vor MAOI. Einmal/Woche-Dosierung möglich</td></tr>
-          <tr style="border-bottom:1px solid #e8e6df;background:#fafaf8;"><td style="padding:7px 10px;font-weight:500;">Sertralin</td><td style="padding:7px 10px;">~26h</td><td style="padding:7px 10px;color:#BA7517;">Mild</td><td style="padding:7px 10px;color:#3B6D11;">Wenig Interaktionen</td><td style="padding:7px 10px;">1. Wahl in SS, beste Verträglichkeit</td></tr>
-          <tr style="border-bottom:1px solid #e8e6df;background:#fff;"><td style="padding:7px 10px;font-weight:500;">Escitalopram</td><td style="padding:7px 10px;">~27h</td><td style="padding:7px 10px;color:#BA7517;">Mild–moderat</td><td style="padding:7px 10px;color:#3B6D11;">Minimal</td><td style="padding:7px 10px;">Reinster SSRI. QTc ↑ bei >20mg beachten</td></tr>
-          <tr style="border-bottom:1px solid #e8e6df;background:#fafaf8;"><td style="padding:7px 10px;font-weight:500;">Paroxetin</td><td style="padding:7px 10px;">~20h</td><td style="padding:7px 10px;color:#791F1F;">Stark</td><td style="padding:7px 10px;color:#791F1F;">Stärkster CYP2D6-Inhibitor</td><td style="padding:7px 10px;">Anticholinerg, Gewichtszunahme. Schwangerschaft meiden</td></tr>
-          <tr style="background:#fff;"><td style="padding:7px 10px;font-weight:500;">Fluvoxamin</td><td style="padding:7px 10px;">~15h</td><td style="padding:7px 10px;color:#BA7517;">Moderat</td><td style="padding:7px 10px;color:#791F1F;">Starker CYP1A2/3A4-Inhibitor</td><td style="padding:7px 10px;">1. Wahl bei OCD. Hemmt Clozapin-Abbau massiv!</td></tr>
         </tbody>
       </table>
     </div>
@@ -6940,11 +7976,6 @@ function renderMedFull(t) {
     </div>`;
   }
 
-  // 6. Quiz (inline, after content)
-  if(t.quiz && t.quiz.length) {
-    html += renderMedQuizFull(t);
-  }
-
   return `<div class="pt1" style="padding-top:0;">${html}</div>`;
 }
 
@@ -6969,78 +8000,62 @@ function renderMedSection(t, s, i) {
     </div>`;
 }
 
-// ── Full quiz renderer ─────────────────────────────────────────
-function renderMedQuizFull(t) {
-  const qHtml = t.quiz.map((q,qi) => {
-    const opts = q.o.map((opt,oi) =>
-      `<button onclick="medAnswer(${qi},${oi})" id="mq-${qi}-${oi}"
-        style="display:block;width:100%;text-align:left;padding:9px 14px;margin:5px 0;border-radius:8px;border:1px solid #d3d1c7;background:#f5f4ef;cursor:pointer;font-size:13px;font-family:inherit;transition:all .15s;line-height:1.5;">
-        <span style="display:inline-block;min-width:20px;font-weight:500;color:#888780;">${String.fromCharCode(65+oi)}.</span> ${opt}
-      </button>`).join("");
-    return `<div id="mq-block-${qi}" style="margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid #e8e6df;">
-      <div style="font-size:13px;font-weight:500;margin-bottom:.75rem;line-height:1.6;color:#1a1a18;">${qi+1}. ${q.f}</div>
-      <div id="mq-opts-${qi}">${opts}</div>
-      <div id="mq-feedback-${qi}" style="display:none;margin-top:.75rem;font-size:13px;border-radius:8px;padding:10px 14px;line-height:1.6;"></div>
-    </div>`;
-  }).join("");
+// ── Kursformat (Vertiefungskurs mit Modulen) ───────────────────
+let activeMedModule = 0;
 
-  return `<div id="med-quiz-${t.id}" style="margin-bottom:1.5rem;border:1px solid #d3d1c7;border-radius:12px;overflow:hidden;background:#fff;">
-    <div style="background:#f1efe8;padding:10px 16px;border-bottom:1px solid #d3d1c7;display:flex;align-items:center;justify-content:space-between;">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-size:15px;">✏</span>
-        <span style="font-size:13px;font-weight:500;">Wissenscheck – ${t.quiz.length} Fragen</span>
+function renderMedKurs(t) {
+  const mods = t.kursModule;
+  const mIdx = Math.max(0, Math.min(activeMedModule, mods.length-1));
+  const mod = mods[mIdx];
+  const catBg = MED_CAT_COLORS[t.cat]||"#f1efe8";
+  const catBorder = MED_CAT_BORDER[t.cat]||"#d3d1c7";
+
+  document.getElementById("med-toc").innerHTML =
+    `<div style="display:flex;gap:6px;flex-wrap:wrap;">` +
+    mods.map((m,i) => `<button onclick="medKursSetModule(${i})"
+        style="padding:6px 12px;border-radius:20px;border:1px solid ${mIdx===i?'#2c2c2a':'#d3d1c7'};
+        background:${mIdx===i?'#2c2c2a':'transparent'};color:${mIdx===i?'#f1efe8':'#5f5e5a'};
+        font-size:12px;font-weight:${mIdx===i?'500':'400'};cursor:pointer;font-family:inherit;">${m.icon} ${i+1}. ${m.titel}</button>`).join("") +
+    `</div>`;
+
+  let intro = "";
+  if(mIdx===0 && t.lernziele && t.lernziele.length) {
+    intro = `<div style="margin-bottom:1.5rem;border:1px solid ${catBorder};border-radius:12px;overflow:hidden;background:${catBg};">
+      <div style="padding:10px 16px;border-bottom:1px solid ${catBorder};display:flex;align-items:center;gap:8px;">
+        <span style="font-size:15px;">📋</span>
+        <span style="font-size:13px;font-weight:500;">Lernziele – Was Sie nach diesem Kurs können</span>
       </div>
-      <span style="font-size:11px;color:#5f5e5a;">Klicken Sie eine Antwort an</span>
-    </div>
-    <div style="padding:16px;">
-      ${qHtml}
-      <div id="mq-score-${t.id}" style="display:none;text-align:center;padding:1.25rem;background:#EAF3DE;border-radius:10px;border:1px solid #C0DD97;">
-        <div style="font-size:24px;font-weight:500;color:#3B6D11;" id="mq-score-num-${t.id}"></div>
-        <div style="font-size:13px;color:#3B6D11;margin-top:4px;">Quiz abgeschlossen! 🎉</div>
+      <div style="padding:12px 16px;">
+        <ol style="margin:0;padding-left:1.25rem;">
+          ${t.lernziele.map(z=>`<li style="font-size:13px;line-height:1.7;margin-bottom:3px;">${z}</li>`).join("")}
+        </ol>
+        ${t.quelle?`<div style="font-size:11px;color:#5f5e5a;margin-top:8px;">Grundlage: ${t.quelle}</div>`:''}
       </div>
+    </div>`;
+  }
+
+  document.getElementById("med-content").innerHTML = `<div class="pt1" style="padding-top:0;">
+    ${intro}
+    <div style="font-size:11px;color:#888780;margin-bottom:.25rem;">Modul ${mIdx+1} / ${mods.length}</div>
+    <div style="font-size:16px;font-weight:500;margin-bottom:.25rem;">${mod.icon} ${mod.titel}</div>
+    <div style="font-size:12px;color:#5f5e5a;margin-bottom:1rem;">🎯 Lernziel: ${mod.lernziel}</div>
+    <div class="mk">${mod.inhalt}</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #e8e6df;">
+      <button onclick="medKursNav(-1)" style="padding:7px 16px;border-radius:8px;border:1px solid #d3d1c7;background:transparent;color:#5f5e5a;font-size:13px;cursor:pointer;font-family:inherit;${mIdx===0?'visibility:hidden;':''}">← ${mIdx>0?mods[mIdx-1].titel:''}</button>
+      <button onclick="medKursNav(1)" style="padding:7px 16px;border-radius:8px;border:1px solid #2c2c2a;background:#2c2c2a;color:#f1efe8;font-size:13px;cursor:pointer;font-family:inherit;${mIdx===mods.length-1?'visibility:hidden;':''}">${mIdx<mods.length-1?mods[mIdx+1].titel:''} →</button>
     </div>
   </div>`;
 }
 
-// ── Quiz answer handler ────────────────────────────────────────
-const medQuizState = {};
-
-function medAnswer(qi, oi) {
-  if(!activeMed) return;
+function medKursSetModule(i) {
   const t = MED_TOPICS.find(x=>x.id===activeMed);
-  if(!t||!t.quiz||!t.quiz[qi]) return;
-  const q = t.quiz[qi];
-  const stateKey = `${activeMed}-${qi}`;
-  if(medQuizState[stateKey]) return;
-  medQuizState[stateKey] = true;
-  const correct = oi === q.r;
-  if(correct) medQuizState[`${activeMed}-${qi}-correct`] = true;
-  const feedbackEl = document.getElementById(`mq-feedback-${qi}`);
-  for(let i=0;i<q.o.length;i++) {
-    const btn = document.getElementById(`mq-${qi}-${i}`);
-    if(!btn) continue;
-    if(i===q.r) { btn.style.background="#EAF3DE"; btn.style.borderColor="#C0DD97"; btn.style.color="#3B6D11"; }
-    else if(i===oi&&!correct) { btn.style.background="#FCEBEB"; btn.style.borderColor="#F7C1C1"; btn.style.color="#791F1F"; }
-    btn.style.cursor="default";
-  }
-  if(feedbackEl) {
-    feedbackEl.style.display="block";
-    feedbackEl.style.background = correct?"#EAF3DE":"#FCEBEB";
-    feedbackEl.style.color = correct?"#3B6D11":"#791F1F";
-    feedbackEl.style.border = `1px solid ${correct?"#C0DD97":"#F7C1C1"}`;
-    feedbackEl.innerHTML = `<strong>${correct?"✓ Richtig!":"✗ Leider falsch."}</strong> ${q.a}`;
-  }
-  const allDone = t.quiz.every((_,i)=>medQuizState[`${activeMed}-${i}`]);
-  if(allDone) {
-    let correctCount = 0;
-    t.quiz.forEach((_,i)=>{ if(medQuizState[`${activeMed}-${i}-correct`]) correctCount++; });
-    const scoreEl = document.getElementById(`mq-score-${activeMed}`);
-    const numEl = document.getElementById(`mq-score-num-${activeMed}`);
-    if(scoreEl) scoreEl.style.display="block";
-    if(numEl) numEl.textContent = `${correctCount} / ${t.quiz.length} richtig`;
-    if(correctCount === t.quiz.length) { medRead.add(activeMed); updateMarkBtn(); medUpdateProgress(); }
-  }
+  if(!t || !t.kursModule || i<0 || i>=t.kursModule.length) return;
+  activeMedModule = i;
+  renderMedKurs(t);
+  document.getElementById("med-detail").scrollIntoView({behavior:"smooth",block:"start"});
 }
+
+function medKursNav(dir) { medKursSetModule(activeMedModule + dir); }
 
 // ═══════════════════════════════════════════════════════════════
 // FALLKONZEPTUALISIERUNG – PRAXISLEITFADEN
@@ -7607,6 +8622,14 @@ buildCards = function(disorders) {
   });
   // Med. Grundlagen Neurobiologie cards
   MED_TOPICS.forEach(t => {
+    (t.kursModule||[]).forEach(mod => {
+      (mod.karten||[]).forEach(k => {
+        cards.push({cat:"Med. Grundlagen", qtype:"Med. Grundlagen: Pharmakologie",
+          q:`${k.q} <span style="color:#888780;font-size:11px;">(${t.name} · ${mod.titel})</span>`,
+          a:`<div style="font-size:13px;line-height:1.65;">${k.a}</div>`
+        });
+      });
+    });
     (t.inhalt||[]).slice(0, 4).forEach(s => {
       cards.push({cat:"Med. Grundlagen", qtype:"Med. Grundlagen: Neurobiologie",
         q:`Was versteht man unter „${s.titel}"? (Thema: ${t.name})`,
